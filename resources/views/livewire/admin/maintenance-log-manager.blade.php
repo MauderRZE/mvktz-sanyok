@@ -1,9 +1,9 @@
 <div class="space-y-6">
-    <x-flash />
-<x-toolbar :count="count($logs)" label="Всього записів ТО" buttonLabel="Додати запис ТО" />
+    <x-ui.flash />
+<x-ui.toolbar :count="count($logs)" label="Всього записів ТО" buttonLabel="Додати запис ТО" />
 
     @if($isOpen)
-    <x-modal title="{{ $logId ? 'Редагувати' : 'Додати' }} запис обслуговування" maxWidth="md">
+    <x-ui.modal title="{{ $logId ? 'Редагувати' : 'Додати' }} запис обслуговування" maxWidth="md">
             <div>
                     <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Обладнання (ПК / Пристрій)</label>
                     <select wire:model="equipment_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
@@ -44,46 +44,42 @@
                     <textarea wire:model="description" rows="3" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors" placeholder="Опишіть які саме роботи було виконано..."></textarea>
                     @error('description') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
                 </div>
-        </x-modal>
+        </x-ui.modal>
     @endif
 
     {{-- Desktop --}}
-    <div class="hidden md:block bg-surface-800/50 border border-white/5 rounded-2xl overflow-hidden">
-        <table class="w-full">
-            <thead>
-                <tr class="border-b border-white/5">
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-28">Дата</th>
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Обладнання (Інв. №)</th>
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Тип роботи</th>
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Опис</th>
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-28">Вартість</th>
-                    <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider w-32">Дії</th>
-                </tr>
-            </thead>
+    <x-table.wrapper>
+            <x-slot name="headers">
+                    <x-table.th align="left" width="28">Дата</x-table.th>
+                    <x-table.th align="left">Обладнання (Інв. №)</x-table.th>
+                    <x-table.th align="left">Тип роботи</x-table.th>
+                    <x-table.th align="left">Опис</x-table.th>
+                    <x-table.th align="left" width="28">Вартість</x-table.th>
+                    <x-table.th align="right" width="32">Дії</x-table.th>
+                </x-slot>
             <tbody class="divide-y divide-white/5 text-sm">
                 @forelse($logs as $l)
                 <tr class="hover:bg-white/[0.02] transition-colors">
-                    <td class="px-5 py-3 text-gray-400 whitespace-nowrap">{{ $l->action_date }}</td>
-                    <td class="px-5 py-3 text-white font-medium">
+                    <x-table.td align="left" class="text-gray-400 whitespace-nowrap">{{ $l->action_date }}</x-table.td>
+                    <x-table.td align="left" primary class="text-white font-medium">
                         {{ $l->equipment->inventory_number ?? '-' }}
                         <span class="block text-[10px] text-gray-500">{{ $l->equipment->accounting_name ?? '' }}</span>
-                    </td>
-                    <td class="px-5 py-3 text-brand-400 font-medium">{{ $l->maintenanceType->type_name ?? '-' }}</td>
-                    <td class="px-5 py-3 text-gray-300 max-w-xs truncate" title="{{ $l->description }}">{{ $l->description }}</td>
-                    <td class="px-5 py-3 text-emerald-400 font-semibold">{{ number_format($l->cost, 2, '.', ' ') }} грн</td>
-                    <td class="px-5 py-3 text-right">
-                        <x-action-buttons id="{{ $l->id }}" />
-                    </td>
+                    </x-table.td>
+                    <x-table.td align="left" class="text-brand-400 font-medium">{{ $l->maintenanceType->type_name ?? '-' }}</x-table.td>
+                    <td class="px-5 py-3 text-gray-300 max-w-xs truncate" title="{{ $l->description }}">{{ $l->description }}</x-table.td>
+                    <x-table.td align="left" class="text-emerald-400 font-semibold">{{ number_format($l->cost, 2, '.', ' ') }} грн</x-table.td>
+                    <x-table.td align="right">
+                        <x-ui.action-buttons id="{{ $l->id }}" />
+                    </x-table.td>
                 </tr>
                 @empty
-                <tr><td colspan="6" class="px-5 py-10 text-center text-gray-600">Немає записів</td></tr>
+                <tr><x-table.td colspan="6" class="px-5 py-10 text-center text-gray-600">Немає записів</x-table.td></tr>
                 @endforelse
             </tbody>
-        </table>
-    </div>
+        </x-table.wrapper>
 
     {{-- Mobile --}}
-    <div class="md:hidden space-y-3">
+    <x-table.mobile-list>
         @forelse($logs as $l)
         <div class="bg-surface-800/50 border border-white/5 rounded-xl p-4 space-y-2">
             <div class="flex items-start justify-between">
@@ -110,5 +106,5 @@
         @empty
         <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
         @endforelse
-    </div>
+    </x-table.mobile-list>
 </div>

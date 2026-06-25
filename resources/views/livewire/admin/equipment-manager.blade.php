@@ -1,6 +1,6 @@
 <div class="space-y-6">
     {{-- Flash Message --}}
-    <x-flash />
+    <x-ui.flash />
 {{-- Header --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -62,26 +62,23 @@
     @endif
 
     {{-- Desktop Table --}}
-    <div class="hidden md:block bg-surface-800/50 border border-white/5 rounded-2xl overflow-hidden">
-        <table class="w-full">
-            <thead>
-                <tr class="border-b border-white/5">
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ID</th>
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Інв. №</th>
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Назва</th>
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Тип</th>
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Статус</th>
-                    <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Дії</th>
-                </tr>
-            </thead>
+    <x-table.wrapper>
+            <x-slot name="headers">
+                    <x-table.th align="left">ID</x-table.th>
+                    <x-table.th align="left">Інв. №</x-table.th>
+                    <x-table.th align="left">Назва</x-table.th>
+                    <x-table.th align="left">Тип</x-table.th>
+                    <x-table.th align="left">Статус</x-table.th>
+                    <x-table.th align="right">Дії</x-table.th>
+                </x-slot>
             <tbody class="divide-y divide-white/5">
                 @forelse($equipments as $eq)
                 <tr class="hover:bg-white/[0.02] transition-colors">
-                    <td class="px-5 py-3 text-sm text-gray-500">#{{ $eq->id }}</td>
-                    <td class="px-5 py-3 text-sm text-white font-medium">{{ $eq->inventory_number }}</td>
-                    <td class="px-5 py-3 text-sm text-gray-300">{{ $eq->accounting_name }}</td>
-                    <td class="px-5 py-3 text-sm"><span class="px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-300 text-xs font-medium">{{ $eq->type->type_name ?? '—' }}</span></td>
-                    <td class="px-5 py-3 text-sm">
+                    <x-table.td align="left" class="text-gray-500">#{{ $eq->id }}</x-table.td>
+                    <x-table.td align="left" primary class="text-white font-medium">{{ $eq->inventory_number }}</x-table.td>
+                    <x-table.td align="left" class="text-gray-300">{{ $eq->accounting_name }}</x-table.td>
+                    <x-table.td align="left"><span class="px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-300 text-xs font-medium">{{ $eq->type->type_name ?? '—' }}</span></x-table.td>
+                    <x-table.td align="left">
                         @if($eq->status == 'В експлуатації')
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-medium"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>{{ $eq->status }}</span>
                         @elseif($eq->status == 'На складі')
@@ -89,20 +86,19 @@
                         @else
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-500/10 text-red-400 text-xs font-medium"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>{{ $eq->status }}</span>
                         @endif
-                    </td>
-                    <td class="px-5 py-3 text-right">
-                        <x-action-buttons id="{{ $eq->id }}" />
-                    </td>
+                    </x-table.td>
+                    <x-table.td align="right">
+                        <x-ui.action-buttons id="{{ $eq->id }}" />
+                    </x-table.td>
                 </tr>
                 @empty
-                <tr><td colspan="6" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</td></tr>
+                <tr><x-table.td colspan="6" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</x-table.td></tr>
                 @endforelse
             </tbody>
-        </table>
-    </div>
+        </x-table.wrapper>
 
     {{-- Mobile Cards --}}
-    <div class="md:hidden space-y-3">
+    <x-table.mobile-list>
         @forelse($equipments as $eq)
         <div class="bg-surface-800/50 border border-white/5 rounded-xl p-4 space-y-3">
             <div class="flex items-start justify-between">
@@ -120,11 +116,11 @@
             </div>
             <div class="flex items-center justify-between pt-2 border-t border-white/5">
                 <span class="px-2 py-0.5 rounded-lg bg-brand-500/10 text-brand-300 text-xs font-medium">{{ $eq->type->type_name ?? '—' }}</span>
-                <x-action-buttons id="{{ $eq->id }}" />
+                <x-ui.action-buttons id="{{ $eq->id }}" />
             </div>
         </div>
         @empty
         <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
         @endforelse
-    </div>
+    </x-table.mobile-list>
 </div>

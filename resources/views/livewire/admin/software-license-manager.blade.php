@@ -1,9 +1,9 @@
 <div class="space-y-6">
-    <x-flash />
-<x-toolbar :count="count($licenses)" label="Всього ліцензій" buttonLabel="Додати ліцензію" />
+    <x-ui.flash />
+<x-ui.toolbar :count="count($licenses)" label="Всього ліцензій" buttonLabel="Додати ліцензію" />
 
     @if($isOpen)
-    <x-modal title="{{ $licenseId ? 'Редагувати' : 'Додати' }} ліцензію ПЗ" maxWidth="md">
+    <x-ui.modal title="{{ $licenseId ? 'Редагувати' : 'Додати' }} ліцензію ПЗ" maxWidth="md">
             <div>
                     <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Назва програмного забезпечення</label>
                     <input type="text" wire:model="software_name" placeholder="напр. Windows 11 Pro, Office 2021" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
@@ -45,43 +45,40 @@
                         @error('expiration_date') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
                     </div>
                 </div>
-        </x-modal>
+        </x-ui.modal>
     @endif
 
     {{-- Desktop --}}
-    <div class="hidden md:block bg-surface-800/50 border border-white/5 rounded-2xl overflow-hidden">
-        <table class="w-full">
-            <thead>
-                <tr class="border-b border-white/5">
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Назва ПЗ</th>
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Ключ ліцензії</th>
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Встановлено на ПК (Компонент)</th>
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Термін дії</th>
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Статус</th>
-                    <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider w-32">Дії</th>
-                </tr>
-            </thead>
+    <x-table.wrapper>
+            <x-slot name="headers">
+                    <x-table.th align="left">Назва ПЗ</x-table.th>
+                    <x-table.th align="left">Ключ ліцензії</x-table.th>
+                    <x-table.th align="left">Встановлено на ПК (Компонент)</x-table.th>
+                    <x-table.th align="left">Термін дії</x-table.th>
+                    <x-table.th align="left">Статус</x-table.th>
+                    <x-table.th align="right" width="32">Дії</x-table.th>
+                </x-slot>
             <tbody class="divide-y divide-white/5 text-sm">
                 @forelse($licenses as $lic)
                 <tr class="hover:bg-white/[0.02] transition-colors">
-                    <td class="px-5 py-3 text-white font-medium">{{ $lic->software_name }}</td>
-                    <td class="px-5 py-3 text-gray-400 font-mono text-xs">{{ $lic->license_key ?? '-' }}</td>
-                    <td class="px-5 py-3 text-gray-300 text-xs">
+                    <x-table.td align="left" primary class="text-white font-medium">{{ $lic->software_name }}</x-table.td>
+                    <x-table.td align="left" class="text-gray-400 font-mono text-xs">{{ $lic->license_key ?? '-' }}</x-table.td>
+                    <x-table.td align="left" class="text-gray-300 text-xs">
                         @if($lic->component)
                             <span class="text-brand-400 font-medium">[{{ $lic->component->equipment->inventory_number ?? 'Склад' }}]</span> 
                             {{ $lic->component->componentType->component_name ?? '-' }} ({{ $lic->component->brand_model }})
                         @else
                             -
                         @endif
-                    </td>
-                    <td class="px-5 py-3 text-gray-400 whitespace-nowrap">
+                    </x-table.td>
+                    <x-table.td align="left" class="text-gray-400 whitespace-nowrap">
                         @if($lic->expiration_date)
                             {{ $lic->expiration_date }}
                         @else
                             <span class="text-gray-600">Безстрокова</span>
                         @endif
-                    </td>
-                    <td class="px-5 py-3">
+                    </x-table.td>
+                    <x-table.td align="left">
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium 
                             @if($lic->license_status == 'Активна') bg-emerald-500/10 text-emerald-400
                             @elseif($lic->license_status == 'Призупинена') bg-amber-500/10 text-amber-400
@@ -92,20 +89,19 @@
                                 @else bg-red-400 @endif"></span>
                             {{ $lic->license_status }}
                         </span>
-                    </td>
-                    <td class="px-5 py-3 text-right">
-                        <x-action-buttons id="{{ $lic->id }}" />
-                    </td>
+                    </x-table.td>
+                    <x-table.td align="right">
+                        <x-ui.action-buttons id="{{ $lic->id }}" />
+                    </x-table.td>
                 </tr>
                 @empty
-                <tr><td colspan="6" class="px-5 py-10 text-center text-gray-600">Немає записів</td></tr>
+                <tr><x-table.td colspan="6" class="px-5 py-10 text-center text-gray-600">Немає записів</x-table.td></tr>
                 @endforelse
             </tbody>
-        </table>
-    </div>
+        </x-table.wrapper>
 
     {{-- Mobile --}}
-    <div class="md:hidden space-y-3">
+    <x-table.mobile-list>
         @forelse($licenses as $lic)
         <div class="bg-surface-800/50 border border-white/5 rounded-xl p-4 space-y-2">
             <div class="flex items-start justify-between">
@@ -143,5 +139,5 @@
         @empty
         <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
         @endforelse
-    </div>
+    </x-table.mobile-list>
 </div>

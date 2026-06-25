@@ -1,9 +1,9 @@
 <div class="space-y-6">
-    <x-flash />
-<x-toolbar :count="count($users)" label="Всього" buttonLabel="Додати" />
+    <x-ui.flash />
+<x-ui.toolbar :count="count($users)" label="Всього" buttonLabel="Додати" />
 
     @if($isOpen)
-    <x-modal title="{{ $userId ? 'Редагувати' : 'Додати' }} адміністратора" maxWidth="lg">
+    <x-ui.modal title="{{ $userId ? 'Редагувати' : 'Додати' }} адміністратора" maxWidth="lg">
             <div>
                     <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ім'я</label>
                     <input type="text" wire:model="name" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
@@ -19,44 +19,40 @@
                     <input type="password" wire:model="password" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
                     @error('password') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
                 </div>
-        </x-modal>
+        </x-ui.modal>
     @endif
 
     {{-- Desktop --}}
-    <div class="hidden md:block bg-surface-800/50 border border-white/5 rounded-2xl overflow-hidden">
-        <table class="w-full">
-            <thead>
-                <tr class="border-b border-white/5">
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-20">ID</th>
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Ім'я</th>
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
-                    <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider w-32">Дії</th>
-                </tr>
-            </thead>
+    <x-table.wrapper>
+            <x-slot name="headers">
+                    <x-table.th align="left" width="20">ID</x-table.th>
+                    <x-table.th align="left">Ім'я</x-table.th>
+                    <x-table.th align="left">Email</x-table.th>
+                    <x-table.th align="right" width="32">Дії</x-table.th>
+                </x-slot>
             <tbody class="divide-y divide-white/5">
                 @forelse($users as $user)
                 <tr class="hover:bg-white/[0.02] transition-colors">
-                    <td class="px-5 py-3 text-sm text-gray-500">#{{ $user->id }}</td>
-                    <td class="px-5 py-3">
+                    <x-table.td align="left" class="text-gray-500">#{{ $user->id }}</x-table.td>
+                    <x-table.td align="left">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-xs font-bold text-white shrink-0">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
                             <span class="text-sm text-white font-medium">{{ $user->name }}</span>
                         </div>
-                    </td>
-                    <td class="px-5 py-3 text-sm text-gray-400">{{ $user->email }}</td>
-                    <td class="px-5 py-3 text-right">
-                        <x-action-buttons id="{{ $user->id }}" />
-                    </td>
+                    </x-table.td>
+                    <x-table.td align="left" class="text-gray-400">{{ $user->email }}</x-table.td>
+                    <x-table.td align="right">
+                        <x-ui.action-buttons id="{{ $user->id }}" />
+                    </x-table.td>
                 </tr>
                 @empty
-                <tr><td colspan="4" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</td></tr>
+                <tr><x-table.td colspan="4" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</x-table.td></tr>
                 @endforelse
             </tbody>
-        </table>
-    </div>
+        </x-table.wrapper>
 
     {{-- Mobile --}}
-    <div class="md:hidden space-y-3">
+    <x-table.mobile-list>
         @forelse($users as $user)
         <div class="bg-surface-800/50 border border-white/5 rounded-xl p-4 flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-sm font-bold text-white shrink-0">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
@@ -72,5 +68,5 @@
         @empty
         <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
         @endforelse
-    </div>
+    </x-table.mobile-list>
 </div>

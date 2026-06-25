@@ -1,9 +1,9 @@
 <div class="space-y-6">
-    <x-flash />
-<x-toolbar :count="count($components)" label="Всього" buttonLabel="Додати" />
+    <x-ui.flash />
+<x-ui.toolbar :count="count($components)" label="Всього" buttonLabel="Додати" />
 
     @if($isOpen)
-    <x-modal title="{{ $componentId ? 'Редагувати' : 'Додати' }} комплектуюче" maxWidth="lg">
+    <x-ui.modal title="{{ $componentId ? 'Редагувати' : 'Додати' }} комплектуюче" maxWidth="lg">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Обладнання (ПК / Пристрій)</label>
@@ -79,47 +79,44 @@
                     </div>
                     @endif
                 </div>
-        </x-modal>
+        </x-ui.modal>
     @endif
 
     {{-- Desktop --}}
-    <div class="hidden md:block bg-surface-800/50 border border-white/5 rounded-2xl overflow-hidden">
-        <table class="w-full">
-            <thead>
-                <tr class="border-b border-white/5">
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Пристрій (Інв. №)</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Тип компонента</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Модель</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Серійний</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Мережа</th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Статус</th>
-                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">Дії</th>
-                </tr>
-            </thead>
+    <x-table.wrapper>
+            <x-slot name="headers">
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Пристрій (Інв. №)</x-table.th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Тип компонента</x-table.th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Модель</x-table.th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Серійний</x-table.th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Мережа</x-table.th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Статус</x-table.th>
+                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">Дії</x-table.th>
+                </x-slot>
             <tbody class="divide-y divide-white/5">
                 @forelse($components as $c)
                 <tr class="hover:bg-white/[0.02] transition-colors text-sm">
-                    <td class="px-4 py-3 text-white font-medium">
+                    <x-table.td align="left" primary class="text-white font-medium">
                         {{ $c->equipment->inventory_number ?? '-' }}
                         <span class="block text-[10px] text-gray-500">{{ $c->equipment->accounting_name ?? '' }}</span>
-                    </td>
-                    <td class="px-4 py-3 text-gray-300">{{ $c->componentType->component_name ?? '-' }}</td>
-                    <td class="px-4 py-3 text-gray-300">
+                    </x-table.td>
+                    <x-table.td align="left" class="text-gray-300">{{ $c->componentType->component_name ?? '-' }}</x-table.td>
+                    <x-table.td align="left" class="text-gray-300">
                         {{ $c->brand_model ?? '-' }}
                         @if($c->cartridge_model)
                             <span class="block text-[10px] text-brand-400">Картридж: {{ $c->cartridge_model }}</span>
                         @endif
-                    </td>
-                    <td class="px-4 py-3 text-gray-400 font-mono text-xs">{{ $c->serial_number ?? '-' }}</td>
-                    <td class="px-4 py-3 text-gray-400">
+                    </x-table.td>
+                    <x-table.td align="left" class="text-gray-400 font-mono text-xs">{{ $c->serial_number ?? '-' }}</x-table.td>
+                    <x-table.td align="left" class="text-gray-400">
                         @if($c->has_network)
                             <span class="text-xs text-brand-400 block font-mono">{{ $c->ip_address }}</span>
                             <span class="text-[10px] text-gray-500 block font-mono">{{ $c->mac_address }}</span>
                         @else
                             <span class="text-gray-600">-</span>
                         @endif
-                    </td>
-                    <td class="px-4 py-3">
+                    </x-table.td>
+                    <x-table.td align="left">
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium 
                             @if($c->status == 'Працює') bg-emerald-500/10 text-emerald-400
                             @elseif($c->status == 'Знято') bg-gray-500/10 text-gray-400
@@ -132,20 +129,19 @@
                                 @else bg-red-400 @endif"></span>
                             {{ $c->status }}
                         </span>
-                    </td>
-                    <td class="px-4 py-3 text-right">
-                        <x-action-buttons id="{{ $c->id }}" />
-                    </td>
+                    </x-table.td>
+                    <x-table.td align="right">
+                        <x-ui.action-buttons id="{{ $c->id }}" />
+                    </x-table.td>
                 </tr>
                 @empty
-                <tr><td colspan="7" class="px-4 py-10 text-center text-gray-600">Немає записів</td></tr>
+                <tr><x-table.td colspan="7" class="px-4 py-10 text-center text-gray-600">Немає записів</x-table.td></tr>
                 @endforelse
             </tbody>
-        </table>
-    </div>
+        </x-table.wrapper>
 
     {{-- Mobile --}}
-    <div class="md:hidden space-y-3">
+    <x-table.mobile-list>
         @forelse($components as $c)
         <div class="bg-surface-800/50 border border-white/5 rounded-xl p-4 space-y-2">
             <div class="flex items-start justify-between">
@@ -187,5 +183,5 @@
         @empty
         <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
         @endforelse
-    </div>
+    </x-table.mobile-list>
 </div>
