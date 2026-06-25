@@ -6,67 +6,51 @@
     <x-ui.modal title="{{ $materialId ? 'Редагувати' : 'Додати' }} МШП" maxWidth="lg">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Назва матеріалу (базовий)</label>
-                        <select wire:model="base_material_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                        <x-form.select label="Назва матеріалу (базовий)" model="base_material_id">
                             <option value="">Оберіть матеріал...</option>
                             @foreach($baseMaterialsList as $bm)
                                 <option value="{{ $bm->id }}">{{ $bm->material_name }}</option>
                             @endforeach
-                        </select>
-                        @error('base_material_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Кількість</label>
-                        <input type="number" wire:model="quantity" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        @error('quantity') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        <x-form.input label="Кількість" model="quantity" type="number" />
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Прив'язане обладнання (якщо встановлено)</label>
-                        <select wire:model="equipment_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                        <x-form.select label="Прив'язане обладнання (якщо встановлено)" model="equipment_id">
                             <option value="">Не встановлено (на складі)...</option>
                             @foreach($equipmentList as $eq)
                                 <option value="{{ $eq->id }}">{{ $eq->inventory_number }} - {{ $eq->accounting_name }}</option>
                             @endforeach
-                        </select>
-                        @error('equipment_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Договір закупівлі</label>
-                        <select wire:model="contract_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                        <x-form.select label="Договір закупівлі" model="contract_id">
                             <option value="">Оберіть договір...</option>
                             @foreach($contractsList as $c)
                                 <option value="{{ $c->id }}">Договір №{{ $c->contract_number }} ({{ $c->contract_date }})</option>
                             @endforeach
-                        </select>
-                        @error('contract_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Серійний номер</label>
-                        <input type="text" wire:model="serial_number" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        @error('serial_number') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        <x-form.input label="Серійний номер" model="serial_number" type="text" />
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Дата закупівлі</label>
-                        <input type="date" wire:model="purchase_date" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        @error('purchase_date') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        <x-form.input label="Дата закупівлі" model="purchase_date" type="date" />
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Дата встановлення</label>
-                        <input type="date" wire:model="installation_date" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        @error('installation_date') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        <x-form.input label="Дата встановлення" model="installation_date" type="date" />
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Примітки</label>
-                    <textarea wire:model="notes" rows="2" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors"></textarea>
-                    @error('notes') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                    <x-form.textarea label="Примітки" model="notes" rows="2" />
                 </div>
         </x-ui.modal>
     @endif
@@ -74,13 +58,13 @@
     {{-- Desktop --}}
     <x-table.wrapper>
             <x-slot name="headers">
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Матеріал (МШП)</x-table.th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Серійний</x-table.th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">К-сть</x-table.th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Встановлено на</x-table.th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Договір</x-table.th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Дати</x-table.th>
-                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">Дії</x-table.th>
+                    <x-table.th align="left">Матеріал (МШП)</x-table.th>
+                    <x-table.th align="left">Серійний</x-table.th>
+                    <x-table.th align="left">К-сть</x-table.th>
+                    <x-table.th align="left">Встановлено на</x-table.th>
+                    <x-table.th align="left">Договір</x-table.th>
+                    <x-table.th align="left">Дати</x-table.th>
+                    <x-table.th align="right" width="24">Дії</x-table.th>
                 </x-slot>
             <tbody class="divide-y divide-white/5 text-sm">
                 @forelse($materials as $m)

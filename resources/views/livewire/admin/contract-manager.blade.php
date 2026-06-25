@@ -5,24 +5,18 @@
     @if($isOpen)
     <x-ui.modal title="{{ $contractId ? 'Редагувати' : 'Додати' }} договір" maxWidth="md">
             <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Номер договору</label>
-                    <input type="text" wire:model="contract_number" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                    @error('contract_number') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                    <x-form.input label="Номер договору" model="contract_number" type="text" />
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Дата договору</label>
-                    <input type="date" wire:model="contract_date" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                    @error('contract_date') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                    <x-form.input label="Дата договору" model="contract_date" type="date" />
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Постачальник</label>
-                    <select wire:model="supplier_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        <option value="">Оберіть постачальника...</option>
+                    <x-form.select label="Постачальник" model="supplier_id">
+                            <option value="">Оберіть постачальника...</option>
                         @foreach($suppliersList as $sup)
                             <option value="{{ $sup->id }}">{{ $sup->supplier_name }}</option>
                         @endforeach
-                    </select>
-                    @error('supplier_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                 </div>
         </x-ui.modal>
     @endif

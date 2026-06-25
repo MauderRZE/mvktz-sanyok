@@ -5,27 +5,20 @@
     @if($isOpen)
     <x-ui.modal title="{{ $employeeId ? 'Редагувати' : 'Додати' }} співробітника" maxWidth="lg">
             <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Прізвище</label>
-                    <input type="text" wire:model="last_name" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                    @error('last_name') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                    <x-form.input label="Прізвище" model="last_name" type="text" />
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ім'я</label>
-                    <input type="text" wire:model="first_name" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                    @error('first_name') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                    <x-form.input label="Ім'я" model="first_name" type="text" />
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">По-батькові</label>
-                    <input type="text" wire:model="middle_name" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                    <x-form.input label="По-батькові" model="middle_name" type="text" />
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Посада</label>
-                        <input type="text" wire:model="position" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                        <x-form.input label="Посада" model="position" type="text" />
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Відділ</label>
-                        <input type="text" wire:model="department" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                        <x-form.input label="Відділ" model="department" type="text" />
                     </div>
                 </div>
         </x-ui.modal>

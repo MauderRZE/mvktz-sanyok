@@ -5,19 +5,13 @@
     @if($isOpen)
     <x-ui.modal title="{{ $userId ? 'Редагувати' : 'Додати' }} адміністратора" maxWidth="lg">
             <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ім'я</label>
-                    <input type="text" wire:model="name" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                    @error('name') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                    <x-form.input label="Ім'я" model="name" type="text" />
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Email</label>
-                    <input type="email" wire:model="email" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                    @error('email') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                    <x-form.input label="Email" model="email" type="email" />
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Пароль {{ $userId ? '(залиште пустим, якщо не змінюєте)' : '' }}</label>
-                    <input type="password" wire:model="password" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                    @error('password') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                    <x-form.input label="Пароль {{ $userId ? '(залиште пустим, якщо не змінюєте)' : '' }}" model="password" type="password" />
                 </div>
         </x-ui.modal>
     @endif

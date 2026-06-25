@@ -5,39 +5,31 @@
     @if($isOpen)
     <x-ui.modal title="{{ $movementId ? 'Редагувати' : 'Зареєструвати' }} переміщення" maxWidth="md">
             <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Обладнання (Інв. №)</label>
-                    <select wire:model="equipment_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        <option value="">Оберіть обладнання...</option>
+                    <x-form.select label="Обладнання (Інв. №)" model="equipment_id">
+                            <option value="">Оберіть обладнання...</option>
                         @foreach($equipmentList as $eq)
                             <option value="{{ $eq->id }}">{{ $eq->inventory_number }} - {{ $eq->accounting_name }}</option>
                         @endforeach
-                    </select>
-                    @error('equipment_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Куди переміщено (Кабінет / Локація)</label>
-                    <select wire:model="location_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        <option value="">Оберіть локацію...</option>
+                    <x-form.select label="Куди переміщено (Кабінет / Локація)" model="location_id">
+                            <option value="">Оберіть локацію...</option>
                         @foreach($locationsList as $loc)
                             <option value="{{ $loc->id }}">Кабінет {{ $loc->room_number }}</option>
                         @endforeach
-                    </select>
-                    @error('location_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Відповідальний співробітник</label>
-                    <select wire:model="employee_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        <option value="">Без відповідального (на склад)...</option>
+                    <x-form.select label="Відповідальний співробітник" model="employee_id">
+                            <option value="">Без відповідального (на склад)...</option>
                         @foreach($employeesList as $emp)
                             <option value="{{ $emp->id }}">{{ $emp->fullName }} ({{ $emp->position }})</option>
                         @endforeach
-                    </select>
-                    @error('employee_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Дата переміщення</label>
-                    <input type="date" wire:model="move_date" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                    @error('move_date') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                    <x-form.input label="Дата переміщення" model="move_date" type="date" />
                 </div>
         </x-ui.modal>
     @endif

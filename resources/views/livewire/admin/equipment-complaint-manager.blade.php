@@ -6,49 +6,39 @@
     <x-ui.modal title="{{ $complaintId ? 'Редагувати' : 'Зареєструвати' }} скаргу" maxWidth="lg">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Обладнання (Інв. №)</label>
-                        <select wire:model="equipment_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                        <x-form.select label="Обладнання (Інв. №)" model="equipment_id">
                             <option value="">Оберіть обладнання...</option>
                             @foreach($equipmentList as $eq)
                                 <option value="{{ $eq->id }}">{{ $eq->inventory_number }} - {{ $eq->accounting_name }}</option>
                             @endforeach
-                        </select>
-                        @error('equipment_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Співробітник (хто поскаржився)</label>
-                        <select wire:model="reported_by_employee_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                        <x-form.select label="Співробітник (хто поскаржився)" model="reported_by_employee_id">
                             <option value="">Оберіть співробітника...</option>
                             @foreach($employeesList as $emp)
                                 <option value="{{ $emp->id }}">{{ $emp->fullName }} ({{ $emp->position }})</option>
                             @endforeach
-                        </select>
-                        @error('reported_by_employee_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Дата скарги</label>
-                        <input type="date" wire:model="complaint_date" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        @error('complaint_date') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        <x-form.input label="Дата скарги" model="complaint_date" type="date" />
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Статус вирішення</label>
-                        <select wire:model="resolution_status" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                        <x-form.select label="Статус вирішення" model="resolution_status">
                             <option value="Відкрито">Відкрито</option>
                             <option value="В роботі">В роботі</option>
                             <option value="Вирішено">Вирішено</option>
-                        </select>
-                        @error('resolution_status') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                     </div>
                 </div>
 
                 @if($resolution_status === 'Вирішено')
                 <div class="fade-in">
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Дата вирішення</label>
-                    <input type="date" wire:model="resolution_date" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                    @error('resolution_date') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                    <x-form.input label="Дата вирішення" model="resolution_date" type="date" />
                 </div>
                 @endif
 
@@ -79,7 +69,7 @@
                         <span class="block text-[10px] text-gray-500">{{ $c->equipment->accounting_name ?? '' }}</span>
                     </x-table.td>
                     <x-table.td align="left" class="text-gray-300">{{ $c->employee->fullName ?? 'Не вказано' }}</x-table.td>
-                    <td class="px-5 py-3 text-gray-300 max-w-xs truncate" title="{{ $c->issue_description }}">{{ $c->issue_description }}</x-table.td>
+                    <x-table.td class="max-w-xs truncate" title="{{ $c->issue_description }}">{{ $c->issue_description }}</x-table.td>
                     <x-table.td align="left">
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium 
                             @if($c->resolution_status == 'Вирішено') bg-emerald-500/10 text-emerald-400

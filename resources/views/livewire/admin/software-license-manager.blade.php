@@ -5,44 +5,34 @@
     @if($isOpen)
     <x-ui.modal title="{{ $licenseId ? 'Редагувати' : 'Додати' }} ліцензію ПЗ" maxWidth="md">
             <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Назва програмного забезпечення</label>
-                    <input type="text" wire:model="software_name" placeholder="напр. Windows 11 Pro, Office 2021" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                    @error('software_name') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                    <x-form.input label="Назва програмного забезпечення" model="software_name" type="text" placeholder="напр. Windows 11 Pro, Office 2021" />
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ліцензійний ключ / Сертифікат</label>
-                    <input type="text" wire:model="license_key" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                    @error('license_key') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                    <x-form.input label="Ліцензійний ключ / Сертифікат" model="license_key" type="text" />
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Встановлено на комплектуюче (ПК)</label>
-                    <select wire:model="component_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        <option value="">Оберіть компонент...</option>
+                    <x-form.select label="Встановлено на комплектуюче (ПК)" model="component_id">
+                            <option value="">Оберіть компонент...</option>
                         @foreach($componentsList as $comp)
                             <option value="{{ $comp->id }}">
                                 [{{ $comp->equipment->inventory_number ?? 'Склад' }}] {{ $comp->componentType->component_name ?? '-' }} ({{ $comp->brand_model }})
                             </option>
                         @endforeach
-                    </select>
-                    @error('component_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Статус ліцензії</label>
-                        <select wire:model="license_status" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                        <x-form.select label="Статус ліцензії" model="license_status">
                             <option value="Активна">Активна</option>
                             <option value="Прострочена">Прострочена</option>
                             <option value="Призупинена">Призупинена</option>
-                        </select>
-                        @error('license_status') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Дата закінчення</label>
-                        <input type="date" wire:model="expiration_date" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        @error('expiration_date') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        <x-form.input label="Дата закінчення" model="expiration_date" type="date" />
                     </div>
                 </div>
         </x-ui.modal>

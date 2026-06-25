@@ -6,75 +6,56 @@
     <x-ui.modal title="{{ $componentId ? 'Редагувати' : 'Додати' }} комплектуюче" maxWidth="lg">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Обладнання (ПК / Пристрій)</label>
-                        <select wire:model="equipment_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                        <x-form.select label="Обладнання (ПК / Пристрій)" model="equipment_id">
                             <option value="">Оберіть обладнання...</option>
                             @foreach($equipmentList as $eq)
                                 <option value="{{ $eq->id }}">{{ $eq->inventory_number }} - {{ $eq->accounting_name }}</option>
                             @endforeach
-                        </select>
-                        @error('equipment_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Базовий компонент</label>
-                        <select wire:model="component_type_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                        <x-form.select label="Базовий компонент" model="component_type_id">
                             <option value="">Оберіть компонент...</option>
                             @foreach($baseComponentsList as $bc)
                                 <option value="{{ $bc->id }}">{{ $bc->component_name }}</option>
                             @endforeach
-                        </select>
-                        @error('component_type_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Виробник / Модель</label>
-                        <input type="text" wire:model="brand_model" placeholder="напр. Kingston DDR4 16GB" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        @error('brand_model') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        <x-form.input label="Виробник / Модель" model="brand_model" type="text" placeholder="напр. Kingston DDR4 16GB" />
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Серійний номер</label>
-                        <input type="text" wire:model="serial_number" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        @error('serial_number') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        <x-form.input label="Серійний номер" model="serial_number" type="text" />
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Модель картриджа (якщо є)</label>
-                        <input type="text" wire:model="cartridge_model" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        @error('cartridge_model') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        <x-form.input label="Модель картриджа (якщо є)" model="cartridge_model" type="text" />
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Стан роботи</label>
-                        <select wire:model="status" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                        <x-form.select label="Стан роботи" model="status">
                             <option value="Працює">Працює</option>
                             <option value="Знято">Знято</option>
                             <option value="Зламано">Зламано</option>
                             <option value="В ремонті">В ремонті</option>
-                        </select>
-                        @error('status') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                     </div>
                 </div>
 
                 <div class="border-t border-white/5 pt-4">
-                    <label class="flex items-center gap-2 text-sm text-gray-300 mb-4 cursor-pointer">
-                        <input type="checkbox" wire:model="has_network" value="1" class="rounded bg-surface-900 border-white/10 text-brand-600 focus:ring-brand-500">
-                        Мережевий пристрій / інтерфейс
-                    </label>
+                    <x-form.checkbox label="Мережевий пристрій / інтерфейс" model="has_network" />
 
                     @if($has_network)
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 fade-in">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">IP-Адреса</label>
-                            <input type="text" wire:model="ip_address" placeholder="192.168.1.50" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                            @error('ip_address') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                            <x-form.input label="IP-Адреса" model="ip_address" type="text" placeholder="192.168.1.50" />
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">MAC-Адреса</label>
-                            <input type="text" wire:model="mac_address" placeholder="AA:BB:CC:DD:EE:FF" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                            @error('mac_address') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                            <x-form.input label="MAC-Адреса" model="mac_address" type="text" placeholder="AA:BB:CC:DD:EE:FF" />
                         </div>
                     </div>
                     @endif
@@ -85,13 +66,13 @@
     {{-- Desktop --}}
     <x-table.wrapper>
             <x-slot name="headers">
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Пристрій (Інв. №)</x-table.th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Тип компонента</x-table.th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Модель</x-table.th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Серійний</x-table.th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Мережа</x-table.th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Статус</x-table.th>
-                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">Дії</x-table.th>
+                    <x-table.th align="left">Пристрій (Інв. №)</x-table.th>
+                    <x-table.th align="left">Тип компонента</x-table.th>
+                    <x-table.th align="left">Модель</x-table.th>
+                    <x-table.th align="left">Серійний</x-table.th>
+                    <x-table.th align="left">Мережа</x-table.th>
+                    <x-table.th align="left">Статус</x-table.th>
+                    <x-table.th align="right" width="24">Дії</x-table.th>
                 </x-slot>
             <tbody class="divide-y divide-white/5">
                 @forelse($components as $c)

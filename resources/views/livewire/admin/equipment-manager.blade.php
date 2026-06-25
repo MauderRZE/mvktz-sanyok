@@ -25,32 +25,25 @@
             </div>
             <div class="p-6 space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Інвентарний номер</label>
-                    <input type="text" wire:model="inventory_number" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                    @error('inventory_number') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                    <x-form.input label="Інвентарний номер" model="inventory_number" type="text" />
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Назва (бухгалтерська)</label>
-                    <input type="text" wire:model="accounting_name" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                    @error('accounting_name') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                    <x-form.input label="Назва (бухгалтерська)" model="accounting_name" type="text" />
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Тип</label>
-                    <select wire:model="equipment_type_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        <option value="" class="bg-surface-800">— Оберіть тип —</option>
+                    <x-form.select label="Тип" model="equipment_type_id">
+                            <option value="" class="bg-surface-800">— Оберіть тип —</option>
                         @foreach($types as $t)
                             <option value="{{ $t->id }}" class="bg-surface-800">{{ $t->type_name }}</option>
                         @endforeach
-                    </select>
-                    @error('equipment_type_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Статус</label>
-                    <select wire:model="status" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        <option value="В експлуатації" class="bg-surface-800">В експлуатації</option>
+                    <x-form.select label="Статус" model="status">
+                            <option value="В експлуатації" class="bg-surface-800">В експлуатації</option>
                         <option value="На складі" class="bg-surface-800">На складі</option>
                         <option value="Списано" class="bg-surface-800">Списано</option>
-                    </select>
+                        </x-form.select>
                 </div>
             </div>
             <div class="px-6 py-4 border-t border-white/5 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">

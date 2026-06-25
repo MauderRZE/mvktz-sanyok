@@ -5,26 +5,22 @@
     @if($isOpen)
     <x-ui.modal title="{{ $logId ? 'Редагувати' : 'Додати' }} запис обслуговування" maxWidth="md">
             <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Обладнання (ПК / Пристрій)</label>
-                    <select wire:model="equipment_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        <option value="">Оберіть обладнання...</option>
+                    <x-form.select label="Обладнання (ПК / Пристрій)" model="equipment_id">
+                            <option value="">Оберіть обладнання...</option>
                         @foreach($equipmentList as $eq)
                             <option value="{{ $eq->id }}">{{ $eq->inventory_number }} - {{ $eq->accounting_name }}</option>
                         @endforeach
-                    </select>
-                    @error('equipment_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Тип обслуговування</label>
-                        <select wire:model="action_type_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                        <x-form.select label="Тип обслуговування" model="action_type_id">
                             <option value="">Оберіть тип робіт...</option>
                             @foreach($typesList as $t)
                                 <option value="{{ $t->id }}">{{ $t->type_name }}</option>
                             @endforeach
-                        </select>
-                        @error('action_type_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Вартість (грн)</label>
@@ -34,9 +30,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Дата проведення робіт</label>
-                    <input type="date" wire:model="action_date" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                    @error('action_date') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                    <x-form.input label="Дата проведення робіт" model="action_date" type="date" />
                 </div>
 
                 <div>
@@ -66,7 +60,7 @@
                         <span class="block text-[10px] text-gray-500">{{ $l->equipment->accounting_name ?? '' }}</span>
                     </x-table.td>
                     <x-table.td align="left" class="text-brand-400 font-medium">{{ $l->maintenanceType->type_name ?? '-' }}</x-table.td>
-                    <td class="px-5 py-3 text-gray-300 max-w-xs truncate" title="{{ $l->description }}">{{ $l->description }}</x-table.td>
+                    <x-table.td class="max-w-xs truncate" title="{{ $l->description }}">{{ $l->description }}</x-table.td>
                     <x-table.td align="left" class="text-emerald-400 font-semibold">{{ number_format($l->cost, 2, '.', ' ') }} грн</x-table.td>
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $l->id }}" />

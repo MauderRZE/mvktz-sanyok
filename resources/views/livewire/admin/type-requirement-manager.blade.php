@@ -7,24 +7,20 @@
     @if($isOpen)
     <x-ui.modal title="{{ $isEditMode ? 'Редагувати' : 'Додати' }} вимогу комплекту" maxWidth="md">
             <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Тип техніки (напр. Комп'ютер)</label>
-                    <select wire:model="equipment_type_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        <option value="">Оберіть тип техніки...</option>
+                    <x-form.select label="Тип техніки (напр. Комп'ютер)" model="equipment_type_id">
+                            <option value="">Оберіть тип техніки...</option>
                         @foreach($typesList as $t)
                             <option value="{{ $t->id }}">{{ $t->type_name }}</option>
                         @endforeach
-                    </select>
-                    @error('equipment_type_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Необхідний компонент (напр. Монітор)</label>
-                    <select wire:model="component_id" class="w-full px-4 py-2.5 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
-                        <option value="">Оберіть базовий компонент...</option>
+                    <x-form.select label="Необхідний компонент (напр. Монітор)" model="component_id">
+                            <option value="">Оберіть базовий компонент...</option>
                         @foreach($componentsList as $c)
                             <option value="{{ $c->id }}">{{ $c->component_name }}</option>
                         @endforeach
-                    </select>
-                    @error('component_id') <span class="text-xs text-red-400 mt-1">{{ $message }}</span>@enderror
+                        </x-form.select>
                 </div>
         </x-ui.modal>
     @endif
