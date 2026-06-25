@@ -82,10 +82,10 @@
                     </x-table.th>
                     <x-table.th align="right">Дії</x-table.th>
                 </x-slot>
-            <tbody class="divide-y divide-white/5">
+            
                 @forelse($equipments as $eq)
-                <tr class="hover:bg-white/[0.02] transition-colors">
-                    <x-table.td align="left" class="text-gray-500">#{{ $eq->id }}</x-table.td>
+                <x-table.tr>
+                    <x-table.td align="left" muted>#{{ $eq->id }}</x-table.td>
                     <x-table.td align="left" primary class="text-white font-medium">{{ $eq->inventory_number }}</x-table.td>
                     <x-table.td align="left" class="text-gray-300">{{ $eq->accounting_name }}</x-table.td>
                     <x-table.td align="left"><span class="px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-300 text-xs font-medium">{{ $eq->type->type_name ?? '—' }}</span></x-table.td>
@@ -95,17 +95,17 @@
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $eq->id }}" />
                     </x-table.td>
-                </tr>
+                </x-table.tr>
                 @empty
-                <tr><x-table.td colspan="6" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</x-table.td></tr>
+                <x-table.tr><x-table.td colspan="6" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</x-table.td></x-table.tr>
                 @endforelse
-            </tbody>
+            
         </x-table.wrapper>
 
     {{-- Mobile Cards --}}
     <x-table.mobile-list>
         @forelse($equipments as $eq)
-        <div class="bg-surface-800/50 border border-white/5 rounded-xl p-4 space-y-3">
+        <x-table.mobile-card layout="y-3">
             <div class="flex items-start justify-between">
                 <div>
                     <p class="text-white font-medium text-sm">{{ $eq->accounting_name }}</p>
@@ -117,7 +117,7 @@
                 <span class="px-2 py-0.5 rounded-lg bg-brand-500/10 text-brand-300 text-xs font-medium">{{ $eq->type->type_name ?? '—' }}</span>
                 <x-ui.action-buttons id="{{ $eq->id }}" />
             </div>
-        </div>
+        </x-table.mobile-card>
         @empty
         <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
         @endforelse

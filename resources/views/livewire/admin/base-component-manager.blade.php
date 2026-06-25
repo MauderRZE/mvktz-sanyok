@@ -15,31 +15,31 @@
                     <x-table.th align="left">Назва</x-table.th>
                     <x-table.th align="right" width="32">Дії</x-table.th>
                 </x-slot>
-            <tbody class="divide-y divide-white/5">
+            
                 @forelse($components as $comp)
-                <tr class="hover:bg-white/[0.02] transition-colors">
-                    <x-table.td align="left" class="text-gray-500">#{{ $comp->id }}</x-table.td>
+                <x-table.tr>
+                    <x-table.td align="left" muted>#{{ $comp->id }}</x-table.td>
                     <x-table.td align="left" primary class="text-white font-medium">{{ $comp->component_name }}</x-table.td>
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $comp->id }}" />
                     </x-table.td>
-                </tr>
+                </x-table.tr>
                 @empty
-                <tr><x-table.td colspan="3" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</x-table.td></tr>
+                <x-table.tr><x-table.td colspan="3" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</x-table.td></x-table.tr>
                 @endforelse
-            </tbody>
+            
         </x-table.wrapper>
 
     {{-- Mobile --}}
     <x-table.mobile-list>
         @forelse($components as $comp)
-        <div class="bg-surface-800/50 border border-white/5 rounded-xl p-4 flex items-center justify-between">
+        <x-table.mobile-card>
             <div>
                 <p class="text-sm text-white font-medium">{{ $comp->component_name }}</p>
                 <p class="text-xs text-gray-500">ID: {{ $comp->id }}</p>
             </div>
             <x-ui.action-buttons id="{{ $comp->id }}" />
-        </div>
+        </x-table.mobile-card>
         @empty
         <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
         @endforelse

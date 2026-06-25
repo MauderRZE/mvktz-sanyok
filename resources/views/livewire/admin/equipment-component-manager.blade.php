@@ -74,9 +74,9 @@
                     <x-table.th align="left">Статус</x-table.th>
                     <x-table.th align="right" width="24">Дії</x-table.th>
                 </x-slot>
-            <tbody class="divide-y divide-white/5">
+            
                 @forelse($components as $c)
-                <tr class="hover:bg-white/[0.02] transition-colors text-sm">
+                <x-table.tr class="text-sm">
                     <x-table.td align="left" primary class="text-white font-medium">
                         {{ $c->equipment->inventory_number ?? '-' }}
                         <span class="block text-[10px] text-gray-500">{{ $c->equipment->accounting_name ?? '' }}</span>
@@ -114,17 +114,17 @@
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $c->id }}" />
                     </x-table.td>
-                </tr>
+                </x-table.tr>
                 @empty
-                <tr><x-table.td colspan="7" class="px-4 py-10 text-center text-gray-600">Немає записів</x-table.td></tr>
+                <x-table.tr><x-table.td colspan="7" class="px-4 py-10 text-center text-gray-600">Немає записів</x-table.td></x-table.tr>
                 @endforelse
-            </tbody>
+            
         </x-table.wrapper>
 
     {{-- Mobile --}}
     <x-table.mobile-list>
         @forelse($components as $c)
-        <div class="bg-surface-800/50 border border-white/5 rounded-xl p-4 space-y-2">
+        <x-table.mobile-card layout="y-2">
             <div class="flex items-start justify-between">
                 <div>
                     <span class="text-xs text-brand-400 font-semibold uppercase tracking-wider">{{ $c->componentType->component_name ?? '-' }}</span>
@@ -160,7 +160,7 @@
                     {{ $c->status }}
                 </span>
             </div>
-        </div>
+        </x-table.mobile-card>
         @empty
         <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
         @endforelse

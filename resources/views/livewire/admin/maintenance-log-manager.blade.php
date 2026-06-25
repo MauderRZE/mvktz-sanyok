@@ -51,9 +51,9 @@
                     <x-table.th align="left" width="28">Вартість</x-table.th>
                     <x-table.th align="right" width="32">Дії</x-table.th>
                 </x-slot>
-            <tbody class="divide-y divide-white/5 text-sm">
+            
                 @forelse($logs as $l)
-                <tr class="hover:bg-white/[0.02] transition-colors">
+                <x-table.tr>
                     <x-table.td align="left" class="text-gray-400 whitespace-nowrap">{{ $l->action_date }}</x-table.td>
                     <x-table.td align="left" primary class="text-white font-medium">
                         {{ $l->equipment->inventory_number ?? '-' }}
@@ -65,17 +65,17 @@
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $l->id }}" />
                     </x-table.td>
-                </tr>
+                </x-table.tr>
                 @empty
-                <tr><x-table.td colspan="6" class="px-5 py-10 text-center text-gray-600">Немає записів</x-table.td></tr>
+                <x-table.tr><x-table.td colspan="6" class="px-5 py-10 text-center text-gray-600">Немає записів</x-table.td></x-table.tr>
                 @endforelse
-            </tbody>
+            
         </x-table.wrapper>
 
     {{-- Mobile --}}
     <x-table.mobile-list>
         @forelse($logs as $l)
-        <div class="bg-surface-800/50 border border-white/5 rounded-xl p-4 space-y-2">
+        <x-table.mobile-card layout="y-2">
             <div class="flex items-start justify-between">
                 <div>
                     <span class="text-xs text-gray-500">Дата: {{ $l->action_date }}</span>
@@ -96,7 +96,7 @@
                 <span class="text-gray-500 font-semibold">Вартість:</span>
                 <span class="text-emerald-400 font-bold">{{ number_format($l->cost, 2, '.', ' ') }} грн</span>
             </div>
-        </div>
+        </x-table.mobile-card>
         @empty
         <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
         @endforelse

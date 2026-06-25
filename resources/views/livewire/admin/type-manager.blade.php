@@ -15,10 +15,10 @@
                     <x-table.th align="left">Назва</x-table.th>
                     <x-table.th align="right" width="32">Дії</x-table.th>
                 </x-slot>
-            <tbody class="divide-y divide-white/5">
+            
                 @forelse($types as $type)
-                <tr class="hover:bg-white/[0.02] transition-colors">
-                    <x-table.td align="left" class="text-gray-500">#{{ $type->id }}</x-table.td>
+                <x-table.tr>
+                    <x-table.td align="left" muted>#{{ $type->id }}</x-table.td>
                     <x-table.td align="left" primary class="text-white font-medium">
                         <span class="inline-flex items-center gap-2">
                             <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
@@ -28,17 +28,17 @@
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $type->id }}" />
                     </x-table.td>
-                </tr>
+                </x-table.tr>
                 @empty
-                <tr><x-table.td colspan="3" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</x-table.td></tr>
+                <x-table.tr><x-table.td colspan="3" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</x-table.td></x-table.tr>
                 @endforelse
-            </tbody>
+            
         </x-table.wrapper>
 
     {{-- Mobile --}}
     <x-table.mobile-list>
         @forelse($types as $type)
-        <div class="bg-surface-800/50 border border-white/5 rounded-xl p-4 flex items-center justify-between">
+        <x-table.mobile-card>
             <div class="flex items-center gap-3">
                 <svg class="w-5 h-5 text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
                 <div>
@@ -47,7 +47,7 @@
                 </div>
             </div>
             <x-ui.action-buttons id="{{ $type->id }}" />
-        </div>
+        </x-table.mobile-card>
         @empty
         <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
         @endforelse

@@ -30,27 +30,27 @@
                     <x-table.th align="left">Постачальник</x-table.th>
                     <x-table.th align="right" width="32">Дії</x-table.th>
                 </x-slot>
-            <tbody class="divide-y divide-white/5">
+            
                 @forelse($contracts as $c)
-                <tr class="hover:bg-white/[0.02] transition-colors">
-                    <x-table.td align="left" class="text-gray-500">#{{ $c->id }}</x-table.td>
+                <x-table.tr>
+                    <x-table.td align="left" muted>#{{ $c->id }}</x-table.td>
                     <x-table.td align="left" primary class="text-white font-medium">{{ $c->contract_number }}</x-table.td>
                     <x-table.td align="left" class="text-gray-300">{{ $c->contract_date }}</x-table.td>
                     <x-table.td align="left" class="text-gray-400">{{ $c->supplier->supplier_name ?? '-' }}</x-table.td>
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $c->id }}" />
                     </x-table.td>
-                </tr>
+                </x-table.tr>
                 @empty
-                <tr><x-table.td colspan="5" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</x-table.td></tr>
+                <x-table.tr><x-table.td colspan="5" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</x-table.td></x-table.tr>
                 @endforelse
-            </tbody>
+            
         </x-table.wrapper>
 
     {{-- Mobile --}}
     <x-table.mobile-list>
         @forelse($contracts as $c)
-        <div class="bg-surface-800/50 border border-white/5 rounded-xl p-4 flex flex-col gap-2">
+        <x-table.mobile-card layout="col">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-white font-medium">Договір №{{ $c->contract_number }}</p>
@@ -61,7 +61,7 @@
             <div class="text-xs text-gray-400 border-t border-white/5 pt-2">
                 Постачальник: {{ $c->supplier->supplier_name ?? '-' }}
             </div>
-        </div>
+        </x-table.mobile-card>
         @empty
         <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
         @endforelse
