@@ -8,7 +8,9 @@ use App\Models\EquipmentType;
 
 class EquipmentManager extends Component
 {
-    public $equipments, $equipmentId, $inventory_number, $accounting_name, $equipment_type_id, $status;
+    use \Livewire\WithPagination;
+
+    public $equipmentId, $inventory_number, $accounting_name, $equipment_type_id, $status;
     public $types;
     public $isOpen = 0;
     
@@ -16,11 +18,48 @@ class EquipmentManager extends Component
     public $viewEquipmentId = null;
     public $viewEquipment = null;
 
+    // Filters & Sorting
+    public $search = '';
+    public $filterType = '';
+    public $filterStatus = '';
+    public $sortField = 'id';
+    public $sortDirection = 'desc';
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
+
     public function render()
     {
-        $this->equipments = Equipment::with('type')->get();
         $this->types = EquipmentType::all();
-        return view('livewire.admin.equipment-manager')->layout('layouts.admin');
+        
+        $query = Equipment::with('type')
+            ->when($this->search, function($q) {
+                $q->where('inventory_number', 'like', '%' . $this->search . '%')
+                  ->orWhere('accounting_name', 'like', '%' . $this->search . '%');
+            })
+            ->when($this->filterType, function($q) {
+                $q->where('equipment_type_id', $this->filterType);
+            })
+            ->when($this->filterStatus, function($q) {
+                $q->where('status', $this->filterStatus);
+            })
+            ->orderBy($this->sortField, $this->sortDirection);
+
+        return view('livewire.admin.equipment-manager', [
+            'equipments' => $query->paginate(15)
+        ])->layout('layouts.admin');
     }
 
     public function create()

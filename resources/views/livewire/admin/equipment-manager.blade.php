@@ -1,15 +1,39 @@
 <div class="space-y-6">
     {{-- Flash Message --}}
     <x-ui.flash />
-{{-- Header --}}
+{{-- Header & Filters --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <p class="text-sm text-gray-500">Всього записів: <span class="text-gray-300 font-medium">{{ count($equipments) }}</span></p>
+            <p class="text-sm text-gray-500">Всього записів: <span class="text-gray-300 font-medium">{{ $equipments->total() }}</span></p>
         </div>
         <button wire:click="create()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/20 hover:shadow-brand-500/30 transition-all duration-200">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Додати
         </button>
+    </div>
+
+    {{-- Filters Bar --}}
+    <div class="bg-surface-800/50 border border-white/5 p-4 rounded-2xl flex flex-col sm:flex-row gap-4 items-center">
+        <div class="flex-1 w-full relative">
+            <svg class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input wire:model.debounce.300ms="search" type="text" placeholder="Пошук за інвентарним номером або назвою..." class="w-full bg-surface-900 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-colors">
+        </div>
+        <div class="w-full sm:w-48">
+            <select wire:model="filterType" class="w-full bg-surface-900 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-colors">
+                <option value="">Усі типи</option>
+                @foreach($types as $t)
+                    <option value="{{ $t->id }}">{{ $t->type_name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="w-full sm:w-48">
+            <select wire:model="filterStatus" class="w-full bg-surface-900 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-colors">
+                <option value="">Всі статуси</option>
+                <option value="В експлуатації">В експлуатації</option>
+                <option value="На складі">На складі</option>
+                <option value="Списано">Списано</option>
+            </select>
+        </div>
     </div>
 
     {{-- Modal --}}
@@ -57,11 +81,21 @@
     {{-- Desktop Table --}}
     <x-table.wrapper>
             <x-slot name="headers">
-                    <x-table.th align="left">ID</x-table.th>
-                    <x-table.th align="left">Інв. №</x-table.th>
-                    <x-table.th align="left">Назва</x-table.th>
-                    <x-table.th align="left">Тип</x-table.th>
-                    <x-table.th align="left">Статус</x-table.th>
+                    <x-table.th align="left" wire:click="sortBy('id')" class="cursor-pointer hover:bg-white/5">
+                        <div class="flex items-center gap-1">ID @if($sortField === 'id') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
+                    </x-table.th>
+                    <x-table.th align="left" wire:click="sortBy('inventory_number')" class="cursor-pointer hover:bg-white/5">
+                        <div class="flex items-center gap-1">Інв. № @if($sortField === 'inventory_number') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
+                    </x-table.th>
+                    <x-table.th align="left" wire:click="sortBy('accounting_name')" class="cursor-pointer hover:bg-white/5">
+                        <div class="flex items-center gap-1">Назва @if($sortField === 'accounting_name') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
+                    </x-table.th>
+                    <x-table.th align="left" wire:click="sortBy('equipment_type_id')" class="cursor-pointer hover:bg-white/5">
+                        <div class="flex items-center gap-1">Тип @if($sortField === 'equipment_type_id') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
+                    </x-table.th>
+                    <x-table.th align="left" wire:click="sortBy('status')" class="cursor-pointer hover:bg-white/5">
+                        <div class="flex items-center gap-1">Статус @if($sortField === 'status') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
+                    </x-table.th>
                     <x-table.th align="right">Дії</x-table.th>
                 </x-slot>
             <tbody class="divide-y divide-white/5">
@@ -116,6 +150,10 @@
         <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
         @endforelse
     </x-table.mobile-list>
+
+    <div class="mt-4">
+        {{ $equipments->links() }}
+    </div>
 
     {{-- Slide-over --}}
     @if($isViewOpen && $viewEquipment)
