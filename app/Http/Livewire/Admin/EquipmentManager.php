@@ -11,6 +11,10 @@ class EquipmentManager extends Component
     public $equipments, $equipmentId, $inventory_number, $accounting_name, $equipment_type_id, $status;
     public $types;
     public $isOpen = 0;
+    
+    public $isViewOpen = false;
+    public $viewEquipmentId = null;
+    public $viewEquipment = null;
 
     public function render()
     {
@@ -75,6 +79,20 @@ class EquipmentManager extends Component
         $this->equipment_type_id = $eq->equipment_type_id;
         $this->status = $eq->status;
         $this->openModal();
+    }
+
+    public function view($id)
+    {
+        $this->viewEquipmentId = $id;
+        $this->viewEquipment = Equipment::with(['type', 'components.componentType', 'movements.location', 'movements.employee', 'complaints', 'maintenanceLogs'])->findOrFail($id);
+        $this->isViewOpen = true;
+    }
+
+    public function closeView()
+    {
+        $this->isViewOpen = false;
+        $this->viewEquipmentId = null;
+        $this->viewEquipment = null;
     }
 
     public function delete($id)
