@@ -28,4 +28,5 @@ Route::group(['prefix' => 'admin', 'layout' => 'layouts.admin', 'middleware' => 
     Route::get('/employees', \App\Http\Livewire\Admin\EmployeeManager::class)->name('admin.employees');
     Route::get('/categories', \App\Http\Livewire\Admin\CategoryManager::class)->name('admin.categories');
     Route::get('/types', \App\Http\Livewire\Admin\TypeManager::class)->name('admin.types');
+    Route::get('/users', \App\Http\Livewire\Admin\UserManager::class)->name('admin.users');
 });
