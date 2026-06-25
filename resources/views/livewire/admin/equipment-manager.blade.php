@@ -6,76 +6,60 @@
         <div>
             <p class="text-sm text-gray-500">Всього записів: <span class="text-gray-300 font-medium">{{ $equipments->total() }}</span></p>
         </div>
-        <button wire:click="create()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white text-sm font-semibold rounded-xl shadow-lg shadow-brand-500/20 hover:shadow-brand-500/30 transition-all duration-200">
+        <x-ui.button wire:click="create()">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Додати
-        </button>
+        </x-ui.button>
     </div>
 
     {{-- Filters Bar --}}
-    <div class="bg-surface-800/50 border border-white/5 p-4 rounded-2xl flex flex-col sm:flex-row gap-4 items-center">
-        <div class="flex-1 w-full relative">
-            <svg class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            <input wire:model.debounce.300ms="search" type="text" placeholder="Пошук за інвентарним номером або назвою..." class="w-full bg-surface-900 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-colors">
-        </div>
+    <x-ui.card class="p-4 flex flex-col sm:flex-row gap-4 items-center">
+        <x-form.search wire:model.debounce.300ms="search" placeholder="Пошук за інвентарним номером або назвою..." />
         <div class="w-full sm:w-48">
-            <select wire:model="filterType" class="w-full bg-surface-900 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-colors">
+            <x-form.simple-select wire:model="filterType">
                 <option value="">Усі типи</option>
                 @foreach($types as $t)
                     <option value="{{ $t->id }}">{{ $t->type_name }}</option>
                 @endforeach
-            </select>
+            </x-form.simple-select>
         </div>
         <div class="w-full sm:w-48">
-            <select wire:model="filterStatus" class="w-full bg-surface-900 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-colors">
+            <x-form.simple-select wire:model="filterStatus">
                 <option value="">Всі статуси</option>
                 <option value="В експлуатації">В експлуатації</option>
                 <option value="На складі">На складі</option>
                 <option value="Списано">Списано</option>
-            </select>
+            </x-form.simple-select>
         </div>
-    </div>
+    </x-ui.card>
 
     {{-- Modal --}}
     @if($isOpen)
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4" x-data x-init="document.body.style.overflow='hidden'" x-destroy="document.body.style.overflow=''">
-        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" wire:click="closeModal()"></div>
-        <div class="relative w-full max-w-lg bg-surface-800 border border-white/5 rounded-2xl shadow-2xl fade-in overflow-hidden">
-            <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-white">{{ $equipmentId ? 'Редагувати' : 'Додати' }} обладнання</h3>
-                <button wire:click="closeModal()" class="text-gray-500 hover:text-white transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
+    <x-ui.modal title="{{ $equipmentId ? 'Редагувати' : 'Додати' }} обладнання" maxWidth="lg">
+        <div class="space-y-4" x-data x-init="document.body.style.overflow='hidden'" x-destroy="document.body.style.overflow=''">
+            <div>
+                <x-form.input label="Інвентарний номер" model="inventory_number" type="text" />
             </div>
-            <div class="p-6 space-y-4">
-                <div>
-                    <x-form.input label="Інвентарний номер" model="inventory_number" type="text" />
-                </div>
-                <div>
-                    <x-form.input label="Назва (бухгалтерська)" model="accounting_name" type="text" />
-                </div>
-                <div>
-                    <x-form.select label="Тип" model="equipment_type_id">
-                            <option value="" class="bg-surface-800">— Оберіть тип —</option>
-                        @foreach($types as $t)
-                            <option value="{{ $t->id }}" class="bg-surface-800">{{ $t->type_name }}</option>
-                        @endforeach
-                        </x-form.select>
-                </div>
-                <div>
-                    <x-form.select label="Статус" model="status">
-                            <option value="В експлуатації" class="bg-surface-800">В експлуатації</option>
-                        <option value="На складі" class="bg-surface-800">На складі</option>
-                        <option value="Списано" class="bg-surface-800">Списано</option>
-                        </x-form.select>
-                </div>
+            <div>
+                <x-form.input label="Назва (бухгалтерська)" model="accounting_name" type="text" />
             </div>
-            <div class="px-6 py-4 border-t border-white/5 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
-                <button wire:click="closeModal()" class="px-5 py-2.5 text-sm font-medium text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl transition-colors">Скасувати</button>
-                <button wire:click.prevent="store()" class="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 rounded-xl shadow-lg shadow-brand-500/20 transition-all">Зберегти</button>
+            <div>
+                <x-form.select label="Тип" model="equipment_type_id">
+                    <option value="" class="bg-surface-800">— Оберіть тип —</option>
+                    @foreach($types as $t)
+                        <option value="{{ $t->id }}" class="bg-surface-800">{{ $t->type_name }}</option>
+                    @endforeach
+                </x-form.select>
+            </div>
+            <div>
+                <x-form.select label="Статус" model="status">
+                    <option value="В експлуатації" class="bg-surface-800">В експлуатації</option>
+                    <option value="На складі" class="bg-surface-800">На складі</option>
+                    <option value="Списано" class="bg-surface-800">Списано</option>
+                </x-form.select>
             </div>
         </div>
-    </div>
+    </x-ui.modal>
     @endif
 
     {{-- Desktop Table --}}
@@ -106,13 +90,7 @@
                     <x-table.td align="left" class="text-gray-300">{{ $eq->accounting_name }}</x-table.td>
                     <x-table.td align="left"><span class="px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-300 text-xs font-medium">{{ $eq->type->type_name ?? '—' }}</span></x-table.td>
                     <x-table.td align="left">
-                        @if($eq->status == 'В експлуатації')
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-medium"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>{{ $eq->status }}</span>
-                        @elseif($eq->status == 'На складі')
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 text-xs font-medium"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>{{ $eq->status }}</span>
-                        @else
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-500/10 text-red-400 text-xs font-medium"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>{{ $eq->status }}</span>
-                        @endif
+                        <x-ui.badge status="{{ $eq->status }}" />
                     </x-table.td>
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $eq->id }}" />
@@ -133,13 +111,7 @@
                     <p class="text-white font-medium text-sm">{{ $eq->accounting_name }}</p>
                     <p class="text-xs text-gray-500 mt-0.5">Інв. № {{ $eq->inventory_number }}</p>
                 </div>
-                @if($eq->status == 'В експлуатації')
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-medium"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>{{ $eq->status }}</span>
-                @elseif($eq->status == 'На складі')
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-500/10 text-amber-400 text-xs font-medium"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>{{ $eq->status }}</span>
-                @else
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-red-500/10 text-red-400 text-xs font-medium"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>{{ $eq->status }}</span>
-                @endif
+                <x-ui.badge status="{{ $eq->status }}" />
             </div>
             <div class="flex items-center justify-between pt-2 border-t border-white/5">
                 <span class="px-2 py-0.5 rounded-lg bg-brand-500/10 text-brand-300 text-xs font-medium">{{ $eq->type->type_name ?? '—' }}</span>
@@ -162,13 +134,7 @@
             <h3 class="text-2xl font-bold text-white mb-1">{{ $viewEquipment->accounting_name }}</h3>
             <div class="flex items-center gap-3 mt-2">
                 <span class="px-3 py-1 rounded-lg bg-brand-500/10 text-brand-300 text-sm font-medium">{{ $viewEquipment->type->type_name ?? '—' }}</span>
-                @if($viewEquipment->status == 'В експлуатації')
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-sm font-medium"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>{{ $viewEquipment->status }}</span>
-                @elseif($viewEquipment->status == 'На складі')
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/10 text-amber-400 text-sm font-medium"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>{{ $viewEquipment->status }}</span>
-                @else
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-red-500/10 text-red-400 text-sm font-medium"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>{{ $viewEquipment->status }}</span>
-                @endif
+                <x-ui.badge status="{{ $viewEquipment->status }}" />
             </div>
         </div>
 
@@ -189,7 +155,7 @@
                                 <p class="text-sm text-gray-500">{{ $comp->brand_model }} <span class="text-gray-600">|</span> s/n: {{ $comp->serial_number ?? '—' }}</p>
                             </div>
                             <div>
-                                <span class="px-2 py-1 rounded text-xs font-medium {{ $comp->status == 'Працює' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400' }}">{{ $comp->status }}</span>
+                                <x-ui.badge status="{{ $comp->status }}" :dot="false" />
                             </div>
                         </div>
                     @empty
@@ -222,7 +188,7 @@
                         <div class="bg-surface-800 border border-white/5 rounded-xl p-4">
                             <div class="flex justify-between items-start mb-2">
                                 <p class="text-white font-medium">{{ $comp->description }}</p>
-                                <span class="px-2 py-1 rounded text-xs font-medium {{ $comp->resolution_status == 'Відкрито' ? 'bg-red-500/10 text-red-400' : ($comp->resolution_status == 'В роботі' ? 'bg-amber-500/10 text-amber-400' : 'bg-emerald-500/10 text-emerald-400') }}">{{ $comp->resolution_status }}</span>
+                                <x-ui.badge status="{{ $comp->resolution_status }}" :dot="false" />
                             </div>
                             <p class="text-sm text-gray-500">Дата: {{ $comp->created_at ?? 'Невідомо' }}</p>
                         </div>
@@ -242,7 +208,7 @@
                             </div>
                             <div class="text-right">
                                 <p class="text-sm text-gray-400 mb-1">{{ $log->maintenance_date }}</p>
-                                <span class="px-2 py-1 rounded text-xs font-medium {{ $log->status == 'Виконано' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400' }}">{{ $log->status }}</span>
+                                <x-ui.badge status="{{ $log->status }}" :dot="false" />
                             </div>
                         </div>
                     @empty

@@ -28,8 +28,8 @@ $maxWidthClass = [
             </div>
         @else
             <div class="px-6 py-4 border-t border-white/5 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
-                <button wire:click="closeModal()" class="px-5 py-2.5 text-sm font-medium text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl transition-colors">Скасувати</button>
-                <button wire:click.prevent="store()" class="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 rounded-xl shadow-lg shadow-brand-500/20 transition-all">Зберегти</button>
+                <x-ui.button variant="secondary" wire:click="closeModal()">Скасувати</x-ui.button>
+                <x-ui.button wire:click.prevent="store()">Зберегти</x-ui.button>
             </div>
         @endif
     </div>
