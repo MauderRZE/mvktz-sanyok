@@ -93,7 +93,7 @@
                         <x-ui.badge status="{{ $eq->status }}" />
                     </x-table.td>
                     <x-table.td align="right">
-                        <x-ui.action-buttons id="{{ $eq->id }}" />
+                        <x-ui.action-buttons id="{{ $eq->id }}" :viewAction="true" />
                     </x-table.td>
                 </x-table.tr>
                 @empty
@@ -115,7 +115,7 @@
             </div>
             <div class="flex items-center justify-between pt-2 border-t border-white/5">
                 <span class="px-2 py-0.5 rounded-lg bg-brand-500/10 text-brand-300 text-xs font-medium">{{ $eq->type->type_name ?? '—' }}</span>
-                <x-ui.action-buttons id="{{ $eq->id }}" />
+                <x-ui.action-buttons id="{{ $eq->id }}" :viewAction="true" />
             </div>
         </x-table.mobile-card>
         @empty

@@ -1,7 +1,7 @@
-@props(['id' => null, 'viewAction' => null, 'editAction' => null, 'deleteAction' => null])
+@props(['id' => null, 'viewAction' => false, 'editAction' => null, 'deleteAction' => null])
 
 @php
-$view = $viewAction ?? ($id ? "view({$id})" : "");
+$view = ($viewAction === true) ? ($id ? "view({$id})" : "") : $viewAction;
 $edit = $editAction ?? ($id ? "edit({$id})" : "");
 $delete = $deleteAction ?? ($id ? "delete({$id})" : "");
 @endphp
