@@ -45,4 +45,14 @@ class Equipment extends Model
     {
         return $this->hasMany(MaintenanceLog::class, 'equipment_id');
     }
+
+    public function softwareLicenses()
+    {
+        return $this->hasMany(SoftwareLicense::class, 'equipment_id');
+    }
+
+    public function lowValueMaterials()
+    {
+        return $this->hasMany(LowValueMaterial::class, 'equipment_id');
+    }
 }
