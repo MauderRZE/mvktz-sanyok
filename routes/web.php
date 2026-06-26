@@ -44,5 +44,6 @@ Route::group(['prefix' => 'admin', 'layout' => 'layouts.admin', 'middleware' => 
     Route::get('/maintenance-logs', \App\Http\Livewire\Admin\MaintenanceLogManager::class)->name('admin.maintenance-logs');
     Route::get('/software-licenses', \App\Http\Livewire\Admin\SoftwareLicenseManager::class)->name('admin.software-licenses');
     Route::get('/type-requirements', \App\Http\Livewire\Admin\TypeRequirementManager::class)->name('admin.type-requirements');
+    Route::get('/system-errors', \App\Http\Livewire\Admin\SystemErrorManager::class)->name('admin.system-errors');
 });
 
