@@ -7,24 +7,24 @@ use Illuminate\Support\Facades\Auth;
 
 class Login extends Component
 {
-    public $email = '';
+    public $login = '';
     public $password = '';
     public $remember = false;
 
     protected $rules = [
-        'email' => 'required|email',
+        'login' => 'required',
         'password' => 'required',
     ];
 
-    public function login()
+    public function submit()
     {
         $this->validate();
 
-        if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        if (Auth::attempt(['login' => $this->login, 'password' => $this->password], $this->remember)) {
             return redirect()->intended(route('admin.equipment'));
         }
 
-        $this->addError('email', 'Невірний email або пароль.');
+        $this->addError('login', 'Невірний логін або пароль.');
     }
 
     public function render()

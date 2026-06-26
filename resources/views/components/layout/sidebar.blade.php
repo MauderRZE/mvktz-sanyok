@@ -126,7 +126,7 @@
             </div>
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-white truncate">{{ auth()->user()->name ?? 'Admin' }}</p>
-                <p class="text-xs text-gray-500 truncate">{{ auth()->user()->email ?? '' }}</p>
+                <p class="text-xs text-gray-500 truncate">{{ auth()->user()->login ?? '' }}</p>
             </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

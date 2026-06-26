@@ -8,7 +8,7 @@
                     <x-form.input label="Ім'я" model="name" type="text" />
                 </div>
                 <div>
-                    <x-form.input label="Email" model="email" type="email" />
+                    <x-form.input label="Логін" model="login" type="text" />
                 </div>
                 <div>
                     <x-form.input label="Пароль {{ $userId ? '(залиште пустим, якщо не змінюєте)' : '' }}" model="password" type="password" />
@@ -21,7 +21,7 @@
             <x-slot name="headers">
                     <x-table.th align="left" width="20">ID</x-table.th>
                     <x-table.th align="left">Ім'я</x-table.th>
-                    <x-table.th align="left">Email</x-table.th>
+                    <x-table.th align="left">Логін</x-table.th>
                     <x-table.th align="right" width="32">Дії</x-table.th>
                 </x-slot>
             
@@ -31,9 +31,9 @@
                     <x-table.td align="left">
                     <x-ui.avatar-cell :name="$user->name" :title="$user->name" />
                 </x-table.td>
-                    <x-table.td align="left" class="text-gray-400">{{ $user->email }}</x-table.td>
+                    <x-table.td align="left" class="text-gray-400">{{ $user->login }}</x-table.td>
                     <x-table.td align="right">
-                        <x-ui.action-buttons id="{{ $user->id }}" />
+                         <x-ui.action-buttons id="{{ $user->id }}" />
                     </x-table.td>
                 </x-table.tr>
                 @empty
@@ -47,7 +47,7 @@
         @forelse($users as $user)
         <x-table.mobile-card layout="none">
             <div class="flex items-center gap-3">
-                <x-ui.avatar-cell class="flex-1" size="lg" :name="$user->name" :title="$user->name" :subtitle="$user->email" />
+                <x-ui.avatar-cell class="flex-1" size="lg" :name="$user->name" :title="$user->name" :subtitle="$user->login" />
                 <x-ui.action-buttons id="{{ $user->id }}" />
             </div>
         </x-table.mobile-card>

@@ -67,7 +67,9 @@ erDiagram
 #### 1.4. `employees` (Співробітники)
 Реєстр персоналу організації для закріплення матеріальної відповідальності.
 * **id** (INT, Primary Key, Auto Increment): Унікальний код співробітника.
-* **full_name** (VARCHAR(255), NOT NULL): ПІБ співробітника.
+* **last_name** (VARCHAR(100), NOT NULL): Прізвище.
+* **first_name** (VARCHAR(100), NOT NULL): Ім'я.
+* **middle_name** (VARCHAR(100), NULL): По батькові.
 * **position** (VARCHAR(150), NULL): Посада.
 * **department** (VARCHAR(150), NULL): Підрозділ/відділ.
 
@@ -100,7 +102,7 @@ erDiagram
 #### 2.1. `equipment` (Основні засоби / Обладнання)
 Головна таблиця обліку інвентарних одиниць техніки.
 * **id** (INT, Primary Key, Auto Increment).
-* **inventory_number** (VARCHAR(100), NOT NULL, UNIQUE): Інвентарний або номенклатурний номер організації.
+* **inventory_number** (INT, NOT NULL, UNIQUE): Інвентарний або номенклатурний номер організації.
 * **accounting_name** (VARCHAR(255), NOT NULL): Бухгалтерська назва об'єкта обліку.
 * **technical_description** (TEXT, NULL): Додаткові технічні нотатки.
 * **equipment_type_id** (INT, NOT NULL): Посилання на довідник типів техніки.
@@ -108,7 +110,7 @@ erDiagram
 * **employee_id** (INT, NULL): Поточна матеріально відповідальна особа (`ON DELETE SET NULL`).
 * **purchase_date** (DATE, NULL): Дата придбання.
 * **commissioning_date** (DATE, NOT NULL): Дата введення в експлуатацію.
-* **status** (VARCHAR(50), DEFAULT 'В експлуатації'): Стан об'єкта (наприклад, *'В експлуатації'*, *'На складі'*, *'Списано'*).
+* **status** (ENUM('В експлуатації','В ремонті','На складі','Списано','Зарезервовано'), NOT NULL): Стан об'єкта.
 * **write_off_date** (DATE, NULL): Дата списання з балансу.
 * **write_off_reason** (TEXT, NULL): Причина списання техніки.
 * **notes** (TEXT, NULL): Довільні примітки.
@@ -121,10 +123,10 @@ erDiagram
 * **brand_model** (VARCHAR(150), NULL): Бренд та модель деталі (наприклад, *'Kingston NV2 1TB'*).
 * **serial_number** (VARCHAR(100), NULL): Серійний номер виробника.
 * **cartridge_model** (VARCHAR(100), NULL): Заповнюється, якщо це картридж принтера.
-* **has_network** (BOOLEAN, DEFAULT FALSE): Наявність мережевого інтерфейсу.
+* **has_network** (TINYINT(1), NULL): Наявність мережевого інтерфейсу.
 * **ip_address** (VARCHAR(45), NULL): Мережева IP-адреса (підтримує IPv4 та IPv6).
 * **mac_address** (VARCHAR(17), NULL): Фізична MAC-адреса.
-* **status** (VARCHAR(50), DEFAULT 'Працює'): Поточний стан вузла.
+* **status** (VARCHAR(50), NULL): Поточний стан вузла.
 
 ---
 
@@ -144,8 +146,9 @@ erDiagram
 * **serial_number** (VARCHAR(100), NULL): За наявності у матеріалу власного серійного номера.
 * **purchase_date** (DATE, NULL): Дата придбання.
 * **installation_date** (DATE, NULL): Дата встановлення/видачі в роботу.
-* **quantity** (INT, DEFAULT 1): Кількість одиниць.
+* **quantity** (INT, NULL): Кількість одиниць.
 * **notes** (TEXT, NULL).
+* **status** (VARCHAR(50), NULL): Поточний стан матеріалу (наприклад, *'На складі'*, *'Видано'*, *'Списано'*).
 
 ---
 
@@ -172,7 +175,7 @@ erDiagram
 * **action_type_id** (INT, NOT NULL): Тип робіт з довідника `maintenance_types(id)`.
 * **action_date** (DATE, NOT NULL): Дата проведення сервісу.
 * **description** (TEXT, NOT NULL): Опис виконаних дій та виявлених несправностей.
-* **cost** (DECIMAL(10, 2), DEFAULT 0.00): Вартість ремонту/обслуговування (для фінансового аналізу).
+* **cost** (DECIMAL(10, 2), NULL): Вартість ремонту/обслуговування (для фінансового аналізу).
 
 #### 4.4. `equipment_movement` (Історія переміщень)
 Лог фізичної зміни розташування обладнання та зміни відповідальних осіб.
@@ -189,7 +192,7 @@ erDiagram
 * **complaint_date** (DATE, NOT NULL): Дата подання звернення.
 * **reported_by_employee_id** (INT, NULL): Хто із співробітників зафіксував проблему (`ON DELETE SET NULL`).
 * **issue_description** (TEXT, NOT NULL): Детальний опис поломки або некоректної поведінки.
-* **resolution_status** (VARCHAR(50), DEFAULT 'Відкрито'): Поточний статус заявки (*'Відкрито'*, *'В роботі'*, *'Вирішено'*).
+* **resolution_status** (VARCHAR(50), NULL): Поточний статус заявки (*'Відкрито'*, *'В роботі'*, *'Вирішено'*).
 * **resolution_date** (DATE, NULL): Дата закриття інциденту.
 
 ---

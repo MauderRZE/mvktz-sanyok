@@ -9,25 +9,25 @@
             <p class="text-sm text-gray-500 mt-1">Увійдіть у систему обліку</p>
         </div>
 
-        <form wire:submit.prevent="login" class="space-y-5">
-            <!-- Email -->
+        <form wire:submit.prevent="submit" class="space-y-5">
+            <!-- Login -->
             <div>
-                <label for="email-address" class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Email</label>
-                <input wire:model="email" id="email-address" type="email" required autocomplete="email"
+                <label for="login" class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Логін</label>
+                <input wire:model.defer="login" id="login" type="text" required autocomplete="username"
                        class="w-full px-4 py-3 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors"
-                       placeholder="your@email.com">
+                       placeholder="Введіть логін">
             </div>
 
             <!-- Password -->
             <div>
                 <label for="password" class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Пароль</label>
-                <input wire:model="password" id="password" type="password" required autocomplete="current-password"
+                <input wire:model.defer="password" id="password" type="password" required autocomplete="current-password"
                        class="w-full px-4 py-3 bg-surface-900/60 border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors"
                        placeholder="••••••••">
             </div>
 
             <!-- Error -->
-            @error('email')
+            @error('login')
                 <div class="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20">
                     <svg class="w-4 h-4 text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
                     <span class="text-sm text-red-300">{{ $message }}</span>
@@ -41,9 +41,9 @@
                 <label for="remember_me" class="ml-2 text-sm text-gray-400">Запам'ятати мене</label>
             </div>
 
-            <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-semibold rounded-xl shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 transition-all duration-200 text-sm">
-                <span wire:loading.remove wire:target="login">Увійти</span>
-                <span wire:loading wire:target="login" class="flex items-center justify-center gap-2">
+            <button type="submit" class="w-full h-[46px] px-4 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-semibold rounded-xl shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 transition-all duration-200 text-sm flex items-center justify-center">
+                <span wire:loading.remove wire:target="submit">Увійти</span>
+                <span wire:loading wire:target="submit" class="flex items-center justify-center gap-2">
                     <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                     Вхід...
                 </span>

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserManager extends Component
 {
-    public $users, $userId, $name, $email, $password;
+    public $users, $userId, $name, $login, $password;
     public $isOpen = 0;
 
     public function render()
@@ -36,7 +36,7 @@ class UserManager extends Component
     private function resetInputFields(){
         $this->userId = null;
         $this->name = '';
-        $this->email = '';
+        $this->login = '';
         $this->password = '';
     }
 
@@ -44,7 +44,7 @@ class UserManager extends Component
     {
         $rules = [
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $this->userId,
+            'login' => 'required|unique:users,login,' . $this->userId,
         ];
 
         // Якщо це новий користувач або пароль був введений, вимагаємо пароль
@@ -56,7 +56,7 @@ class UserManager extends Component
 
         $data = [
             'name' => $this->name,
-            'email' => $this->email,
+            'login' => $this->login,
         ];
 
         if (!empty($this->password)) {
@@ -77,7 +77,7 @@ class UserManager extends Component
         $user = User::findOrFail($id);
         $this->userId = $id;
         $this->name = $user->name;
-        $this->email = $user->email;
+        $this->login = $user->login;
         $this->password = ''; // Не заповнюємо пароль
         $this->openModal();
     }
