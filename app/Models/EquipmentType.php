@@ -14,8 +14,14 @@ class EquipmentType extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'category_id',
         'type_name',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(EquipmentCategory::class, 'category_id');
+    }
 
     public function equipment()
     {
