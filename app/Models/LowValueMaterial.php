@@ -15,13 +15,16 @@ class LowValueMaterial extends Model
 
     protected $fillable = [
         'material_id',
+        'brand_model',
         'equipment_id',
         'contract_id',
         'serial_number',
+        'nomenclature_number',
         'purchase_date',
         'installation_date',
         'quantity',
         'notes',
+        'status',
     ];
 
     public function material()

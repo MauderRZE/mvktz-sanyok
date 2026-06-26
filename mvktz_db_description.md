@@ -141,9 +141,11 @@ erDiagram
 Таблиця фактичного наявності та встановлення МШП.
 * **id** (INT, Primary Key, Auto Increment).
 * **material_id** (INT, NOT NULL): Посилання на найменування матеріалу `base_materials(id)`.
+* **brand_model** (VARCHAR(150), NULL): Бренд / модель матеріалу.
 * **equipment_id** (INT, NULL): До якого основного обладнання встановлено/видано матеріал (`ON DELETE SET NULL`).
 * **contract_id** (INT, NULL): За яким договором придбано (`ON DELETE SET NULL`).
 * **serial_number** (VARCHAR(100), NULL): За наявності у матеріалу власного серійного номера.
+* **nomenclature_number** (VARCHAR(150), NULL): Номенклатурний номер.
 * **purchase_date** (DATE, NULL): Дата придбання.
 * **installation_date** (DATE, NULL): Дата встановлення/видачі в роботу.
 * **quantity** (INT, NULL): Кількість одиниць.

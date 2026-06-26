@@ -18,6 +18,22 @@
                     </div>
                 </div>
 
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <x-form.input label="Бренд / Модель" model="brand_model" type="text" />
+                    </div>
+                    <div>
+                        <x-form.input label="Номенклатурний номер" model="nomenclature_number" type="text" />
+                    </div>
+                    <div>
+                        <x-form.select label="Статус" model="status">
+                            <option value="На складі">На складі</option>
+                            <option value="Видано">Видано</option>
+                            <option value="Списано">Списано</option>
+                        </x-form.select>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <x-form.select label="Прив'язане обладнання (якщо встановлено)" model="equipment_id">
@@ -71,12 +87,23 @@
                 <x-table.tr>
                     <x-table.td align="left" primary class="text-white font-medium">
                         {{ $m->material->material_name ?? '-' }}
+                        @if($m->brand_model)
+                            <span class="block text-xs text-brand-400 font-normal">{{ $m->brand_model }}</span>
+                        @endif
                         @if($m->notes)
                             <span class="block text-[10px] text-gray-500 italic">{{ $m->notes }}</span>
                         @endif
                     </x-table.td>
-                    <x-table.td align="left" class="text-gray-400 font-mono text-xs">{{ $m->serial_number ?? '-' }}</x-table.td>
-                    <x-table.td align="left" class="text-gray-300 font-semibold">{{ $m->quantity }} шт.</x-table.td>
+                    <x-table.td align="left" class="text-gray-400 font-mono text-xs">
+                        <div>S/N: {{ $m->serial_number ?? '-' }}</div>
+                        @if($m->nomenclature_number)
+                            <div class="text-[10px] text-gray-500">Ном: {{ $m->nomenclature_number }}</div>
+                        @endif
+                    </x-table.td>
+                    <x-table.td align="left" class="text-gray-300 font-semibold">
+                        <div>{{ $m->quantity }} шт.</div>
+                        <div class="text-[10px] text-gray-500 font-normal">{{ $m->status ?? 'На складі' }}</div>
+                    </x-table.td>
                     <x-table.td align="left" class="text-gray-300">
                         @if($m->equipment)
                             <span class="text-brand-400">{{ $m->equipment->inventory_number }}</span>
@@ -113,8 +140,19 @@
         <x-table.mobile-card layout="y-2">
             <div class="flex items-start justify-between">
                 <div>
-                    <span class="text-xs text-gray-500">Кількість: {{ $m->quantity }} шт.</span>
-                    <p class="text-sm text-white font-medium">{{ $m->material->material_name ?? '-' }}</p>
+                    <span class="text-xs text-gray-500">Кількість: {{ $m->quantity }} шт. ({{ $m->status ?? 'На складі' }})</span>
+                    <p class="text-sm text-white font-medium">
+                        {{ $m->material->material_name ?? '-' }}
+                        @if($m->brand_model)
+                            <span class="text-brand-400 font-normal">({{ $m->brand_model }})</span>
+                        @endif
+                    </p>
+                    @if($m->nomenclature_number || $m->serial_number)
+                        <p class="text-[11px] text-gray-400 font-mono">
+                            @if($m->serial_number) S/N: {{ $m->serial_number }} @endif
+                            @if($m->nomenclature_number) Ном: {{ $m->nomenclature_number }} @endif
+                        </p>
+                    @endif
                     <p class="text-xs text-gray-400">
                         Розташування: 
                         @if($m->equipment)
