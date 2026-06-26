@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вхід — Інвентар МВКТЗ</title>
     <meta name="description" content="Сторінка входу в систему обліку техніки МВКТЗ">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="/tailwind.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -24,6 +22,7 @@
         }
     </script>
     <style>
+        [wire\:loading] { display: none !important; }
         .glow { box-shadow: 0 0 80px rgba(99,102,241,0.15), 0 0 160px rgba(99,102,241,0.05); }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
         .float { animation: float 6s ease-in-out infinite; }
