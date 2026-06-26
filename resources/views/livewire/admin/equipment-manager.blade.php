@@ -100,6 +100,9 @@
                     <option value="Списано" class="bg-surface-800">Списано</option>
                 </x-form.select>
             </div>
+            <div>
+                <x-form.input label="Дата введення в експлуатацію" model="commissioning_date" type="date" />
+            </div>
         </div>
     </x-ui.modal>
     @endif

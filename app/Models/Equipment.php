@@ -19,6 +19,7 @@ class Equipment extends Model
         'accounting_name',
         'equipment_type_id',
         'status',
+        'commissioning_date',
     ];
 
     public function type()

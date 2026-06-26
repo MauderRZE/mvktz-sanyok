@@ -13,7 +13,7 @@ class EquipmentManager extends Component
 {
     use \Livewire\WithPagination;
 
-    public $equipmentId, $inventory_number, $accounting_name, $equipment_type_id, $status;
+    public $equipmentId, $inventory_number, $accounting_name, $equipment_type_id, $status, $commissioning_date;
     public $types;
     public $isOpen = 0;
     
@@ -124,6 +124,7 @@ class EquipmentManager extends Component
         $this->accounting_name = '';
         $this->equipment_type_id = '';
         $this->status = 'В експлуатації';
+        $this->commissioning_date = '';
     }
 
     public function store()
@@ -133,13 +134,15 @@ class EquipmentManager extends Component
             'accounting_name' => 'required',
             'equipment_type_id' => 'required|integer',
             'status' => 'required',
+            'commissioning_date' => 'required|date',
         ]);
 
         Equipment::updateOrCreate(['id' => $this->equipmentId], [
             'inventory_number' => $this->inventory_number,
             'accounting_name' => $this->accounting_name,
             'equipment_type_id' => $this->equipment_type_id,
-            'status' => $this->status
+            'status' => $this->status,
+            'commissioning_date' => $this->commissioning_date
         ]);
 
         session()->flash('message', 
@@ -157,6 +160,7 @@ class EquipmentManager extends Component
         $this->accounting_name = $eq->accounting_name;
         $this->equipment_type_id = $eq->equipment_type_id;
         $this->status = $eq->status;
+        $this->commissioning_date = $eq->commissioning_date;
         $this->openModal();
     }
 

@@ -4,7 +4,15 @@
 
     @if($isOpen)
     <x-ui.modal title="{{ $typeId ? 'Редагувати' : 'Додати' }} тип" maxWidth="md">
-            <x-form.input label="Назва типу" model="type_name" type="text" />
+            <div class="space-y-4">
+                <x-form.select label="Категорія" model="category_id">
+                    <option value="">Оберіть категорію</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                    @endforeach
+                </x-form.select>
+                <x-form.input label="Назва типу" model="type_name" type="text" />
+            </div>
         </x-ui.modal>
     @endif
 
