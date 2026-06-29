@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<x-ui.page-wrapper>
     <x-ui.flash />
 <x-ui.toolbar :count="count($users)" label="Всього" buttonLabel="Додати" />
 
@@ -37,7 +37,7 @@
                     </x-table.td>
                 </x-table.tr>
                 @empty
-                <x-table.tr><x-table.td colspan="4" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</x-table.td></x-table.tr>
+                <x-table.empty colspan="4" />
                 @endforelse
             
         </x-table.wrapper>
@@ -45,14 +45,12 @@
     {{-- Mobile --}}
     <x-table.mobile-list>
         @forelse($users as $user)
-        <x-table.mobile-card layout="none">
-            <div class="flex items-center gap-3">
-                <x-ui.avatar-cell class="flex-1" size="lg" :name="$user->name" :title="$user->name" :subtitle="$user->login" />
-                <x-ui.action-buttons id="{{ $user->id }}" />
-            </div>
+        <x-table.mobile-card layout="gap-3">
+            <x-ui.avatar-cell class="flex-1" size="lg" :name="$user->name" :title="$user->name" :subtitle="$user->login" />
+            <x-ui.action-buttons id="{{ $user->id }}" />
         </x-table.mobile-card>
         @empty
-        <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
+        <x-table.mobile-empty />
         @endforelse
     </x-table.mobile-list>
-</div>
+</x-ui.page-wrapper>

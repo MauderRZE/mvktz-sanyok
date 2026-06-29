@@ -5,10 +5,14 @@ $variants = [
     'В експлуатації' => 'bg-emerald-500/10 text-emerald-400',
     'Працює' => 'bg-emerald-500/10 text-emerald-400',
     'Виконано' => 'bg-emerald-500/10 text-emerald-400',
+    'Активна' => 'bg-emerald-500/10 text-emerald-400',
     'На складі' => 'bg-amber-500/10 text-amber-400',
     'В роботі' => 'bg-amber-500/10 text-amber-400',
+    'Призупинена' => 'bg-amber-500/10 text-amber-400',
+    'В ремонті' => 'bg-amber-500/10 text-amber-400',
     'Списано' => 'bg-red-500/10 text-red-400',
     'Відкрито' => 'bg-red-500/10 text-red-400',
+    'Знято' => 'bg-gray-500/10 text-gray-400',
     'default' => 'bg-brand-500/10 text-brand-300'
 ];
 $dotColors = [
@@ -25,5 +29,5 @@ $dotClass = $dotColors[$status] ?? '';
     @if($dot && $dotClass)
         <span class="w-1.5 h-1.5 rounded-full {{ $dotClass }}"></span>
     @endif
-    {{ $slot ?? $status }}
+    {{ $slot->isEmpty() ? $status : $slot }}
 </span>

@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<x-ui.page-wrapper>
     <x-ui.flash />
 <x-ui.toolbar :count="count($categories)" label="Всього" buttonLabel="Додати" />
 
@@ -19,13 +19,13 @@
                 @forelse($categories as $cat)
                 <x-table.tr>
                     <x-table.td align="left" muted>#{{ $cat->id }}</x-table.td>
-                    <x-table.td align="left" primary class="text-white font-medium">{{ $cat->category_name }}</x-table.td>
+                    <x-table.td align="left" primary>{{ $cat->category_name }}</x-table.td>
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $cat->id }}" />
                     </x-table.td>
                 </x-table.tr>
                 @empty
-                <x-table.tr><x-table.td colspan="3" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</x-table.td></x-table.tr>
+                <x-table.empty colspan="3" />
                 @endforelse
             
         </x-table.wrapper>
@@ -34,14 +34,11 @@
     <x-table.mobile-list>
         @forelse($categories as $cat)
         <x-table.mobile-card>
-            <div>
-                <p class="text-sm text-white font-medium">{{ $cat->category_name }}</p>
-                <p class="text-xs text-gray-500">ID: {{ $cat->id }}</p>
-            </div>
+            <x-ui.text-block title="{{ $cat->category_name }}" subtitle="ID: {{ $cat->id }}" />
             <x-ui.action-buttons id="{{ $cat->id }}" />
         </x-table.mobile-card>
         @empty
-        <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
+        <x-table.mobile-empty />
         @endforelse
     </x-table.mobile-list>
-</div>
+</x-ui.page-wrapper>

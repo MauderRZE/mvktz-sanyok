@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<x-ui.page-wrapper>
     {{-- Flash Message --}}
     <x-ui.flash />
 {{-- Header & Filters --}}
@@ -134,15 +134,15 @@
                 @forelse($equipments as $eq)
                 <x-table.tr>
                     <x-table.td align="left" muted>#{{ $eq->id }}</x-table.td>
-                    <x-table.td align="left" primary class="text-white font-medium">{{ $eq->inventory_number }}</x-table.td>
-                    <x-table.td align="left" class="text-gray-300">{{ $eq->accounting_name }}</x-table.td>
+                    <x-table.td align="left" primary>{{ $eq->inventory_number }}</x-table.td>
+                    <x-table.td align="left">{{ $eq->accounting_name }}</x-table.td>
                     <x-table.td align="left"><span class="px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-300 text-xs font-medium">{{ $eq->type->type_name ?? '—' }}</span></x-table.td>
                     <x-table.td align="left" class="text-xs text-gray-300">
                         @if($eq->components->count() > 0)
                             <div class="font-medium text-gray-200">{{ $eq->components->count() }} од.</div>
-                            <div class="text-[10px] text-gray-500 max-w-[150px] truncate" title="{{ $eq->components->map(fn($c) => ($c->componentType->component_name ?? '') . ($c->brand_model ? ' (' . $c->brand_model . ')' : ''))->implode(', ') }}">
+                            <x-table.cell-subtext class="max-w-[150px] truncate" title="{{ $eq->components->map(fn($c) => ($c->componentType->component_name ?? '') . ($c->brand_model ? ' (' . $c->brand_model . ')' : ''))->implode(', ') }}">
                                 {{ $eq->components->map(fn($c) => $c->componentType->component_name ?? '')->unique()->implode(', ') }}
-                            </div>
+                            </x-table.cell-subtext>
                         @else
                             <span class="text-gray-600">—</span>
                         @endif
@@ -153,9 +153,9 @@
                         @endphp
                         @if($latestMove)
                             <div class="font-medium text-brand-300">Каб. {{ $latestMove->location->room_number ?? '—' }}</div>
-                            <div class="text-[10px] text-gray-500">
+                            <x-table.cell-subtext>
                                 {{ $latestMove->employee ? ($latestMove->employee->last_name . ' ' . mb_substr($latestMove->employee->first_name, 0, 1) . '.') : '—' }}
-                            </div>
+                            </x-table.cell-subtext>
                         @else
                             <span class="text-gray-600">Немає руху</span>
                         @endif
@@ -190,7 +190,7 @@
                     </x-table.td>
                 </x-table.tr>
                 @empty
-                <x-table.tr><x-table.td colspan="9" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</x-table.td></x-table.tr>
+                <x-table.empty colspan="9" />
                 @endforelse
             
         </x-table.wrapper>
@@ -199,20 +199,17 @@
     <x-table.mobile-list>
         @forelse($equipments as $eq)
         <x-table.mobile-card layout="y-3">
-            <div class="flex items-start justify-between">
-                <div>
-                    <p class="text-white font-medium text-sm">{{ $eq->accounting_name }}</p>
-                    <p class="text-xs text-gray-500 mt-0.5">Інв. № {{ $eq->inventory_number }}</p>
-                </div>
+            <x-table.mobile-card-header align="start">
+                <x-ui.text-block title="{{ $eq->accounting_name }}" subtitle="Інв. № {{ $eq->inventory_number }}" />
                 <x-ui.badge status="{{ $eq->status }}" />
-            </div>
-            <div class="flex items-center justify-between pt-2 border-t border-white/5">
+            </x-table.mobile-card-header>
+            <x-table.mobile-card-footer flex="true">
                 <span class="px-2 py-0.5 rounded-lg bg-brand-500/10 text-brand-300 text-xs font-medium">{{ $eq->type->type_name ?? '—' }}</span>
                 <x-ui.action-buttons id="{{ $eq->id }}" :viewAction="true" />
-            </div>
+            </x-table.mobile-card-footer>
         </x-table.mobile-card>
         @empty
-        <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
+        <x-table.mobile-empty />
         @endforelse
     </x-table.mobile-list>
 
@@ -242,79 +239,82 @@
             </x-slot>
 
             <x-ui.tab-content name="components">
-                <div class="space-y-4">
+                <x-table.mobile-list>
                     @forelse($viewEquipment->components as $comp)
-                        <div class="bg-surface-800 border border-white/5 rounded-xl p-4 flex justify-between items-center">
+                        <x-table.mobile-card>
                             <div>
-                                <p class="text-white font-medium">{{ $comp->componentType->component_name ?? 'Невідомо' }}</p>
-                                <p class="text-sm text-gray-500">{{ $comp->brand_model }} <span class="text-gray-600">|</span> s/n: {{ $comp->serial_number ?? '—' }}</p>
+                                <x-ui.text-block 
+                                    title="{{ $comp->componentType->component_name ?? 'Невідомо' }}" 
+                                    subtitle="{{ $comp->brand_model }} | s/n: {{ $comp->serial_number ?? '—' }}" 
+                                />
                             </div>
                             <div>
                                 <x-ui.badge status="{{ $comp->status }}" :dot="false" />
                             </div>
-                        </div>
+                        </x-table.mobile-card>
                     @empty
-                        <p class="text-gray-500 text-center py-4">Немає встановлених компонентів</p>
+                        <x-table.mobile-empty>Немає встановлених компонентів</x-table.mobile-empty>
                     @endforelse
-                </div>
+                </x-table.mobile-list>
             </x-ui.tab-content>
 
             <x-ui.tab-content name="movements">
-                <div class="space-y-4">
+                <x-table.mobile-list>
                     @forelse($viewEquipment->movements as $mov)
-                        <div class="bg-surface-800 border border-white/5 rounded-xl p-4 flex justify-between items-center">
+                        <x-table.mobile-card>
                             <div>
-                                <p class="text-white font-medium">{{ $mov->location->room_number ?? 'Невідомо' }}</p>
-                                <p class="text-sm text-gray-500">Відповідальний: {{ $mov->employee->last_name ?? '—' }} {{ $mov->employee->first_name ?? '' }}</p>
+                                <x-ui.text-block 
+                                    title="{{ $mov->location->room_number ?? 'Невідомо' }}" 
+                                    subtitle="Відповідальний: {{ $mov->employee->last_name ?? '—' }} {{ $mov->employee->first_name ?? '' }}" 
+                                />
                             </div>
                             <div>
                                 <p class="text-sm text-gray-400">{{ $mov->move_date }}</p>
                             </div>
-                        </div>
+                        </x-table.mobile-card>
                     @empty
-                        <p class="text-gray-500 text-center py-4">Історія переміщень порожня</p>
+                        <x-table.mobile-empty>Історія переміщень порожня</x-table.mobile-empty>
                     @endforelse
-                </div>
+                </x-table.mobile-list>
             </x-ui.tab-content>
 
             <x-ui.tab-content name="licenses">
-                <div class="space-y-4">
+                <x-table.mobile-list>
                     @forelse($viewEquipment->softwareLicenses as $lic)
-                        <div class="bg-surface-800 border border-white/5 rounded-xl p-4 flex justify-between items-center">
+                        <x-table.mobile-card>
                             <div>
-                                <p class="text-white font-medium">{{ $lic->software_name }}</p>
-                                <p class="text-xs text-gray-500 font-mono">Ключ: {{ $lic->license_key ?? '—' }}</p>
+                                <x-ui.text-block 
+                                    title="{{ $lic->software_name }}" 
+                                    subtitle="Ключ: {{ $lic->license_key ?? '—' }}" 
+                                    subtitleClass="text-xs text-gray-500 font-mono"
+                                />
                                 @if($lic->expiration_date)
-                                    <p class="text-xs text-gray-500">Діє до: {{ $lic->expiration_date }}</p>
+                                    <p class="text-xs text-gray-500 mt-1">Діє до: {{ $lic->expiration_date }}</p>
                                 @else
-                                    <p class="text-xs text-gray-600">Безстрокова</p>
+                                    <p class="text-xs text-gray-600 mt-1">Безстрокова</p>
                                 @endif
                             </div>
                             <div>
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                    @if($lic->license_status == 'Активна') bg-emerald-500/10 text-emerald-400
-                                    @elseif($lic->license_status == 'Призупинена') bg-amber-500/10 text-amber-400
-                                    @else bg-red-500/10 text-red-400 @endif">
-                                    {{ $lic->license_status }}
-                                </span>
+                                <x-ui.badge status="{{ $lic->license_status }}" :dot="false" />
                             </div>
-                        </div>
+                        </x-table.mobile-card>
                     @empty
-                        <p class="text-gray-500 text-center py-4">Немає встановленого ліцензійного ПЗ</p>
+                        <x-table.mobile-empty>Немає встановленого ліцензійного ПЗ</x-table.mobile-empty>
                     @endforelse
-                </div>
+                </x-table.mobile-list>
             </x-ui.tab-content>
 
             <x-ui.tab-content name="lowValueMaterials">
-                <div class="space-y-4">
+                <x-table.mobile-list>
                     @forelse($viewEquipment->lowValueMaterials as $m)
-                        <div class="bg-surface-800 border border-white/5 rounded-xl p-4 flex justify-between items-center">
+                        <x-table.mobile-card>
                             <div>
-                                <p class="text-white font-medium">{{ $m->material->material_name ?? 'Невідомо' }}</p>
-                                @if($m->brand_model)
-                                    <p class="text-xs text-brand-400">{{ $m->brand_model }}</p>
-                                @endif
-                                <p class="text-xs text-gray-500">
+                                <x-ui.text-block 
+                                    title="{{ $m->material->material_name ?? 'Невідомо' }}" 
+                                    subtitle="{{ $m->brand_model }}" 
+                                    subtitleClass="text-xs text-brand-400"
+                                />
+                                <p class="text-xs text-gray-500 mt-1">
                                     S/N: {{ $m->serial_number ?? '—' }} 
                                     @if($m->nomenclature_number) <span class="text-gray-600">|</span> Ном: {{ $m->nomenclature_number }} @endif
                                 </p>
@@ -324,50 +324,53 @@
                             </div>
                             <div class="text-right">
                                 <p class="text-sm font-semibold text-gray-200">{{ $m->quantity }} шт.</p>
-                                <span class="text-[10px] text-gray-500">{{ $m->status }}</span>
+                                <x-table.cell-subtext>{{ $m->status }}</x-table.cell-subtext>
                             </div>
-                        </div>
+                        </x-table.mobile-card>
                     @empty
-                        <p class="text-gray-500 text-center py-4">Немає закріплених малоцінних матеріалів (МШП)</p>
+                        <x-table.mobile-empty>Немає закріплених малоцінних матеріалів (МШП)</x-table.mobile-empty>
                     @endforelse
-                </div>
+                </x-table.mobile-list>
             </x-ui.tab-content>
 
             <x-ui.tab-content name="complaints">
-                <div class="space-y-4">
+                <x-table.mobile-list>
                     @forelse($viewEquipment->complaints as $comp)
-                        <div class="bg-surface-800 border border-white/5 rounded-xl p-4">
-                            <div class="flex justify-between items-start mb-2">
-                                <p class="text-white font-medium">{{ $comp->description }}</p>
+                        <x-table.mobile-card layout="none">
+                            <x-table.mobile-card-header align="start" class="mb-2">
+                                <x-ui.text-block title="{{ $comp->description }}" />
                                 <x-ui.badge status="{{ $comp->resolution_status }}" :dot="false" />
-                            </div>
-                            <p class="text-sm text-gray-500">Дата: {{ $comp->created_at ?? 'Невідомо' }}</p>
-                        </div>
+                            </x-table.mobile-card-header>
+                            <x-table.cell-subtext>Дата: {{ $comp->created_at ?? 'Невідомо' }}</x-table.cell-subtext>
+                        </x-table.mobile-card>
                     @empty
-                        <p class="text-gray-500 text-center py-4">Скарг не знайдено</p>
+                        <x-table.mobile-empty>Скарг не знайдено</x-table.mobile-empty>
                     @endforelse
-                </div>
+                </x-table.mobile-list>
             </x-ui.tab-content>
 
             <x-ui.tab-content name="maintenance">
-                <div class="space-y-4">
+                <x-table.mobile-list>
                     @forelse($viewEquipment->maintenanceLogs as $log)
-                        <div class="bg-surface-800 border border-white/5 rounded-xl p-4 flex justify-between items-center">
+                        <x-table.mobile-card>
                             <div>
-                                <p class="text-white font-medium">{{ $log->performed_by }}</p>
-                                <p class="text-sm text-brand-400">{{ $log->cost ? $log->cost . ' грн' : 'Безкоштовно' }}</p>
+                                <x-ui.text-block 
+                                    title="{{ $log->performed_by }}" 
+                                    subtitle="{{ $log->cost ? $log->cost . ' грн' : 'Безкоштовно' }}" 
+                                    subtitleClass="text-sm text-brand-400"
+                                />
                             </div>
                             <div class="text-right">
                                 <p class="text-sm text-gray-400 mb-1">{{ $log->maintenance_date }}</p>
                                 <x-ui.badge status="{{ $log->status }}" :dot="false" />
                             </div>
-                        </div>
+                        </x-table.mobile-card>
                     @empty
-                        <p class="text-gray-500 text-center py-4">Журнал ТО порожній</p>
+                        <x-table.mobile-empty>Журнал ТО порожній</x-table.mobile-empty>
                     @endforelse
-                </div>
+                </x-table.mobile-list>
             </x-ui.tab-content>
         </x-ui.tabs>
     </x-ui.slide-over>
     @endif
-</div>
+</x-ui.page-wrapper>

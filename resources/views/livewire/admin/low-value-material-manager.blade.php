@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<x-ui.page-wrapper>
     <x-ui.flash />
 <x-ui.toolbar :count="count($materials)" label="Всього позицій" buttonLabel="Додати МШП" />
 
@@ -85,29 +85,29 @@
             
                 @forelse($materials as $m)
                 <x-table.tr>
-                    <x-table.td align="left" primary class="text-white font-medium">
+                    <x-table.td align="left" primary>
                         {{ $m->material->material_name ?? '-' }}
                         @if($m->brand_model)
-                            <span class="block text-xs text-brand-400 font-normal">{{ $m->brand_model }}</span>
+                            <x-table.cell-accent class="block text-xs font-normal mt-0.5">{{ $m->brand_model }}</x-table.cell-accent>
                         @endif
                         @if($m->notes)
-                            <span class="block text-[10px] text-gray-500 italic">{{ $m->notes }}</span>
+                            <x-table.cell-subtext class="italic">{{ $m->notes }}</x-table.cell-subtext>
                         @endif
                     </x-table.td>
                     <x-table.td align="left" class="text-gray-400 font-mono text-xs">
                         <div>S/N: {{ $m->serial_number ?? '-' }}</div>
                         @if($m->nomenclature_number)
-                            <div class="text-[10px] text-gray-500">Ном: {{ $m->nomenclature_number }}</div>
+                            <x-table.cell-subtext>Ном: {{ $m->nomenclature_number }}</x-table.cell-subtext>
                         @endif
                     </x-table.td>
                     <x-table.td align="left" class="text-gray-300 font-semibold">
                         <div>{{ $m->quantity }} шт.</div>
-                        <div class="text-[10px] text-gray-500 font-normal">{{ $m->status ?? 'На складі' }}</div>
+                        <x-table.cell-subtext class="font-normal">{{ $m->status ?? 'На складі' }}</x-table.cell-subtext>
                     </x-table.td>
-                    <x-table.td align="left" class="text-gray-300">
+                    <x-table.td align="left">
                         @if($m->equipment)
-                            <span class="text-brand-400">{{ $m->equipment->inventory_number }}</span>
-                            <span class="block text-[10px] text-gray-500">{{ $m->equipment->accounting_name }}</span>
+                            <x-table.cell-accent>{{ $m->equipment->inventory_number }}</x-table.cell-accent>
+                            <x-table.cell-subtext>{{ $m->equipment->accounting_name }}</x-table.cell-subtext>
                         @else
                             <span class="text-gray-500 italic">На складі</span>
                         @endif
@@ -115,7 +115,7 @@
                     <x-table.td align="left" class="text-gray-400 text-xs">
                         @if($m->contract)
                             Договір №{{ $m->contract->contract_number }}
-                            <span class="block text-[10px] text-gray-500">{{ $m->contract->contract_date }}</span>
+                            <x-table.cell-subtext>{{ $m->contract->contract_date }}</x-table.cell-subtext>
                         @else
                             -
                         @endif
@@ -129,7 +129,7 @@
                     </x-table.td>
                 </x-table.tr>
                 @empty
-                <x-table.tr><x-table.td colspan="7" class="px-4 py-10 text-center text-gray-600">Немає записів</x-table.td></x-table.tr>
+                <x-table.empty colspan="7" />
                 @endforelse
             
         </x-table.wrapper>
@@ -138,15 +138,14 @@
     <x-table.mobile-list>
         @forelse($materials as $m)
         <x-table.mobile-card layout="y-2">
-            <div class="flex items-start justify-between">
+            <x-table.mobile-card-header align="start">
                 <div>
                     <span class="text-xs text-gray-500">Кількість: {{ $m->quantity }} шт. ({{ $m->status ?? 'На складі' }})</span>
-                    <p class="text-sm text-white font-medium">
-                        {{ $m->material->material_name ?? '-' }}
-                        @if($m->brand_model)
-                            <span class="text-brand-400 font-normal">({{ $m->brand_model }})</span>
-                        @endif
-                    </p>
+                    <x-ui.text-block 
+                        title="{{ $m->material->material_name ?? '-' }}" 
+                        subtitle="{{ $m->brand_model ? '(' . $m->brand_model . ')' : '' }}" 
+                        subtitleClass="text-brand-400 font-normal mt-1"
+                    />
                     @if($m->nomenclature_number || $m->serial_number)
                         <p class="text-[11px] text-gray-400 font-mono">
                             @if($m->serial_number) S/N: {{ $m->serial_number }} @endif
@@ -162,17 +161,14 @@
                         @endif
                     </p>
                 </div>
-                <div class="flex gap-1 shrink-0">
-                    <button wire:click="edit({{ $m->id }})" class="p-2 rounded-lg text-gray-500 hover:text-brand-400 hover:bg-brand-500/10 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
-                    <button wire:click="delete({{ $m->id }})" class="p-2 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
-                </div>
-            </div>
+                <x-ui.action-buttons id="{{ $m->id }}" />
+            </x-table.mobile-card-header>
             @if($m->notes)
-                <p class="text-xs text-gray-400 italic bg-surface-900/60 p-2 rounded-lg border border-white/5">{{ $m->notes }}</p>
+                <x-table.mobile-card-note class="italic">{{ $m->notes }}</x-table.mobile-card-note>
             @endif
         </x-table.mobile-card>
         @empty
-        <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
+        <x-table.mobile-empty />
         @endforelse
     </x-table.mobile-list>
-</div>
+</x-ui.page-wrapper>

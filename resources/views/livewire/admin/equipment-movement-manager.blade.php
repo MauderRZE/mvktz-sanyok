@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<x-ui.page-wrapper>
     <x-ui.flash />
 <x-ui.toolbar :count="count($movements)" label="Всього переміщень" buttonLabel="Перемістити техніку" />
 
@@ -45,20 +45,20 @@
                 </x-slot>
             
                 @forelse($movements as $m)
-                <x-table.tr class="text-sm">
+                <x-table.tr>
                     <x-table.td align="left" class="text-gray-400 whitespace-nowrap">{{ $m->move_date }}</x-table.td>
-                    <x-table.td align="left" primary class="text-white font-medium">
+                    <x-table.td align="left" primary>
                         {{ $m->equipment->inventory_number ?? '-' }}
-                        <span class="block text-[10px] text-gray-500">{{ $m->equipment->accounting_name ?? '' }}</span>
+                        <x-table.cell-subtext>{{ $m->equipment->accounting_name ?? '' }}</x-table.cell-subtext>
                     </x-table.td>
-                    <x-table.td align="left" class="text-gray-300">Кабінет {{ $m->location->room_number ?? '-' }}</x-table.td>
-                    <x-table.td align="left" class="text-gray-300">{{ $m->employee->fullName ?? 'На складі (без відповідального)' }}</x-table.td>
+                    <x-table.td align="left">Кабінет {{ $m->location->room_number ?? '-' }}</x-table.td>
+                    <x-table.td align="left">{{ $m->employee->fullName ?? 'На складі (без відповідального)' }}</x-table.td>
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $m->id }}" />
                     </x-table.td>
                 </x-table.tr>
                 @empty
-                <x-table.tr><x-table.td colspan="5" class="px-5 py-10 text-center text-gray-600">Немає записів</x-table.td></x-table.tr>
+                <x-table.empty colspan="5" />
                 @endforelse
             
         </x-table.wrapper>
@@ -67,23 +67,23 @@
     <x-table.mobile-list>
         @forelse($movements as $m)
         <x-table.mobile-card layout="col">
-            <div class="flex items-start justify-between">
+            <x-table.mobile-card-header align="start">
                 <div>
-                    <span class="text-xs text-gray-500">Дата: {{ $m->move_date }}</span>
-                    <p class="text-sm text-white font-medium">Обладнання: {{ $m->equipment->inventory_number ?? '-' }}</p>
-                    <p class="text-xs text-brand-400 font-medium">Куди: Кабінет {{ $m->location->room_number ?? '-' }}</p>
+                    <x-table.cell-subtext>Дата: {{ $m->move_date }}</x-table.cell-subtext>
+                    <x-ui.text-block 
+                        title="Обладнання: {{ $m->equipment->inventory_number ?? '-' }}" 
+                        subtitle="Куди: Кабінет {{ $m->location->room_number ?? '-' }}" 
+                        subtitleClass="text-xs text-brand-400 font-medium"
+                    />
                 </div>
-                <div class="flex gap-1 shrink-0">
-                    <button wire:click="edit({{ $m->id }})" class="p-2 rounded-lg text-gray-500 hover:text-brand-400 hover:bg-brand-500/10 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
-                    <button wire:click="delete({{ $m->id }})" class="p-2 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
-                </div>
-            </div>
-            <div class="text-xs text-gray-400 border-t border-white/5 pt-2">
+                <x-ui.action-buttons id="{{ $m->id }}" />
+            </x-table.mobile-card-header>
+            <x-table.mobile-card-footer>
                 Відповідальний: {{ $m->employee->fullName ?? 'На складі (без відповідального)' }}
-            </div>
+            </x-table.mobile-card-footer>
         </x-table.mobile-card>
         @empty
-        <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
+        <x-table.mobile-empty />
         @endforelse
     </x-table.mobile-list>
-</div>
+</x-ui.page-wrapper>

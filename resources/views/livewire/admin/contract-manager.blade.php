@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<x-ui.page-wrapper>
     <x-ui.flash />
 <x-ui.toolbar :count="count($contracts)" label="Всього" buttonLabel="Додати" />
 
@@ -34,15 +34,15 @@
                 @forelse($contracts as $c)
                 <x-table.tr>
                     <x-table.td align="left" muted>#{{ $c->id }}</x-table.td>
-                    <x-table.td align="left" primary class="text-white font-medium">{{ $c->contract_number }}</x-table.td>
-                    <x-table.td align="left" class="text-gray-300">{{ $c->contract_date }}</x-table.td>
+                    <x-table.td align="left" primary>{{ $c->contract_number }}</x-table.td>
+                    <x-table.td align="left">{{ $c->contract_date }}</x-table.td>
                     <x-table.td align="left" class="text-gray-400">{{ $c->supplier->supplier_name ?? '-' }}</x-table.td>
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $c->id }}" />
                     </x-table.td>
                 </x-table.tr>
                 @empty
-                <x-table.tr><x-table.td colspan="5" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</x-table.td></x-table.tr>
+                <x-table.empty colspan="5" />
                 @endforelse
             
         </x-table.wrapper>
@@ -51,19 +51,16 @@
     <x-table.mobile-list>
         @forelse($contracts as $c)
         <x-table.mobile-card layout="col">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-white font-medium">Договір №{{ $c->contract_number }}</p>
-                    <p class="text-xs text-gray-500">ID: {{ $c->id }} | Дата: {{ $c->contract_date }}</p>
-                </div>
+            <x-table.mobile-card-header>
+                <x-ui.text-block title="Договір №{{ $c->contract_number }}" subtitle="ID: {{ $c->id }} | Дата: {{ $c->contract_date }}" />
                 <x-ui.action-buttons id="{{ $c->id }}" />
-            </div>
-            <div class="text-xs text-gray-400 border-t border-white/5 pt-2">
+            </x-table.mobile-card-header>
+            <x-table.mobile-card-footer>
                 Постачальник: {{ $c->supplier->supplier_name ?? '-' }}
-            </div>
+            </x-table.mobile-card-footer>
         </x-table.mobile-card>
         @empty
-        <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
+        <x-table.mobile-empty />
         @endforelse
     </x-table.mobile-list>
-</div>
+</x-ui.page-wrapper>

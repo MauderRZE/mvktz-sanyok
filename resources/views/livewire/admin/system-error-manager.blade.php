@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<x-ui.page-wrapper>
     <x-ui.flash />
     <x-ui.toolbar :count="$errorsList->total()" label="Всього" buttonLabel="Додати" />
 
@@ -83,9 +83,7 @@
             </x-table.td>
         </x-table.tr>
         @empty
-        <x-table.tr>
-            <x-table.td colspan="4" class="px-5 py-10 text-center text-gray-600 text-sm">Помилок поки немає</x-table.td>
-        </x-table.tr>
+        <x-table.empty colspan="4">Помилок поки немає</x-table.empty>
         @endforelse
     </x-table.wrapper>
     
@@ -94,4 +92,4 @@
             {{ $errorsList->links() }}
         </div>
     @endif
-</div>
+</x-ui.page-wrapper>

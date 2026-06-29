@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<x-ui.page-wrapper>
     <x-ui.flash />
 <x-ui.toolbar :count="count($types)" label="Всього" buttonLabel="Додати" />
 
@@ -27,7 +27,7 @@
                 @forelse($types as $type)
                 <x-table.tr>
                     <x-table.td align="left" muted>#{{ $type->id }}</x-table.td>
-                    <x-table.td align="left" primary class="text-white font-medium">
+                    <x-table.td align="left" primary>
                         <span class="inline-flex items-center gap-2">
                             <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
                             {{ $type->type_name }}
@@ -38,7 +38,7 @@
                     </x-table.td>
                 </x-table.tr>
                 @empty
-                <x-table.tr><x-table.td colspan="3" class="px-5 py-10 text-center text-gray-600 text-sm">Немає записів</x-table.td></x-table.tr>
+                <x-table.empty colspan="3" />
                 @endforelse
             
         </x-table.wrapper>
@@ -49,15 +49,12 @@
         <x-table.mobile-card>
             <div class="flex items-center gap-3">
                 <svg class="w-5 h-5 text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
-                <div>
-                    <p class="text-sm text-white font-medium">{{ $type->type_name }}</p>
-                    <p class="text-xs text-gray-500">ID: {{ $type->id }}</p>
-                </div>
+                <x-ui.text-block title="{{ $type->type_name }}" subtitle="ID: {{ $type->id }}" />
             </div>
             <x-ui.action-buttons id="{{ $type->id }}" />
         </x-table.mobile-card>
         @empty
-        <div class="text-center py-10 text-gray-600 text-sm">Немає записів</div>
+        <x-table.mobile-empty />
         @endforelse
     </x-table.mobile-list>
-</div>
+</x-ui.page-wrapper>
