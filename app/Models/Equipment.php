@@ -85,11 +85,6 @@ class Equipment extends Model
         return $this->hasMany(EquipmentMovement::class, 'equip_id');
     }
 
-    public function complaints()
-    {
-        // Table equipment_complaints does not exist. We use repairs as a fallback to avoid crashes.
-        return $this->hasMany(EquipmentComplaint::class, 'assets_id', 'id');
-    }
 
     public function maintenanceLogs()
     {

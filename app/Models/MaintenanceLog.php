@@ -93,10 +93,4 @@ class MaintenanceLog extends Model
         return $this->belongsTo(EquipmentComponent::class, 'assets_id');
     }
 
-    public function maintenanceType()
-    {
-        // Table maintenance_types does not exist.
-        // We use a dummy self-referential relationship to avoid SQL exceptions during eager loading.
-        return $this->belongsTo(MaintenanceType::class, 'id', 'id');
-    }
 }

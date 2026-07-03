@@ -5,22 +5,18 @@ namespace Tests\Feature;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 use App\Models\BaseComponent;
-use App\Models\BaseMaterial;
 use App\Models\Contract;
 use App\Models\Employee;
 use App\Models\Equipment;
 use App\Models\EquipmentCategory;
-use App\Models\EquipmentComplaint;
 use App\Models\EquipmentComponent;
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentType;
 use App\Models\Location;
 use App\Models\LowValueMaterial;
 use App\Models\MaintenanceLog;
-use App\Models\MaintenanceType;
 use App\Models\SoftwareLicense;
 use App\Models\Supplier;
-use App\Models\TypeRequirement;
 use App\Models\User;
 use App\Models\BrandTz;
 use App\Models\Department;
@@ -80,22 +76,18 @@ class DatabaseSchemaTest extends TestCase
     {
         $models = [
             BaseComponent::class,
-            BaseMaterial::class,
             Contract::class,
             Employee::class,
             Equipment::class,
             EquipmentCategory::class,
-            EquipmentComplaint::class,
             EquipmentComponent::class,
             EquipmentMovement::class,
             EquipmentType::class,
             Location::class,
             LowValueMaterial::class,
             MaintenanceLog::class,
-            MaintenanceType::class,
             SoftwareLicense::class,
             Supplier::class,
-            TypeRequirement::class,
             User::class,
             BrandTz::class,
             Department::class,

@@ -6,20 +6,18 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\MaintenanceLog;
 use App\Models\Equipment;
-use App\Models\MaintenanceType;
 
 #[Layout('layouts.admin')]
 class MaintenanceLogManager extends Component
 {
     public $logs, $logId, $equipment_id, $action_type_id, $action_date, $description, $cost = 0;
-    public $equipmentList = [], $typesList = [];
+    public $equipmentList = [];
     public $isOpen = 0;
 
     public function render()
     {
-        $this->logs = MaintenanceLog::with(['equipment', 'maintenanceType'])->get();
+        $this->logs = MaintenanceLog::with(['equipment'])->get();
         $this->equipmentList = Equipment::all();
-        $this->typesList = MaintenanceType::all();
         return view('livewire.admin.maintenance-log-manager');
     }
 
@@ -53,7 +51,7 @@ class MaintenanceLogManager extends Component
     {
         $this->validate([
             'equipment_id' => 'required|exists:equipment,id',
-            'action_type_id' => 'required|exists:maintenance_types,id',
+            'action_type_id' => 'nullable|integer',
             'action_date' => 'required|date',
             'description' => 'required|string',
             'cost' => 'nullable|numeric|min:0',

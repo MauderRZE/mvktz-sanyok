@@ -11,19 +11,14 @@ use App\Http\Livewire\Admin\CategoryManager;
 use App\Http\Livewire\Admin\TypeManager;
 use App\Http\Livewire\Admin\UserManager;
 use App\Http\Livewire\Admin\BaseComponentManager;
-use App\Http\Livewire\Admin\BaseMaterialManager;
 use App\Http\Livewire\Admin\SupplierManager;
 use App\Http\Livewire\Admin\LocationManager;
-use App\Http\Livewire\Admin\MaintenanceTypeManager;
 use App\Http\Livewire\Admin\ContractManager;
 use App\Http\Livewire\Admin\EquipmentComponentManager;
-use App\Http\Livewire\Admin\EquipmentComplaintManager;
 use App\Http\Livewire\Admin\EquipmentMovementManager;
 use App\Http\Livewire\Admin\LowValueMaterialManager;
 use App\Http\Livewire\Admin\MaintenanceLogManager;
 use App\Http\Livewire\Admin\SoftwareLicenseManager;
-use App\Http\Livewire\Admin\TypeRequirementManager;
-use App\Http\Livewire\Admin\SystemErrorManager;
 use App\Http\Livewire\Admin\BrandManager;
 use App\Http\Livewire\Admin\DepartmentManager;
 use App\Http\Livewire\Admin\OrganizationManager;
@@ -59,19 +54,14 @@ class LivewireControllersTest extends TestCase
             'admin.types',
             'admin.users',
             'admin.base-components',
-            'admin.base-materials',
             'admin.suppliers',
             'admin.locations',
-            'admin.maintenance-types',
             'admin.contracts',
             'admin.components',
-            'admin.complaints',
             'admin.movements',
             'admin.low-value-materials',
             'admin.maintenance-logs',
             'admin.software-licenses',
-            'admin.type-requirements',
-            'admin.system-errors',
             'admin.brands',
             'admin.departments',
             'admin.organizations',
@@ -102,19 +92,14 @@ class LivewireControllersTest extends TestCase
             'admin.types',
             'admin.users',
             'admin.base-components',
-            'admin.base-materials',
             'admin.suppliers',
             'admin.locations',
-            'admin.maintenance-types',
             'admin.contracts',
             'admin.components',
-            'admin.complaints',
             'admin.movements',
             'admin.low-value-materials',
             'admin.maintenance-logs',
             'admin.software-licenses',
-            'admin.type-requirements',
-            'admin.system-errors',
             'admin.brands',
             'admin.departments',
             'admin.organizations',

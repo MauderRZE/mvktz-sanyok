@@ -13,19 +13,14 @@ use App\Http\Livewire\Admin\CategoryManager;
 use App\Http\Livewire\Admin\TypeManager;
 use App\Http\Livewire\Admin\UserManager;
 use App\Http\Livewire\Admin\BaseComponentManager;
-use App\Http\Livewire\Admin\BaseMaterialManager;
 use App\Http\Livewire\Admin\SupplierManager;
 use App\Http\Livewire\Admin\LocationManager;
-use App\Http\Livewire\Admin\MaintenanceTypeManager;
 use App\Http\Livewire\Admin\ContractManager;
 use App\Http\Livewire\Admin\EquipmentComponentManager;
-use App\Http\Livewire\Admin\EquipmentComplaintManager;
 use App\Http\Livewire\Admin\EquipmentMovementManager;
 use App\Http\Livewire\Admin\LowValueMaterialManager;
 use App\Http\Livewire\Admin\MaintenanceLogManager;
 use App\Http\Livewire\Admin\SoftwareLicenseManager;
-use App\Http\Livewire\Admin\TypeRequirementManager;
-use App\Http\Livewire\Admin\SystemErrorManager;
 use App\Http\Livewire\Admin\BrandManager;
 use App\Http\Livewire\Admin\DepartmentManager;
 use App\Http\Livewire\Admin\OrganizationManager;
@@ -89,19 +84,14 @@ class LivewireV3Test extends TestCase
             'TypeManager'               => [TypeManager::class],
             'UserManager'               => [UserManager::class],
             'BaseComponentManager'      => [BaseComponentManager::class],
-            'BaseMaterialManager'       => [BaseMaterialManager::class],
             'SupplierManager'           => [SupplierManager::class],
             'LocationManager'           => [LocationManager::class],
-            'MaintenanceTypeManager'    => [MaintenanceTypeManager::class],
             'ContractManager'           => [ContractManager::class],
             'EquipmentComponentManager' => [EquipmentComponentManager::class],
-            'EquipmentComplaintManager' => [EquipmentComplaintManager::class],
             'EquipmentMovementManager'  => [EquipmentMovementManager::class],
             'LowValueMaterialManager'   => [LowValueMaterialManager::class],
             'MaintenanceLogManager'     => [MaintenanceLogManager::class],
             'SoftwareLicenseManager'    => [SoftwareLicenseManager::class],
-            'TypeRequirementManager'    => [TypeRequirementManager::class],
-            'SystemErrorManager'        => [SystemErrorManager::class],
             'BrandManager'              => [BrandManager::class],
             'DepartmentManager'         => [DepartmentManager::class],
             'OrganizationManager'       => [OrganizationManager::class],
@@ -149,19 +139,14 @@ class LivewireV3Test extends TestCase
             'type-manager'                => [$base . '/admin/type-manager.blade.php'],
             'user-manager'                => [$base . '/admin/user-manager.blade.php'],
             'base-component-manager'      => [$base . '/admin/base-component-manager.blade.php'],
-            'base-material-manager'       => [$base . '/admin/base-material-manager.blade.php'],
             'supplier-manager'            => [$base . '/admin/supplier-manager.blade.php'],
             'location-manager'            => [$base . '/admin/location-manager.blade.php'],
-            'maintenance-type-manager'    => [$base . '/admin/maintenance-type-manager.blade.php'],
             'contract-manager'            => [$base . '/admin/contract-manager.blade.php'],
             'equipment-component-manager' => [$base . '/admin/equipment-component-manager.blade.php'],
-            'equipment-complaint-manager' => [$base . '/admin/equipment-complaint-manager.blade.php'],
             'equipment-movement-manager'  => [$base . '/admin/equipment-movement-manager.blade.php'],
             'low-value-material-manager'  => [$base . '/admin/low-value-material-manager.blade.php'],
             'maintenance-log-manager'     => [$base . '/admin/maintenance-log-manager.blade.php'],
             'software-license-manager'    => [$base . '/admin/software-license-manager.blade.php'],
-            'type-requirement-manager'    => [$base . '/admin/type-requirement-manager.blade.php'],
-            'system-error-manager'        => [$base . '/admin/system-error-manager.blade.php'],
             'brand-manager'               => [$base . '/admin/brand-manager.blade.php'],
             'department-manager'          => [$base . '/admin/department-manager.blade.php'],
             'organization-manager'        => [$base . '/admin/organization-manager.blade.php'],
@@ -206,7 +191,6 @@ class LivewireV3Test extends TestCase
             'SupplierManager'        => [SupplierManager::class, 'isOpen'],
             'DepartmentManager'      => [DepartmentManager::class, 'isOpen'],
             'OrganizationManager'    => [OrganizationManager::class, 'isOpen'],
-            'MaintenanceTypeManager' => [MaintenanceTypeManager::class, 'isOpen'],
             'UserManager'            => [UserManager::class, 'isOpen'],
             'AttributeDictionaryManager' => [AttributeDictionaryManager::class, 'isOpen'],
             'SupplierTypeManager'    => [SupplierTypeManager::class, 'isOpen'],
@@ -297,7 +281,6 @@ class LivewireV3Test extends TestCase
             'SupplierManager'        => [SupplierManager::class, 'supplier_name'],
             'DepartmentManager'      => [DepartmentManager::class, 'name'],
             'OrganizationManager'    => [OrganizationManager::class, 'org_name'],
-            'MaintenanceTypeManager' => [MaintenanceTypeManager::class, 'type_name'],
         ];
     }
 
@@ -403,18 +386,6 @@ class LivewireV3Test extends TestCase
         $this->addToAssertionCount(1);
     }
 
-    // =========================================================================
-    // 10. SYSTEM ERROR MANAGER — специфічний функціонал
-    // =========================================================================
-
-    public function test_system_error_manager_toggle_resolved(): void
-    {
-        $this->actingAs($this->user);
-
-        // Монтуємо і переконуємось, що компонент готовий до роботи
-        Livewire::test(SystemErrorManager::class)
-            ->assertStatus(200);
-    }
 
     // =========================================================================
     // 11. ПЕРЕВІРКА PHP 8.2 АТРИБУТІВ #[Layout] на всіх компонентах

@@ -4,22 +4,18 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\BaseComponent;
-use App\Models\BaseMaterial;
 use App\Models\Contract;
 use App\Models\Employee;
 use App\Models\Equipment;
 use App\Models\EquipmentCategory;
-use App\Models\EquipmentComplaint;
 use App\Models\EquipmentComponent;
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentType;
 use App\Models\Location;
 use App\Models\LowValueMaterial;
 use App\Models\MaintenanceLog;
-use App\Models\MaintenanceType;
 use App\Models\SoftwareLicense;
 use App\Models\Supplier;
-use App\Models\TypeRequirement;
 use App\Models\User;
 use App\Models\BrandTz;
 use App\Models\Department;
@@ -38,15 +34,13 @@ class DatabaseRelationshipsTest extends TestCase
     {
         $relationsMap = [
             Contract::class => ['supplier'],
-            Equipment::class => ['type', 'components', 'movements', 'complaints', 'maintenanceLogs'],
-            EquipmentComplaint::class => ['equipment'],
+            Equipment::class => ['type', 'components', 'movements', 'maintenanceLogs'],
             EquipmentComponent::class => ['equipment', 'componentType', 'baseComponent', 'model', 'location', 'holder', 'parentAsset', 'childAssets', 'lowValueMaterial', 'writeOffAct', 'repairs', 'computerSoftwares', 'itemProperties'],
             EquipmentMovement::class => ['equipment', 'location', 'employee', 'asset', 'fromHolder', 'toHolder'],
             EquipmentType::class => ['category', 'brand', 'assets'],
-            LowValueMaterial::class => ['material', 'equipment', 'contract', 'itemProperties'],
-            MaintenanceLog::class => ['equipment', 'maintenanceType', 'asset'],
+            LowValueMaterial::class => ['equipment', 'contract', 'itemProperties'],
+            MaintenanceLog::class => ['equipment', 'asset'],
             SoftwareLicense::class => ['component'],
-            TypeRequirement::class => ['equipmentType', 'componentType', 'component'],
             BrandTz::class => ['equipmentTypes'],
             Department::class => ['employees'],
             Employee::class => ['phones'],
