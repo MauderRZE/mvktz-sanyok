@@ -64,35 +64,43 @@ class EquipmentManager extends Component
         $locationsList = Location::all();
         $employeesList = Employee::all();
         
+        $sortMap = [
+            'id' => 'id',
+            'inventory_number' => 'inv_number',
+            'accounting_name' => 'account_name',
+            'status' => 'status',
+        ];
+        $actualSortField = $sortMap[$this->sortField] ?? 'id';
+
         $query = Equipment::with(['type', 'components.componentType', 'movements.location', 'movements.employee', 'complaints', 'maintenanceLogs', 'softwareLicenses'])
             ->when($this->search, function($q) {
-                $q->where('inventory_number', 'like', '%' . $this->search . '%')
-                  ->orWhere('accounting_name', 'like', '%' . $this->search . '%');
+                $q->where('inv_number', 'like', '%' . $this->search . '%')
+                  ->orWhere('account_name', 'like', '%' . $this->search . '%');
             })
             ->when(!empty($this->filterType), function($q) {
-                $q->whereIn('equipment_type_id', $this->filterType);
+                $q->whereHas('components', function($c) {
+                    $c->whereIn('model_id', $this->filterType);
+                });
             })
             ->when(!empty($this->filterStatus), function($q) {
                 $q->whereIn('status', $this->filterStatus);
             })
             ->when(!empty($this->filterCategory), function($q) {
-                $q->whereHas('type', function($t) {
-                    $t->whereIn('category_id', $this->filterCategory);
+                $q->whereHas('components.componentType', function($c) {
+                    $c->whereIn('category_id', $this->filterCategory);
                 });
             })
             ->when(!empty($this->filterLocation), function($q) {
-                $q->whereHas('movements', function($m) {
-                    $m->whereIn('location_id', $this->filterLocation)
-                      ->whereRaw('id = (select id from equipment_movement where equipment_id = equipment.id order by move_date desc limit 1)');
+                $q->whereHas('components', function($c) {
+                    $c->whereIn('current_loc_id', $this->filterLocation);
                 });
             })
             ->when(!empty($this->filterEmployee), function($q) {
                 $q->whereHas('movements', function($m) {
-                    $m->whereIn('employee_id', $this->filterEmployee)
-                      ->whereRaw('id = (select id from equipment_movement where equipment_id = equipment.id order by move_date desc limit 1)');
+                    $m->whereIn('employee_id', $this->filterEmployee);
                 });
             })
-            ->orderBy($this->sortField, $this->sortDirection);
+            ->orderBy($actualSortField, $this->sortDirection);
 
         return view('livewire.admin.equipment-manager', [
             'equipments' => $query->paginate(15),

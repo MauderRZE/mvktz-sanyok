@@ -28,7 +28,51 @@ class EquipmentComponent extends Model
         'nomenclature_id',
         'status',
         'write_off_act_id',
+        'component_type_id',
+        'brand_model',
+        'cartridge_model',
+        'has_network',
     ];
+
+    public function getComponentTypeIdAttribute()
+    {
+        return $this->base_component_id;
+    }
+
+    public function setComponentTypeIdAttribute($value)
+    {
+        $this->base_component_id = $value;
+    }
+
+    public function getBrandModelAttribute()
+    {
+        return $this->notes;
+    }
+
+    public function setBrandModelAttribute($value)
+    {
+        $this->notes = $value;
+    }
+
+    public function getCartridgeModelAttribute()
+    {
+        return null;
+    }
+
+    public function setCartridgeModelAttribute($value)
+    {
+        // Ignore or store elsewhere.
+    }
+
+    public function getHasNetworkAttribute()
+    {
+        return !empty($this->ip_address) || !empty($this->mac_address);
+    }
+
+    public function setHasNetworkAttribute($value)
+    {
+        // Ignore.
+    }
 
     public function equipment()
     {

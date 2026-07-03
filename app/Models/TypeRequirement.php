@@ -16,7 +16,29 @@ class TypeRequirement extends Model
     protected $fillable = [
         'brand_id',
         'model_name',
+        'equipment_type_id',
+        'component_id',
     ];
+
+    public function getEquipmentTypeIdAttribute()
+    {
+        return $this->id;
+    }
+
+    public function setEquipmentTypeIdAttribute($value)
+    {
+        $this->id = $value;
+    }
+
+    public function getComponentIdAttribute()
+    {
+        return $this->brand_id;
+    }
+
+    public function setComponentIdAttribute($value)
+    {
+        $this->brand_id = $value;
+    }
 
     public function equipmentType()
     {

@@ -20,7 +20,30 @@ class EquipmentMovement extends Model
         'to_holder_id',
         'employee_id',
         'action_date',
+        'equipment_id',
+        'location_id',
+        'move_date',
     ];
+
+    public function getEquipmentIdAttribute()
+    {
+        return $this->equip_id;
+    }
+
+    public function setEquipmentIdAttribute($value)
+    {
+        $this->equip_id = $value;
+    }
+
+    public function getLocationIdAttribute()
+    {
+        return $this->to_holder_id;
+    }
+
+    public function setLocationIdAttribute($value)
+    {
+        $this->to_holder_id = $value;
+    }
 
     public function equipment()
     {
@@ -52,5 +75,10 @@ class EquipmentMovement extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id');
+    }
+
+    public function getMoveDateAttribute()
+    {
+        return $this->action_date;
     }
 }

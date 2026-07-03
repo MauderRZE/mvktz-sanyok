@@ -18,7 +18,62 @@ class SoftwareLicense extends Model
         'license_name',
         'license_type',
         'purchase_date',
+        'component_id',
+        'software_name',
+        'license_key',
+        'license_status',
+        'expiration_date',
     ];
+
+    public function getSoftwareNameAttribute()
+    {
+        return $this->license_name;
+    }
+
+    public function setSoftwareNameAttribute($value)
+    {
+        $this->license_name = $value;
+    }
+
+    public function getComponentIdAttribute()
+    {
+        return $this->id;
+    }
+
+    public function setComponentIdAttribute($value)
+    {
+        // Ignore component_id since not present in licenses table.
+    }
+
+    public function getLicenseKeyAttribute()
+    {
+        return null;
+    }
+
+    public function setLicenseKeyAttribute($value)
+    {
+        // Ignore.
+    }
+
+    public function getLicenseStatusAttribute()
+    {
+        return 'Активна';
+    }
+
+    public function setLicenseStatusAttribute($value)
+    {
+        // Ignore.
+    }
+
+    public function getExpirationDateAttribute()
+    {
+        return null;
+    }
+
+    public function setExpirationDateAttribute($value)
+    {
+        // Ignore.
+    }
 
     public function component()
     {

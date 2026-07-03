@@ -16,7 +16,29 @@ class EquipmentType extends Model
     protected $fillable = [
         'brand_id',
         'model_name',
+        'type_name',
+        'category_id',
     ];
+
+    public function getTypeNameAttribute()
+    {
+        return $this->model_name;
+    }
+
+    public function setTypeNameAttribute($value)
+    {
+        $this->model_name = $value;
+    }
+
+    public function getCategoryIdAttribute()
+    {
+        return $this->brand_id;
+    }
+
+    public function setCategoryIdAttribute($value)
+    {
+        $this->brand_id = $value;
+    }
 
     public function brand()
     {
