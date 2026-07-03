@@ -24,6 +24,11 @@ use App\Http\Livewire\Admin\MaintenanceLogManager;
 use App\Http\Livewire\Admin\SoftwareLicenseManager;
 use App\Http\Livewire\Admin\TypeRequirementManager;
 use App\Http\Livewire\Admin\SystemErrorManager;
+use App\Http\Livewire\Admin\BrandManager;
+use App\Http\Livewire\Admin\DepartmentManager;
+use App\Http\Livewire\Admin\OrganizationManager;
+use App\Http\Livewire\Admin\RetirementActManager;
+use App\Http\Livewire\Admin\WriteOffActManager;
 
 class LivewireControllersTest extends TestCase
 {
@@ -67,6 +72,11 @@ class LivewireControllersTest extends TestCase
             'admin.software-licenses',
             'admin.type-requirements',
             'admin.system-errors',
+            'admin.brands',
+            'admin.departments',
+            'admin.organizations',
+            'admin.retirement-acts',
+            'admin.write-off-acts',
         ];
 
         foreach ($routes as $route) {
@@ -100,6 +110,11 @@ class LivewireControllersTest extends TestCase
             'admin.software-licenses',
             'admin.type-requirements',
             'admin.system-errors',
+            'admin.brands',
+            'admin.departments',
+            'admin.organizations',
+            'admin.retirement-acts',
+            'admin.write-off-acts',
         ];
 
         foreach ($routes as $route) {
@@ -133,6 +148,11 @@ class LivewireControllersTest extends TestCase
             SoftwareLicenseManager::class,
             TypeRequirementManager::class,
             SystemErrorManager::class,
+            BrandManager::class,
+            DepartmentManager::class,
+            OrganizationManager::class,
+            RetirementActManager::class,
+            WriteOffActManager::class,
         ];
 
         $this->actingAs($this->user);

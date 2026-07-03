@@ -45,5 +45,10 @@ Route::group(['prefix' => 'admin', 'layout' => 'layouts.admin', 'middleware' => 
     Route::get('/software-licenses', \App\Http\Livewire\Admin\SoftwareLicenseManager::class)->name('admin.software-licenses');
     Route::get('/type-requirements', \App\Http\Livewire\Admin\TypeRequirementManager::class)->name('admin.type-requirements');
     Route::get('/system-errors', \App\Http\Livewire\Admin\SystemErrorManager::class)->name('admin.system-errors');
+    Route::get('/brands', \App\Http\Livewire\Admin\BrandManager::class)->name('admin.brands');
+    Route::get('/departments', \App\Http\Livewire\Admin\DepartmentManager::class)->name('admin.departments');
+    Route::get('/organizations', \App\Http\Livewire\Admin\OrganizationManager::class)->name('admin.organizations');
+    Route::get('/retirement-acts', \App\Http\Livewire\Admin\RetirementActManager::class)->name('admin.retirement-acts');
+    Route::get('/write-off-acts', \App\Http\Livewire\Admin\WriteOffActManager::class)->name('admin.write-off-acts');
 });
 
