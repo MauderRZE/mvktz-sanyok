@@ -77,6 +77,11 @@ class LivewireControllersTest extends TestCase
             'admin.organizations',
             'admin.retirement-acts',
             'admin.write-off-acts',
+            'admin.attribute-dictionaries',
+            'admin.supplier-types',
+            'admin.computer-software',
+            'admin.employee-phones',
+            'admin.item-properties',
         ];
 
         foreach ($routes as $route) {
@@ -115,6 +120,11 @@ class LivewireControllersTest extends TestCase
             'admin.organizations',
             'admin.retirement-acts',
             'admin.write-off-acts',
+            'admin.attribute-dictionaries',
+            'admin.supplier-types',
+            'admin.computer-software',
+            'admin.employee-phones',
+            'admin.item-properties',
         ];
 
         foreach ($routes as $route) {
@@ -128,43 +138,4 @@ class LivewireControllersTest extends TestCase
         }
     }
 
-    /**
-     * Test that all Livewire components can be mounted successfully.
-     */
-    public function test_all_livewire_components_can_be_mounted()
-    {
-        $components = [
-            EquipmentManager::class,
-            EmployeeManager::class,
-            CategoryManager::class,
-            TypeManager::class,
-            UserManager::class,
-            BaseComponentManager::class,
-            BaseMaterialManager::class,
-            SupplierManager::class,
-            LocationManager::class,
-            MaintenanceTypeManager::class,
-            ContractManager::class,
-            EquipmentComponentManager::class,
-            EquipmentComplaintManager::class,
-            EquipmentMovementManager::class,
-            LowValueMaterialManager::class,
-            MaintenanceLogManager::class,
-            SoftwareLicenseManager::class,
-            TypeRequirementManager::class,
-            SystemErrorManager::class,
-            BrandManager::class,
-            DepartmentManager::class,
-            OrganizationManager::class,
-            RetirementActManager::class,
-            WriteOffActManager::class,
-        ];
-
-        $this->actingAs($this->user);
-
-        foreach ($components as $component) {
-            Livewire::test($component)
-                ->assertStatus(200);
-        }
-    }
 }

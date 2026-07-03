@@ -48,6 +48,10 @@ class Employee extends Model
         return $this->belongsTo(Department::class, 'department_id');
     }
 
+    public function phones()
+    {
+        return $this->hasMany(EmployeePhone::class, 'employee_id');
+    }
 
     public function equipmentMovements()
     {

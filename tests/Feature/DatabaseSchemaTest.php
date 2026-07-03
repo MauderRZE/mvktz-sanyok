@@ -104,6 +104,10 @@ class DatabaseSchemaTest extends TestCase
             SupplierType::class,
             EquipmentRetirementAct::class,
             LowValueWriteOffAct::class,
+            \App\Models\AttributeDictionary::class,
+            \App\Models\ComputerSoftware::class,
+            \App\Models\EmployeePhone::class,
+            \App\Models\ItemProperty::class,
         ];
 
         foreach ($models as $model) {

@@ -1,0 +1,96 @@
+<?php
+
+namespace App\Http\Livewire\Admin;
+
+use Livewire\Component;
+use Livewire\Attributes\Layout;
+use App\Models\ItemProperty;
+use App\Models\EquipmentComponent;
+use App\Models\LowValueMaterial;
+use App\Models\AttributeDictionary;
+
+#[Layout('layouts.admin')]
+class ItemPropertyManager extends Component
+{
+    public $properties, $propertyId, $asset_id, $nomenclature_id, $attribute_id, $attr_value;
+    public $assets, $materials, $dictAttributes;
+    public $isOpen = false;
+
+    public function mount()
+    {
+        $this->assets = EquipmentComponent::with('componentType')->get();
+        $this->materials = LowValueMaterial::all();
+        $this->dictAttributes = AttributeDictionary::orderBy('name')->get();
+    }
+
+    public function render()
+    {
+        $this->properties = ItemProperty::with(['asset.componentType', 'nomenclature', 'attribute'])->get();
+        return view('livewire.admin.item-property-manager');
+    }
+
+    public function create()
+    {
+        $this->resetInputFields();
+        $this->openModal();
+    }
+
+    public function openModal()
+    {
+        $this->isOpen = true;
+    }
+
+    public function closeModal()
+    {
+        $this->isOpen = false;
+    }
+
+    private function resetInputFields()
+    {
+        $this->propertyId = null;
+        $this->asset_id = null;
+        $this->nomenclature_id = null;
+        $this->attribute_id = null;
+        $this->attr_value = '';
+    }
+
+    public function store()
+    {
+        $this->validate([
+            'attribute_id' => 'required|exists:attributes_dictionary,id',
+            'attr_value' => 'required|string|max:255',
+            'asset_id' => 'nullable|exists:assets,id',
+            'nomenclature_id' => 'nullable|exists:low_value_materials,id',
+        ]);
+
+        ItemProperty::updateOrCreate(['id' => $this->propertyId], [
+            'asset_id' => $this->asset_id ?: null,
+            'nomenclature_id' => $this->nomenclature_id ?: null,
+            'attribute_id' => $this->attribute_id,
+            'attr_value' => $this->attr_value,
+        ]);
+
+        session()->flash('message', 
+            $this->propertyId ? 'Властивість оновлено.' : 'Властивість додано.');
+
+        $this->closeModal();
+        $this->resetInputFields();
+    }
+
+    public function edit($id)
+    {
+        $prop = ItemProperty::findOrFail($id);
+        $this->propertyId = $id;
+        $this->asset_id = $prop->asset_id;
+        $this->nomenclature_id = $prop->nomenclature_id;
+        $this->attribute_id = $prop->attribute_id;
+        $this->attr_value = $prop->attr_value;
+        $this->openModal();
+    }
+
+    public function delete($id)
+    {
+        ItemProperty::findOrFail($id)->delete();
+        session()->flash('message', 'Властивість видалено.');
+    }
+}

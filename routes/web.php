@@ -17,6 +17,10 @@ Route::get('/', function () {
     return redirect()->route('admin.equipment');
 });
 
+Route::get('/admin', function () {
+    return redirect()->route('admin.equipment');
+});
+
 Route::get('/login', \App\Http\Livewire\Auth\Login::class)->name('login')->middleware('guest');
 Route::post('/logout', function () {
     \Illuminate\Support\Facades\Auth::logout();
@@ -50,5 +54,11 @@ Route::group(['prefix' => 'admin', 'layout' => 'layouts.admin', 'middleware' => 
     Route::get('/organizations', \App\Http\Livewire\Admin\OrganizationManager::class)->name('admin.organizations');
     Route::get('/retirement-acts', \App\Http\Livewire\Admin\RetirementActManager::class)->name('admin.retirement-acts');
     Route::get('/write-off-acts', \App\Http\Livewire\Admin\WriteOffActManager::class)->name('admin.write-off-acts');
+
+    Route::get('/attribute-dictionaries', \App\Http\Livewire\Admin\AttributeDictionaryManager::class)->name('admin.attribute-dictionaries');
+    Route::get('/supplier-types', \App\Http\Livewire\Admin\SupplierTypeManager::class)->name('admin.supplier-types');
+    Route::get('/computer-software', \App\Http\Livewire\Admin\ComputerSoftwareManager::class)->name('admin.computer-software');
+    Route::get('/employee-phones', \App\Http\Livewire\Admin\EmployeePhoneManager::class)->name('admin.employee-phones');
+    Route::get('/item-properties', \App\Http\Livewire\Admin\ItemPropertyManager::class)->name('admin.item-properties');
 });
 

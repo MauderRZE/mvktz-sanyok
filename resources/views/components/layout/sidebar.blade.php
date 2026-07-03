@@ -137,6 +137,31 @@
             Акти списання малоцінки
         </a>
 
+        <a href="{{ route('admin.attribute-dictionaries') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.attribute-dictionaries') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+            Словник атрибутів
+        </a>
+
+        <a href="{{ route('admin.supplier-types') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.supplier-types') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            Типи постачальників
+        </a>
+
+        <a href="{{ route('admin.computer-software') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.computer-software') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            Програмне забезпечення
+        </a>
+
+        <a href="{{ route('admin.employee-phones') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.employee-phones') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            Телефони співробітників
+        </a>
+
+        <a href="{{ route('admin.item-properties') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.item-properties') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+            Динамічні властивості
+        </a>
+
         <p class="px-3 mt-4 mb-2 text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Система</p>
 
         <a href="{{ route('admin.users') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.users') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">

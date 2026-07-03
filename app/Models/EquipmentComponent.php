@@ -129,4 +129,14 @@ class EquipmentComponent extends Model
     {
         return $this->hasMany(MaintenanceLog::class, 'assets_id');
     }
+
+    public function computerSoftwares()
+    {
+        return $this->hasMany(ComputerSoftware::class, 'computer_id');
+    }
+
+    public function itemProperties()
+    {
+        return $this->hasMany(ItemProperty::class, 'asset_id');
+    }
 }

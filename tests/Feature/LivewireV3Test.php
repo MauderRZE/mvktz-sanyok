@@ -31,6 +31,11 @@ use App\Http\Livewire\Admin\DepartmentManager;
 use App\Http\Livewire\Admin\OrganizationManager;
 use App\Http\Livewire\Admin\RetirementActManager;
 use App\Http\Livewire\Admin\WriteOffActManager;
+use App\Http\Livewire\Admin\AttributeDictionaryManager;
+use App\Http\Livewire\Admin\SupplierTypeManager;
+use App\Http\Livewire\Admin\ComputerSoftwareManager;
+use App\Http\Livewire\Admin\EmployeePhoneManager;
+use App\Http\Livewire\Admin\ItemPropertyManager;
 use App\Http\Livewire\Auth\Login;
 
 /**
@@ -102,6 +107,11 @@ class LivewireV3Test extends TestCase
             'OrganizationManager'       => [OrganizationManager::class],
             'RetirementActManager'      => [RetirementActManager::class],
             'WriteOffActManager'        => [WriteOffActManager::class],
+            'AttributeDictionaryManager'=> [AttributeDictionaryManager::class],
+            'SupplierTypeManager'       => [SupplierTypeManager::class],
+            'ComputerSoftwareManager'   => [ComputerSoftwareManager::class],
+            'EmployeePhoneManager'      => [EmployeePhoneManager::class],
+            'ItemPropertyManager'       => [ItemPropertyManager::class],
             'Login'                     => [Login::class],
         ];
     }
@@ -157,6 +167,11 @@ class LivewireV3Test extends TestCase
             'organization-manager'        => [$base . '/admin/organization-manager.blade.php'],
             'retirement-act-manager'      => [$base . '/admin/retirement-act-manager.blade.php'],
             'write-off-act-manager'       => [$base . '/admin/write-off-act-manager.blade.php'],
+            'attribute-dictionary-manager'=> [$base . '/admin/attribute-dictionary-manager.blade.php'],
+            'supplier-type-manager'       => [$base . '/admin/supplier-type-manager.blade.php'],
+            'computer-software-manager'   => [$base . '/admin/computer-software-manager.blade.php'],
+            'employee-phone-manager'      => [$base . '/admin/employee-phone-manager.blade.php'],
+            'item-property-manager'       => [$base . '/admin/item-property-manager.blade.php'],
             'auth-login'                  => [$base . '/auth/login.blade.php'],
         ];
     }
@@ -193,6 +208,11 @@ class LivewireV3Test extends TestCase
             'OrganizationManager'    => [OrganizationManager::class, 'isOpen'],
             'MaintenanceTypeManager' => [MaintenanceTypeManager::class, 'isOpen'],
             'UserManager'            => [UserManager::class, 'isOpen'],
+            'AttributeDictionaryManager' => [AttributeDictionaryManager::class, 'isOpen'],
+            'SupplierTypeManager'    => [SupplierTypeManager::class, 'isOpen'],
+            'ComputerSoftwareManager'=> [ComputerSoftwareManager::class, 'isOpen'],
+            'EmployeePhoneManager'   => [EmployeePhoneManager::class, 'isOpen'],
+            'ItemPropertyManager'    => [ItemPropertyManager::class, 'isOpen'],
         ];
     }
 

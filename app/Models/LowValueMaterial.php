@@ -152,4 +152,9 @@ class LowValueMaterial extends Model
     {
         return $this->belongsTo(Contract::class, 'contract_id');
     }
+
+    public function itemProperties()
+    {
+        return $this->hasMany(ItemProperty::class, 'nomenclature_id');
+    }
 }
