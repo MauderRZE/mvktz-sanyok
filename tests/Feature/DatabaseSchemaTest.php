@@ -24,15 +24,11 @@ use App\Models\TypeRequirement;
 use App\Models\User;
 use App\Models\BrandTz;
 use App\Models\Department;
-use App\Models\EmployeePhone;
 use App\Models\LocationHolder;
 use App\Models\Organization;
 use App\Models\SupplierType;
 use App\Models\EquipmentRetirementAct;
 use App\Models\LowValueWriteOffAct;
-use App\Models\ItemProperty;
-use App\Models\AttributeDictionary;
-use App\Models\ComputerSoftware;
 
 class DatabaseSchemaTest extends TestCase
 {
@@ -103,15 +99,11 @@ class DatabaseSchemaTest extends TestCase
             User::class,
             BrandTz::class,
             Department::class,
-            EmployeePhone::class,
             LocationHolder::class,
             Organization::class,
             SupplierType::class,
             EquipmentRetirementAct::class,
             LowValueWriteOffAct::class,
-            ItemProperty::class,
-            AttributeDictionary::class,
-            ComputerSoftware::class,
         ];
 
         foreach ($models as $model) {

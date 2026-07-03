@@ -124,10 +124,6 @@ class EquipmentComponent extends Model
         return $this->belongsTo(LowValueWriteOffAct::class, 'write_off_act_id');
     }
 
-    public function computerSoftwares()
-    {
-        return $this->hasMany(ComputerSoftware::class, 'computer_id');
-    }
 
     public function repairs()
     {
