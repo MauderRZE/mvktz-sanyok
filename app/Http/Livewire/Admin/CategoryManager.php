@@ -3,8 +3,10 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\EquipmentCategory;
 
+#[Layout('layouts.admin')]
 class CategoryManager extends Component
 {
     public $categories, $categoryId, $category_name;
@@ -13,7 +15,7 @@ class CategoryManager extends Component
     public function render()
     {
         $this->categories = EquipmentCategory::all();
-        return view('livewire.admin.category-manager')->layout('layouts.admin');
+        return view('livewire.admin.category-manager');
     }
 
     public function create()

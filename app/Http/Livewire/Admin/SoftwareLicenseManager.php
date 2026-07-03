@@ -3,9 +3,11 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\SoftwareLicense;
 use App\Models\EquipmentComponent;
 
+#[Layout('layouts.admin')]
 class SoftwareLicenseManager extends Component
 {
     public $licenses, $licenseId, $component_id, $software_name, $license_key, $license_status = 'Активна', $expiration_date;
@@ -16,7 +18,7 @@ class SoftwareLicenseManager extends Component
     {
         $this->licenses = SoftwareLicense::with('component.equipment', 'component.componentType')->get();
         $this->componentsList = EquipmentComponent::with('equipment', 'componentType')->get();
-        return view('livewire.admin.software-license-manager')->layout('layouts.admin');
+        return view('livewire.admin.software-license-manager');
     }
 
     public function create()

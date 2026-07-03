@@ -3,8 +3,10 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\BaseComponent;
 
+#[Layout('layouts.admin')]
 class BaseComponentManager extends Component
 {
     public $components, $componentId, $component_name;
@@ -13,7 +15,7 @@ class BaseComponentManager extends Component
     public function render()
     {
         $this->components = BaseComponent::all();
-        return view('livewire.admin.base-component-manager')->layout('layouts.admin');
+        return view('livewire.admin.base-component-manager');
     }
 
     public function create()

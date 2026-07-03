@@ -3,8 +3,10 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\Organization;
 
+#[Layout('layouts.admin')]
 class OrganizationManager extends Component
 {
     public $organizations, $orgId, $org_name, $org_type = 'Стороння';
@@ -13,7 +15,7 @@ class OrganizationManager extends Component
     public function render()
     {
         $this->organizations = Organization::all();
-        return view('livewire.admin.organization-manager')->layout('layouts.admin');
+        return view('livewire.admin.organization-manager');
     }
 
     public function create()

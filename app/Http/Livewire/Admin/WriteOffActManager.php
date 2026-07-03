@@ -3,8 +3,10 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\LowValueWriteOffAct;
 
+#[Layout('layouts.admin')]
 class WriteOffActManager extends Component
 {
     public $acts, $actId, $act_number, $act_date;
@@ -13,7 +15,7 @@ class WriteOffActManager extends Component
     public function render()
     {
         $this->acts = LowValueWriteOffAct::all();
-        return view('livewire.admin.write-off-act-manager')->layout('layouts.admin');
+        return view('livewire.admin.write-off-act-manager');
     }
 
     public function create()

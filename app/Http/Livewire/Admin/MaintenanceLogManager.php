@@ -3,10 +3,12 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\MaintenanceLog;
 use App\Models\Equipment;
 use App\Models\MaintenanceType;
 
+#[Layout('layouts.admin')]
 class MaintenanceLogManager extends Component
 {
     public $logs, $logId, $equipment_id, $action_type_id, $action_date, $description, $cost = 0;
@@ -18,7 +20,7 @@ class MaintenanceLogManager extends Component
         $this->logs = MaintenanceLog::with(['equipment', 'maintenanceType'])->get();
         $this->equipmentList = Equipment::all();
         $this->typesList = MaintenanceType::all();
-        return view('livewire.admin.maintenance-log-manager')->layout('layouts.admin');
+        return view('livewire.admin.maintenance-log-manager');
     }
 
     public function create()

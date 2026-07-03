@@ -3,9 +3,11 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
+#[Layout('layouts.admin')]
 class UserManager extends Component
 {
     public $users, $userId, $name, $login, $password;
@@ -14,7 +16,7 @@ class UserManager extends Component
     public function render()
     {
         $this->users = User::all();
-        return view('livewire.admin.user-manager')->layout('layouts.admin');
+        return view('livewire.admin.user-manager');
     }
 
     public function create()

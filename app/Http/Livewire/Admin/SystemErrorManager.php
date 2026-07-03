@@ -4,8 +4,10 @@ namespace App\Http\Livewire\Admin;
 
 use App\Models\SystemError;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use Livewire\WithPagination;
 
+#[Layout('layouts.admin')]
 class SystemErrorManager extends Component
 {
     use WithPagination;
@@ -153,6 +155,6 @@ class SystemErrorManager extends Component
         $errorsList = SystemError::orderBy('created_at', 'desc')->paginate(10);
         return view('livewire.admin.system-error-manager', [
             'errorsList' => $errorsList,
-        ])->layout('layouts.admin');
+        ]);
     }
 }

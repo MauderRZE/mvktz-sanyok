@@ -3,8 +3,10 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\BaseMaterial;
 
+#[Layout('layouts.admin')]
 class BaseMaterialManager extends Component
 {
     public $materials, $materialId, $material_name;
@@ -13,7 +15,7 @@ class BaseMaterialManager extends Component
     public function render()
     {
         $this->materials = BaseMaterial::all();
-        return view('livewire.admin.base-material-manager')->layout('layouts.admin');
+        return view('livewire.admin.base-material-manager');
     }
 
     public function create()

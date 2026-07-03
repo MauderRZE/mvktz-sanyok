@@ -3,8 +3,10 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\Location;
 
+#[Layout('layouts.admin')]
 class LocationManager extends Component
 {
     public $locations, $locationId, $room_number;
@@ -13,7 +15,7 @@ class LocationManager extends Component
     public function render()
     {
         $this->locations = Location::all();
-        return view('livewire.admin.location-manager')->layout('layouts.admin');
+        return view('livewire.admin.location-manager');
     }
 
     public function create()

@@ -3,10 +3,12 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\EquipmentComponent;
 use App\Models\Equipment;
 use App\Models\BaseComponent;
 
+#[Layout('layouts.admin')]
 class EquipmentComponentManager extends Component
 {
     public $components, $componentId, $equipment_id, $component_type_id, $brand_model, $serial_number, $cartridge_model, $has_network = 0, $ip_address, $mac_address, $status = 'Працює';
@@ -18,7 +20,7 @@ class EquipmentComponentManager extends Component
         $this->components = EquipmentComponent::with(['equipment', 'componentType'])->get();
         $this->equipmentList = Equipment::all();
         $this->baseComponentsList = BaseComponent::all();
-        return view('livewire.admin.equipment-component-manager')->layout('layouts.admin');
+        return view('livewire.admin.equipment-component-manager');
     }
 
     public function create()

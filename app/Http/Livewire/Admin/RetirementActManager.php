@@ -3,8 +3,10 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\EquipmentRetirementAct;
 
+#[Layout('layouts.admin')]
 class RetirementActManager extends Component
 {
     public $acts, $actId, $act_number, $act_date, $reason;
@@ -13,7 +15,7 @@ class RetirementActManager extends Component
     public function render()
     {
         $this->acts = EquipmentRetirementAct::all();
-        return view('livewire.admin.retirement-act-manager')->layout('layouts.admin');
+        return view('livewire.admin.retirement-act-manager');
     }
 
     public function create()

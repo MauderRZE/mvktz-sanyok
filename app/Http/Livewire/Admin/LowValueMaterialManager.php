@@ -3,11 +3,13 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\LowValueMaterial;
 use App\Models\BaseMaterial;
 use App\Models\Equipment;
 use App\Models\Contract;
 
+#[Layout('layouts.admin')]
 class LowValueMaterialManager extends Component
 {
     public $materials, $materialId, $base_material_id, $equipment_id, $contract_id, $serial_number, $purchase_date, $installation_date, $quantity = 1, $notes;
@@ -21,7 +23,7 @@ class LowValueMaterialManager extends Component
         $this->baseMaterialsList = BaseMaterial::all();
         $this->equipmentList = Equipment::all();
         $this->contractsList = Contract::all();
-        return view('livewire.admin.low-value-material-manager')->layout('layouts.admin');
+        return view('livewire.admin.low-value-material-manager');
     }
 
     public function create()

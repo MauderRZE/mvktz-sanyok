@@ -3,9 +3,11 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\EquipmentType;
 use App\Models\EquipmentCategory;
 
+#[Layout('layouts.admin')]
 class TypeManager extends Component
 {
     public $types, $categories, $typeId, $type_name, $category_id;
@@ -15,7 +17,7 @@ class TypeManager extends Component
     {
         $this->types = EquipmentType::with('category')->get();
         $this->categories = EquipmentCategory::all();
-        return view('livewire.admin.type-manager')->layout('layouts.admin');
+        return view('livewire.admin.type-manager');
     }
 
     public function create()

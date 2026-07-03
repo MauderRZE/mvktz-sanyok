@@ -27,7 +27,6 @@
     </div>
 </div>
 
-<script src="/alpine.js" defer></script>
 @livewireScripts
 </body>
 </html>

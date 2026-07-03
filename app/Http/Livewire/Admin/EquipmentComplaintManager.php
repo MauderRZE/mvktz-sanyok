@@ -3,10 +3,12 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\EquipmentComplaint;
 use App\Models\Equipment;
 use App\Models\Employee;
 
+#[Layout('layouts.admin')]
 class EquipmentComplaintManager extends Component
 {
     public $complaints, $complaintId, $equipment_id, $complaint_date, $reported_by_employee_id, $issue_description, $resolution_status = 'Відкрито', $resolution_date;
@@ -18,7 +20,7 @@ class EquipmentComplaintManager extends Component
         $this->complaints = EquipmentComplaint::with(['equipment', 'employee'])->get();
         $this->equipmentList = Equipment::all();
         $this->employeesList = Employee::all();
-        return view('livewire.admin.equipment-complaint-manager')->layout('layouts.admin');
+        return view('livewire.admin.equipment-complaint-manager');
     }
 
     public function create()

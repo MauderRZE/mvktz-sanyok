@@ -3,8 +3,10 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\Department;
 
+#[Layout('layouts.admin')]
 class DepartmentManager extends Component
 {
     public $departments, $departmentId, $name;
@@ -13,7 +15,7 @@ class DepartmentManager extends Component
     public function render()
     {
         $this->departments = Department::all();
-        return view('livewire.admin.department-manager')->layout('layouts.admin');
+        return view('livewire.admin.department-manager');
     }
 
     public function create()

@@ -3,9 +3,11 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\Contract;
 use App\Models\Supplier;
 
+#[Layout('layouts.admin')]
 class ContractManager extends Component
 {
     public $contracts, $contractId, $contract_number, $contract_date, $supplier_id;
@@ -16,7 +18,7 @@ class ContractManager extends Component
     {
         $this->contracts = Contract::with('supplier')->get();
         $this->suppliersList = Supplier::all();
-        return view('livewire.admin.contract-manager')->layout('layouts.admin');
+        return view('livewire.admin.contract-manager');
     }
 
     public function create()

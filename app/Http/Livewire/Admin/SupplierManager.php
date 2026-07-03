@@ -3,8 +3,10 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\Supplier;
 
+#[Layout('layouts.admin')]
 class SupplierManager extends Component
 {
     public $suppliers, $supplierId, $supplier_name;
@@ -13,7 +15,7 @@ class SupplierManager extends Component
     public function render()
     {
         $this->suppliers = Supplier::all();
-        return view('livewire.admin.supplier-manager')->layout('layouts.admin');
+        return view('livewire.admin.supplier-manager');
     }
 
     public function create()

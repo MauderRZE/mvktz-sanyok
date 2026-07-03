@@ -3,11 +3,13 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\EquipmentMovement;
 use App\Models\Equipment;
 use App\Models\Location;
 use App\Models\Employee;
 
+#[Layout('layouts.admin')]
 class EquipmentMovementManager extends Component
 {
     public $movements, $movementId, $equipment_id, $location_id, $employee_id, $move_date;
@@ -20,7 +22,7 @@ class EquipmentMovementManager extends Component
         $this->equipmentList = Equipment::all();
         $this->locationsList = Location::all();
         $this->employeesList = Employee::all();
-        return view('livewire.admin.equipment-movement-manager')->layout('layouts.admin');
+        return view('livewire.admin.equipment-movement-manager');
     }
 
     public function create()

@@ -3,8 +3,10 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\Employee;
 
+#[Layout('layouts.admin')]
 class EmployeeManager extends Component
 {
     public $employees;
@@ -15,7 +17,7 @@ class EmployeeManager extends Component
     public function render()
     {
         $this->employees = Employee::all();
-        return view('livewire.admin.employee-manager')->layout('layouts.admin');
+        return view('livewire.admin.employee-manager');
     }
 
     public function create()

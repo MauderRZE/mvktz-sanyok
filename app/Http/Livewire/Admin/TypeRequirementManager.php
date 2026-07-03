@@ -3,10 +3,12 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\TypeRequirement;
 use App\Models\EquipmentType;
 use App\Models\BaseComponent;
 
+#[Layout('layouts.admin')]
 class TypeRequirementManager extends Component
 {
     public $requirements, $equipment_type_id, $component_id;
@@ -20,7 +22,7 @@ class TypeRequirementManager extends Component
         $this->requirements = TypeRequirement::with(['equipmentType', 'component'])->get();
         $this->typesList = EquipmentType::all();
         $this->componentsList = BaseComponent::all();
-        return view('livewire.admin.type-requirement-manager')->layout('layouts.admin');
+        return view('livewire.admin.type-requirement-manager');
     }
 
     public function create()

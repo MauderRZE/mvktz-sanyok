@@ -3,8 +3,10 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\BrandTz;
 
+#[Layout('layouts.admin')]
 class BrandManager extends Component
 {
     public $brands, $brandId, $brandtz_name;
@@ -13,7 +15,7 @@ class BrandManager extends Component
     public function render()
     {
         $this->brands = BrandTz::all();
-        return view('livewire.admin.brand-manager')->layout('layouts.admin');
+        return view('livewire.admin.brand-manager');
     }
 
     public function create()

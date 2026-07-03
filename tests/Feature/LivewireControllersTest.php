@@ -118,8 +118,13 @@ class LivewireControllersTest extends TestCase
         ];
 
         foreach ($routes as $route) {
-            $response = $this->actingAs($this->user)->get(route($route));
-            $response->assertStatus(200);
+            try {
+                $response = $this->actingAs($this->user)->get(route($route));
+                $response->assertStatus(200);
+            } catch (\Exception $e) {
+                fwrite(STDERR, "\n\n❌ FAILING ROUTE: " . $route . "\n\n");
+                throw $e;
+            }
         }
     }
 

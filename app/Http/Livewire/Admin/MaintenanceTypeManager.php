@@ -3,8 +3,10 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\MaintenanceType;
 
+#[Layout('layouts.admin')]
 class MaintenanceTypeManager extends Component
 {
     public $types, $typeId, $type_name;
@@ -13,7 +15,7 @@ class MaintenanceTypeManager extends Component
     public function render()
     {
         $this->types = MaintenanceType::all();
-        return view('livewire.admin.maintenance-type-manager')->layout('layouts.admin');
+        return view('livewire.admin.maintenance-type-manager');
     }
 
     public function create()
