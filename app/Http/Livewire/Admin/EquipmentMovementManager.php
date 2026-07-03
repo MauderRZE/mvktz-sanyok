@@ -55,15 +55,40 @@ class EquipmentMovementManager extends Component
         $this->validate([
             'equipment_id' => 'required|exists:equipment,id',
             'location_id' => 'required|exists:locations,id',
-            'employee_id' => 'nullable|exists:employees,id',
+            'employee_id' => 'nullable|exists:employee,id',
             'move_date' => 'required|date',
         ]);
 
-        EquipmentMovement::updateOrCreate(['id' => $this->movementId], [
-            'equipment_id' => $this->equipment_id,
-            'location_id' => $this->location_id,
+        // Знаходимо або створюємо LocationHolder для цільового співробітника
+        $toHolder = \App\Models\LocationHolder::firstOrCreate([
             'employee_id' => $this->employee_id ?: null,
-            'move_date' => $this->move_date,
+            'organization_id' => null,
+        ]);
+
+        // Отримуємо обладнання та його перший компонент
+        $equipment = Equipment::findOrFail($this->equipment_id);
+        $asset = $equipment->components()->first();
+        $asset_id = $asset ? $asset->id : null;
+
+        // Попередній утримувач (from_holder_id)
+        $from_holder_id = $asset ? $asset->current_holder_id : null;
+
+        // Оновлюємо поточне розташування та утримувача для комплектуючих обладнання
+        if ($asset) {
+            $equipment->components()->update([
+                'current_loc_id' => $this->location_id,
+                'current_holder_id' => $toHolder->id,
+            ]);
+        }
+
+        // Створюємо або оновлюємо запис переміщення
+        EquipmentMovement::updateOrCreate(['id' => $this->movementId], [
+            'equip_id' => $this->equipment_id,
+            'asset_id' => $asset_id,
+            'from_holder_id' => $from_holder_id,
+            'to_holder_id' => $toHolder->id,
+            'employee_id' => $this->employee_id ?: null,
+            'action_date' => $this->move_date,
         ]);
 
         session()->flash('message', 

@@ -1,3 +1,4 @@
+<div>
 <x-ui.page-wrapper>
     <x-ui.flash />
 <x-ui.toolbar :count="count($complaints)" label="Всього скарг" buttonLabel="Зареєструвати скаргу" />
@@ -115,3 +116,4 @@
         @endforelse
     </x-table.mobile-list>
 </x-ui.page-wrapper>
+</div>

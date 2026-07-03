@@ -1,3 +1,4 @@
+<div>
 <x-ui.page-wrapper>
     <x-ui.flash />
 
@@ -63,3 +64,4 @@
         @endforelse
     </x-table.mobile-list>
 </x-ui.page-wrapper>
+</div>

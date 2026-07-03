@@ -1,3 +1,4 @@
+<div>
 <x-ui.page-wrapper>
     <x-ui.flash />
     <x-ui.toolbar :count="count($brands)" label="Всього брендів" buttonLabel="Додати бренд" />
@@ -41,3 +42,4 @@
         @endforelse
     </x-table.mobile-list>
 </x-ui.page-wrapper>
+</div>

@@ -1,3 +1,4 @@
+<div>
 <x-ui.page-wrapper>
     <x-ui.flash />
     <x-ui.toolbar :count="count($acts)" label="Всього актів списання" buttonLabel="Додати акт" />
@@ -49,3 +50,4 @@
         @endforelse
     </x-table.mobile-list>
 </x-ui.page-wrapper>
+</div>

@@ -1,3 +1,4 @@
+<div>
 <x-ui.page-wrapper>
     <x-ui.flash />
 <x-ui.toolbar :count="count($licenses)" label="Всього ліцензій" buttonLabel="Додати ліцензію" />
@@ -117,3 +118,4 @@
         @endforelse
     </x-table.mobile-list>
 </x-ui.page-wrapper>
+</div>

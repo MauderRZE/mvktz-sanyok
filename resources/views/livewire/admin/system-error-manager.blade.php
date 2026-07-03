@@ -1,3 +1,4 @@
+<div>
 <x-ui.page-wrapper>
     <x-ui.flash />
     <x-ui.toolbar :count="$errorsList->total()" label="Всього" buttonLabel="Додати" />
@@ -93,3 +94,4 @@
         </div>
     @endif
 </x-ui.page-wrapper>
+</div>

@@ -37,12 +37,12 @@ class EquipmentMovement extends Model
 
     public function getLocationIdAttribute()
     {
-        return $this->to_holder_id;
+        return $this->asset ? $this->asset->current_loc_id : null;
     }
 
     public function setLocationIdAttribute($value)
     {
-        $this->to_holder_id = $value;
+        // Handled manually in store()
     }
 
     public function equipment()

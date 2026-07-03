@@ -1,3 +1,4 @@
+<div>
 <x-ui.page-wrapper>
     <x-ui.flash />
 <x-ui.toolbar :count="count($movements)" label="Всього переміщень" buttonLabel="Перемістити техніку" />
@@ -51,7 +52,7 @@
                         {{ $m->equipment->inventory_number ?? '-' }}
                         <x-table.cell-subtext>{{ $m->equipment->accounting_name ?? '' }}</x-table.cell-subtext>
                     </x-table.td>
-                    <x-table.td align="left">Кабінет {{ $m->location->room_number ?? '-' }}</x-table.td>
+                    <x-table.td align="left">Кабінет {{ $m->asset->location->room_number ?? ($m->location->room_number ?? '-') }}</x-table.td>
                     <x-table.td align="left">{{ $m->employee->fullName ?? 'На складі (без відповідального)' }}</x-table.td>
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $m->id }}" />
@@ -72,7 +73,7 @@
                     <x-table.cell-subtext>Дата: {{ $m->move_date }}</x-table.cell-subtext>
                     <x-ui.text-block 
                         title="Обладнання: {{ $m->equipment->inventory_number ?? '-' }}" 
-                        subtitle="Куди: Кабінет {{ $m->location->room_number ?? '-' }}" 
+                        subtitle="Куди: Кабінет {{ $m->asset->location->room_number ?? ($m->location->room_number ?? '-') }}" 
                         subtitleClass="text-xs text-brand-400 font-medium"
                     />
                 </div>
@@ -87,3 +88,4 @@
         @endforelse
     </x-table.mobile-list>
 </x-ui.page-wrapper>
+</div>
