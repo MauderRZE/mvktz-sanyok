@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use App\Models\User;
 use Livewire\Livewire;
 use App\Http\Livewire\Admin\EquipmentManager;
@@ -63,10 +65,8 @@ class LivewireV3Test extends TestCase
     // 1. МОНТАЖ ВСІХ КОМПОНЕНТІВ (Livewire v3 mount)
     // =========================================================================
 
-    /**
-     * @test
-     * @dataProvider allComponentsProvider
-     */
+    #[Test]
+    #[DataProvider('allComponentsProvider')]
     public function test_all_components_mount_successfully(string $class): void
     {
         $this->actingAs($this->user);
@@ -110,10 +110,8 @@ class LivewireV3Test extends TestCase
     // 2. КОРЕНЕВИЙ HTML-ТЕГ У ШАБЛОНАХ (Livewire v3 вимога)
     // =========================================================================
 
-    /**
-     * @test
-     * @dataProvider bladeTemplatesProvider
-     */
+    #[Test]
+    #[DataProvider('bladeTemplatesProvider')]
     public function test_blade_templates_have_single_root_tag(string $path): void
     {
         $this->assertFileExists($path, "Blade-шаблон не знайдено: {$path}");
@@ -165,10 +163,8 @@ class LivewireV3Test extends TestCase
     // 3. МОДАЛЬНЕ ВІКНО — відкриття / закриття
     // =========================================================================
 
-    /**
-     * @test
-     * @dataProvider modalComponentsProvider
-     */
+    #[Test]
+    #[DataProvider('modalComponentsProvider')]
     public function test_modal_opens_and_closes(string $class, string $openProp): void
     {
         $this->actingAs($this->user);
@@ -204,10 +200,8 @@ class LivewireV3Test extends TestCase
     // 4. ПОШУК — оновлення властивості search
     // =========================================================================
 
-    /**
-     * @test
-     * @dataProvider searchableComponentsProvider
-     */
+    #[Test]
+    #[DataProvider('searchableComponentsProvider')]
     public function test_search_property_updates(string $class): void
     {
         $this->actingAs($this->user);
@@ -229,10 +223,8 @@ class LivewireV3Test extends TestCase
     // 5. СОРТУВАННЯ — виклик sortBy та зміна напрямку
     // =========================================================================
 
-    /**
-     * @test
-     * @dataProvider sortableComponentsProvider
-     */
+    #[Test]
+    #[DataProvider('sortableComponentsProvider')]
     public function test_sort_by_toggles_direction(string $class, string $field): void
     {
         $this->actingAs($this->user);
@@ -257,10 +249,8 @@ class LivewireV3Test extends TestCase
     // 6. ВАЛІДАЦІЯ — store() без даних повертає помилки
     // =========================================================================
 
-    /**
-     * @test
-     * @dataProvider validationComponentsProvider
-     */
+    #[Test]
+    #[DataProvider('validationComponentsProvider')]
     public function test_store_without_required_fields_fails_validation(string $class, string $requiredField): void
     {
         $this->actingAs($this->user);
@@ -391,10 +381,8 @@ class LivewireV3Test extends TestCase
     // 11. ПЕРЕВІРКА PHP 8.2 АТРИБУТІВ #[Layout] на всіх компонентах
     // =========================================================================
 
-    /**
-     * @test
-     * @dataProvider phpClassesWithLayoutProvider
-     */
+    #[Test]
+    #[DataProvider('phpClassesWithLayoutProvider')]
     public function test_php_component_has_layout_attribute(string $file): void
     {
         $this->assertFileExists($file);
