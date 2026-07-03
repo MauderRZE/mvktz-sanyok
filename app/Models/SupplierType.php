@@ -5,20 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EquipmentCategory extends Model
+class SupplierType extends Model
 {
     use HasFactory;
 
-    protected $table = 'categories_tz';
+    protected $table = 'supplier_types';
 
     public $timestamps = false;
 
     protected $fillable = [
-        'category_name',
+        'type_name',
     ];
 
-    public function baseComponents()
+    public function suppliers()
     {
-        return $this->hasMany(BaseComponent::class, 'category_id');
+        return $this->hasMany(Supplier::class, 'supplier_type_id');
     }
 }

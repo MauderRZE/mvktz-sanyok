@@ -15,5 +15,17 @@ class Supplier extends Model
 
     protected $fillable = [
         'supplier_name',
+        'supplier_type_id',
+        'tax_code',
     ];
+
+    public function supplierType()
+    {
+        return $this->belongsTo(SupplierType::class, 'supplier_type_id');
+    }
+
+    public function contracts()
+    {
+        return $this->hasMany(Contract::class, 'supplier_id');
+    }
 }

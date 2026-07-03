@@ -15,5 +15,11 @@ class BaseComponent extends Model
 
     protected $fillable = [
         'component_name',
+        'category_id',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(EquipmentCategory::class, 'category_id');
+    }
 }

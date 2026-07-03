@@ -5,20 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EquipmentCategory extends Model
+class BrandTz extends Model
 {
     use HasFactory;
 
-    protected $table = 'categories_tz';
+    protected $table = 'brands_tz';
 
     public $timestamps = false;
 
     protected $fillable = [
-        'category_name',
+        'brandtz_name',
     ];
 
-    public function baseComponents()
+    public function equipmentTypes()
     {
-        return $this->hasMany(BaseComponent::class, 'category_id');
+        return $this->hasMany(EquipmentType::class, 'brand_id');
     }
 }

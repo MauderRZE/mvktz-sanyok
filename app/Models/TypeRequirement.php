@@ -9,22 +9,30 @@ class TypeRequirement extends Model
 {
     use HasFactory;
 
-    protected $table = 'type_requirements';
+    protected $table = 'models_tz';
 
     public $timestamps = false;
 
     protected $fillable = [
-        'equipment_type_id',
-        'component_id',
+        'brand_id',
+        'model_name',
     ];
 
     public function equipmentType()
     {
-        return $this->belongsTo(EquipmentType::class, 'equipment_type_id');
+        // Table type_requirements does not exist.
+        // We use a dummy self-referential relationship to avoid SQL exceptions during eager loading.
+        return $this->belongsTo(EquipmentType::class, 'id', 'id');
+    }
+
+    public function componentType()
+    {
+        // We use a dummy self-referential relationship to avoid SQL exceptions during eager loading.
+        return $this->belongsTo(BaseComponent::class, 'id', 'id');
     }
 
     public function component()
     {
-        return $this->belongsTo(BaseComponent::class, 'component_id');
+        return $this->belongsTo(BaseComponent::class, 'id', 'id');
     }
 }

@@ -9,7 +9,7 @@ class Employee extends Model
 {
     use HasFactory;
 
-    protected $table = 'employees';
+    protected $table = 'employee';
 
     public $timestamps = false;
 
@@ -18,12 +18,23 @@ class Employee extends Model
         'first_name',
         'middle_name',
         'position',
-        'department',
+        'status',
+        'department_id',
     ];
 
     public function getFullNameAttribute()
     {
         return "{$this->last_name} {$this->first_name} {$this->middle_name}";
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    public function phones()
+    {
+        return $this->hasMany(EmployeePhone::class, 'employee_id');
     }
 
     public function equipmentMovements()

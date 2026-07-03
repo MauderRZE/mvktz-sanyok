@@ -9,11 +9,21 @@ class BaseMaterial extends Model
 {
     use HasFactory;
 
-    protected $table = 'base_materials';
+    protected $table = 'low_value_materials';
 
     public $timestamps = false;
 
     protected $fillable = [
-        'material_name',
+        'material_account_name',
     ];
+
+    public function getMaterialNameAttribute()
+    {
+        return $this->material_account_name;
+    }
+
+    public function setMaterialNameAttribute($value)
+    {
+        $this->material_account_name = $value;
+    }
 }

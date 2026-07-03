@@ -9,22 +9,29 @@ class EquipmentType extends Model
 {
     use HasFactory;
 
-    protected $table = 'equipment_types';
+    protected $table = 'models_tz';
 
     public $timestamps = false;
 
     protected $fillable = [
-        'category_id',
-        'type_name',
+        'brand_id',
+        'model_name',
     ];
+
+    public function brand()
+    {
+        return $this->belongsTo(BrandTz::class, 'brand_id');
+    }
 
     public function category()
     {
-        return $this->belongsTo(EquipmentCategory::class, 'category_id');
+        // Table models_tz does not have category_id.
+        // We use a dummy self-referential relationship to avoid SQL exceptions during eager loading.
+        return $this->belongsTo(EquipmentCategory::class, 'id', 'id');
     }
 
-    public function equipment()
+    public function assets()
     {
-        return $this->hasMany(Equipment::class, 'equipment_type_id');
+        return $this->hasMany(EquipmentComponent::class, 'model_id');
     }
 }

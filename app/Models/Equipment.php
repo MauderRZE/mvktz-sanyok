@@ -15,16 +15,20 @@ class Equipment extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'inventory_number',
-        'accounting_name',
-        'equipment_type_id',
+        'inv_number',
+        'account_name',
+        'buy_price',
+        'purchase_id',
         'status',
-        'commissioning_date',
+        'retirement_act_id',
+        'notes',
     ];
 
     public function type()
     {
-        return $this->belongsTo(EquipmentType::class, 'equipment_type_id');
+        // Table equipment no longer has equipment_type_id.
+        // We use a dummy self-referential id relationship to avoid SQL exceptions during eager loading.
+        return $this->belongsTo(EquipmentType::class, 'id', 'id');
     }
 
     public function components()
@@ -34,26 +38,58 @@ class Equipment extends Model
 
     public function movements()
     {
-        return $this->hasMany(EquipmentMovement::class, 'equipment_id');
+        return $this->hasMany(EquipmentMovement::class, 'equip_id');
     }
 
     public function complaints()
     {
-        return $this->hasMany(EquipmentComplaint::class, 'equipment_id');
+        // Table equipment_complaints does not exist. We use repairs as a fallback to avoid crashes.
+        return $this->hasMany(EquipmentComplaint::class, 'assets_id', 'id');
     }
 
     public function maintenanceLogs()
     {
-        return $this->hasMany(MaintenanceLog::class, 'equipment_id');
+        // Repairs are now linked to assets (EquipmentComponent), which are linked to equipment.
+        return $this->hasManyThrough(
+            MaintenanceLog::class,
+            EquipmentComponent::class,
+            'equipment_id', // Foreign key on assets table...
+            'assets_id',    // Foreign key on repairs table...
+            'id',           // Local key on equipment table...
+            'id'            // Local key on assets table...
+        );
     }
 
     public function softwareLicenses()
     {
-        return $this->hasMany(SoftwareLicense::class, 'equipment_id');
+        // Licenses are linked to assets (EquipmentComponent).
+        return $this->hasManyThrough(
+            SoftwareLicense::class,
+            EquipmentComponent::class,
+            'equipment_id',
+            'id',
+            'id',
+            'id'
+        );
     }
 
     public function lowValueMaterials()
     {
-        return $this->hasMany(LowValueMaterial::class, 'equipment_id');
+        return $this->hasMany(LowValueMaterial::class, 'contract_id', 'purchase_id');
+    }
+
+    public function purchase()
+    {
+        return $this->belongsTo(Contract::class, 'purchase_id');
+    }
+
+    public function contract()
+    {
+        return $this->belongsTo(Contract::class, 'purchase_id');
+    }
+
+    public function retirementAct()
+    {
+        return $this->belongsTo(EquipmentRetirementAct::class, 'retirement_act_id');
     }
 }

@@ -5,20 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EquipmentCategory extends Model
+class Organization extends Model
 {
     use HasFactory;
 
-    protected $table = 'categories_tz';
+    protected $table = 'organizations';
 
     public $timestamps = false;
 
     protected $fillable = [
-        'category_name',
+        'org_name',
+        'org_type',
     ];
 
-    public function baseComponents()
+    public function locationHolders()
     {
-        return $this->hasMany(BaseComponent::class, 'category_id');
+        return $this->hasMany(LocationHolder::class, 'organization_id');
     }
 }

@@ -5,20 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EquipmentCategory extends Model
+class AttributeDictionary extends Model
 {
     use HasFactory;
 
-    protected $table = 'categories_tz';
+    protected $table = 'attributes_dictionary';
 
     public $timestamps = false;
 
     protected $fillable = [
-        'category_name',
+        'name',
     ];
 
-    public function baseComponents()
+    public function itemProperties()
     {
-        return $this->hasMany(BaseComponent::class, 'category_id');
+        return $this->hasMany(ItemProperty::class, 'attribute_id');
     }
 }

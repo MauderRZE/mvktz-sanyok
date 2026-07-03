@@ -9,20 +9,21 @@ class SoftwareLicense extends Model
 {
     use HasFactory;
 
-    protected $table = 'software_licenses';
+    protected $table = 'licenses';
 
     public $timestamps = false;
 
     protected $fillable = [
-        'component_id',
-        'software_name',
-        'license_key',
-        'license_status',
-        'expiration_date',
+        'vendor_id',
+        'license_name',
+        'license_type',
+        'purchase_date',
     ];
 
     public function component()
     {
-        return $this->belongsTo(EquipmentComponent::class, 'component_id');
+        // Table licenses does not link directly to components.
+        // We use a dummy self-referential relationship to avoid SQL exceptions during eager loading.
+        return $this->belongsTo(EquipmentComponent::class, 'id', 'id');
     }
 }

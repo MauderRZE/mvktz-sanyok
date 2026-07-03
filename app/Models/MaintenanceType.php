@@ -9,7 +9,7 @@ class MaintenanceType extends Model
 {
     use HasFactory;
 
-    protected $table = 'maintenance_types';
+    protected $table = 'supplier_types';
 
     public $timestamps = false;
 

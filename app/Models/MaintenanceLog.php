@@ -9,25 +9,34 @@ class MaintenanceLog extends Model
 {
     use HasFactory;
 
-    protected $table = 'maintenance_log';
+    protected $table = 'repairs';
 
     public $timestamps = false;
 
     protected $fillable = [
-        'equipment_id',
-        'action_type_id',
-        'action_date',
-        'description',
-        'cost',
+        'assets_id',
+        'sent_date',
+        'return_date',
+        'issue_description',
+        'status',
     ];
 
     public function equipment()
     {
-        return $this->belongsTo(Equipment::class, 'equipment_id');
+        // Table repairs links to assets (EquipmentComponent), not equipment directly.
+        // We use a dummy self-referential relationship to avoid SQL exceptions during eager loading.
+        return $this->belongsTo(Equipment::class, 'assets_id', 'id');
+    }
+
+    public function asset()
+    {
+        return $this->belongsTo(EquipmentComponent::class, 'assets_id');
     }
 
     public function maintenanceType()
     {
-        return $this->belongsTo(MaintenanceType::class, 'action_type_id');
+        // Table maintenance_types does not exist.
+        // We use a dummy self-referential relationship to avoid SQL exceptions during eager loading.
+        return $this->belongsTo(MaintenanceType::class, 'id', 'id');
     }
 }

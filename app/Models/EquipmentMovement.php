@@ -9,25 +9,44 @@ class EquipmentMovement extends Model
 {
     use HasFactory;
 
-    protected $table = 'equipment_movement';
+    protected $table = 'movements';
 
     public $timestamps = false;
 
     protected $fillable = [
-        'equipment_id',
-        'location_id',
+        'equip_id',
+        'asset_id',
+        'from_holder_id',
+        'to_holder_id',
         'employee_id',
-        'move_date',
+        'action_date',
     ];
 
     public function equipment()
     {
-        return $this->belongsTo(Equipment::class, 'equipment_id');
+        return $this->belongsTo(Equipment::class, 'equip_id');
+    }
+
+    public function asset()
+    {
+        return $this->belongsTo(EquipmentComponent::class, 'asset_id');
+    }
+
+    public function fromHolder()
+    {
+        return $this->belongsTo(LocationHolder::class, 'from_holder_id');
+    }
+
+    public function toHolder()
+    {
+        return $this->belongsTo(LocationHolder::class, 'to_holder_id');
     }
 
     public function location()
     {
-        return $this->belongsTo(Location::class, 'location_id');
+        // Table movements does not have location_id anymore. 
+        // We use a dummy self-referential relationship to avoid SQL exceptions during eager loading.
+        return $this->belongsTo(Location::class, 'id', 'id');
     }
 
     public function employee()

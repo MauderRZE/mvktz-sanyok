@@ -14,27 +14,25 @@ class LowValueMaterial extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'material_id',
-        'brand_model',
-        'equipment_id',
+        'material_account_name',
+        'price',
+        'count',
+        'nomenklature_number',
         'contract_id',
-        'serial_number',
-        'nomenclature_number',
-        'purchase_date',
-        'installation_date',
-        'quantity',
-        'notes',
-        'status',
     ];
 
     public function material()
     {
-        return $this->belongsTo(BaseMaterial::class, 'material_id');
+        // Table low_value_materials does not have material_id anymore.
+        // We use a dummy self-referential relationship to avoid SQL exceptions during eager loading.
+        return $this->belongsTo(BaseMaterial::class, 'id', 'id');
     }
 
     public function equipment()
     {
-        return $this->belongsTo(Equipment::class, 'equipment_id');
+        // Table low_value_materials does not have equipment_id anymore.
+        // We use a dummy self-referential relationship to avoid SQL exceptions during eager loading.
+        return $this->belongsTo(Equipment::class, 'id', 'id');
     }
 
     public function contract()

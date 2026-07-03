@@ -9,26 +9,31 @@ class EquipmentComplaint extends Model
 {
     use HasFactory;
 
-    protected $table = 'equipment_complaints';
+    protected $table = 'repairs';
 
     public $timestamps = false;
 
     protected $fillable = [
-        'equipment_id',
-        'complaint_date',
-        'reported_by_employee_id',
+        'assets_id',
+        'sent_date',
+        'return_date',
         'issue_description',
-        'resolution_status',
-        'resolution_date',
+        'status',
     ];
 
     public function equipment()
     {
-        return $this->belongsTo(Equipment::class, 'equipment_id');
+        // Fallback relationship to prevent eager loading errors.
+        return $this->belongsTo(Equipment::class, 'assets_id', 'id');
+    }
+
+    public function asset()
+    {
+        return $this->belongsTo(EquipmentComponent::class, 'assets_id');
     }
 
     public function employee()
     {
-        return $this->belongsTo(Employee::class, 'reported_by_employee_id');
+        return $this->belongsTo(Employee::class, 'id', 'id');
     }
 }

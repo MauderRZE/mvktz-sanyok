@@ -9,20 +9,25 @@ class EquipmentComponent extends Model
 {
     use HasFactory;
 
-    protected $table = 'equipment_components';
+    protected $table = 'assets';
 
     public $timestamps = false;
 
     protected $fillable = [
-        'equipment_id',
-        'component_type_id',
-        'brand_model',
+        'base_component_id',
+        'model_id',
         'serial_number',
-        'cartridge_model',
-        'has_network',
+        'current_loc_id',
+        'current_holder_id',
+        'equipment_id',
+        'parent_asset_id',
+        'notes',
         'ip_address',
         'mac_address',
+        'hostname',
+        'nomenclature_id',
         'status',
+        'write_off_act_id',
     ];
 
     public function equipment()
@@ -32,6 +37,56 @@ class EquipmentComponent extends Model
 
     public function componentType()
     {
-        return $this->belongsTo(BaseComponent::class, 'component_type_id');
+        return $this->belongsTo(BaseComponent::class, 'base_component_id');
+    }
+
+    public function baseComponent()
+    {
+        return $this->belongsTo(BaseComponent::class, 'base_component_id');
+    }
+
+    public function model()
+    {
+        return $this->belongsTo(EquipmentType::class, 'model_id');
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class, 'current_loc_id');
+    }
+
+    public function holder()
+    {
+        return $this->belongsTo(LocationHolder::class, 'current_holder_id');
+    }
+
+    public function parentAsset()
+    {
+        return $this->belongsTo(EquipmentComponent::class, 'parent_asset_id');
+    }
+
+    public function childAssets()
+    {
+        return $this->hasMany(EquipmentComponent::class, 'parent_asset_id');
+    }
+
+    public function lowValueMaterial()
+    {
+        return $this->belongsTo(LowValueMaterial::class, 'nomenclature_id');
+    }
+
+    public function writeOffAct()
+    {
+        return $this->belongsTo(LowValueWriteOffAct::class, 'write_off_act_id');
+    }
+
+    public function computerSoftwares()
+    {
+        return $this->hasMany(ComputerSoftware::class, 'computer_id');
+    }
+
+    public function repairs()
+    {
+        return $this->hasMany(MaintenanceLog::class, 'assets_id');
     }
 }
