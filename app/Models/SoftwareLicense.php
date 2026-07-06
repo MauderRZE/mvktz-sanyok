@@ -24,4 +24,9 @@ class SoftwareLicense extends Model
     {
         return $this->belongsTo(Supplier::class, 'vendor_id');
     }
+
+    public function computerSoftwares()
+    {
+        return $this->hasMany(ComputerSoftware::class, 'license_id');
+    }
 }

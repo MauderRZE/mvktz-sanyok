@@ -22,4 +22,9 @@ class BaseComponent extends Model
     {
         return $this->belongsTo(EquipmentCategory::class, 'category_id');
     }
+
+    public function assets()
+    {
+        return $this->hasMany(Asset::class, 'base_component_id');
+    }
 }

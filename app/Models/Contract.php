@@ -29,4 +29,9 @@ class Contract extends Model
     {
         return $this->hasMany(LowValueMaterial::class, 'contract_id');
     }
+
+    public function equipment()
+    {
+        return $this->hasMany(Equipment::class, 'purchase_id');
+    }
 }

@@ -16,4 +16,9 @@ class Location extends Model
     protected $fillable = [
         'room_number',
     ];
+
+    public function assets()
+    {
+        return $this->hasMany(Asset::class, 'current_loc_id');
+    }
 }

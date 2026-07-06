@@ -1,25 +1,36 @@
 <div>
+@php
+    $computersOptions = $computers->map(fn($item) => [
+        'value' => $item->id,
+        'label' => ($item->componentType->component_name ?? 'Асет') . ' (Inv: ' . ($item->equipment?->inv_number ?? 'Немає') . ')'
+    ])->values()->toArray();
+
+    $licensesOptions = $licenses->map(fn($lic) => [
+        'value' => $lic->id,
+        'label' => $lic->license_name
+    ])->values()->toArray();
+@endphp
 <x-ui.page-wrapper>
     <x-ui.flash />
     <x-ui.toolbar :count="count($software)" label="Всього ПЗ" buttonLabel="Додати ПЗ" />
 
     @if($isOpen)
     <x-ui.modal title="{{ $softwareId ? 'Редагувати' : 'Додати' }} запис про ПЗ" maxWidth="md">
-        <x-form.select label="Комп'ютер (Обладнання)" model="computer_id" :options="['' => 'Оберіть комп\'ютер'] + $computers->mapWithKeys(function($item) {
-            return [$item->id => ($item->componentType->component_name ?? 'Асет') . ' (Inv: ' . ($item->equipment?->inv_number ?? 'Немає') . ')'];
-        })->toArray()" />
-        
-        <x-form.select label="Назва ПЗ" model="software_name">
-            <option value="">Оберіть ПЗ</option>
-            <option value="Windows">Windows</option>
-            <option value="Office">Office</option>
-            <option value="ESET">ESET</option>
-        </x-form.select>
+        <div class="space-y-4">
+            <x-form.searchable-select label="Комп'ютер (Обладнання)" model="computer_id" placeholder="Оберіть комп'ютер..." :options="$computersOptions" />
+            
+            <x-form.select label="Назва ПЗ" model="software_name">
+                <option value="">Оберіть ПЗ</option>
+                <option value="Windows">Windows</option>
+                <option value="Office">Office</option>
+                <option value="ESET">ESET</option>
+            </x-form.select>
 
-        <x-form.input label="Версія (22H2, 2019...)" model="version" type="text" />
-        <x-form.checkbox label="Ліцензійне ПЗ?" model="is_licensed" />
-        
-        <x-form.select label="Прив'язка до ліцензії" model="license_id" :options="['' => 'Не вибрано / Без ліцензії'] + $licenses->pluck('license_name', 'id')->toArray()" />
+            <x-form.input label="Версія (22H2, 2019...)" model="version" type="text" />
+            <x-form.checkbox label="Ліцензійне ПЗ?" model="is_licensed" />
+            
+            <x-form.searchable-select label="Прив'язка до ліцензії" model="license_id" placeholder="Не вибрано / Без ліцензії" :options="$licensesOptions" />
+        </div>
     </x-ui.modal>
     @endif
 

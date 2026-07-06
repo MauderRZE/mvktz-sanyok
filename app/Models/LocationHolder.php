@@ -32,4 +32,14 @@ class LocationHolder extends Model
     {
         return $this->hasMany(Asset::class, 'current_holder_id');
     }
+
+    public function movementsFrom()
+    {
+        return $this->hasMany(EquipmentMovement::class, 'from_holder_id');
+    }
+
+    public function movementsTo()
+    {
+        return $this->hasMany(EquipmentMovement::class, 'to_holder_id');
+    }
 }
