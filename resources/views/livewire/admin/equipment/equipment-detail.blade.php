@@ -36,41 +36,13 @@
     </div>
 
     {{-- Вкладки --}}
-    <x-ui.tabs active="assets">
+    <x-ui.tabs active="components">
         <x-slot name="nav">
-            <x-ui.tab-nav name="assets" label="Активи" icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>' />
             <x-ui.tab-nav name="components" label="Комплектуючі" icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>' />
             <x-ui.tab-nav name="movements" label="Рух" icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>' />
             <x-ui.tab-nav name="lowValueMaterials" label="Матеріали / МШП" icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>' />
             <x-ui.tab-nav name="maintenance" label="ТО та ремонти" icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>' />
         </x-slot>
-
-        {{-- Активи --}}
-        <x-ui.tab-content name="assets">
-            <x-table.mobile-list>
-                @forelse($equipment->assets as $comp)
-                    <x-table.mobile-card>
-                        <div>
-                            <x-ui.text-block
-                                title="{{ $comp->componentType->component_name ?? 'Невідомо' }}"
-                                subtitle="{{ $comp->brand_model }} | s/n: {{ $comp->serial_number ?? '—' }}"
-                            />
-                            @if($comp->location)
-                                <p class="text-xs text-gray-500 mt-1">📍 Каб. {{ $comp->location->room_number }}</p>
-                            @endif
-                            @if($comp->holder?->organization)
-                                <p class="text-xs text-gray-500">🏢 {{ $comp->holder->organization->org_name }}</p>
-                            @endif
-                        </div>
-                        <div>
-                            <x-ui.badge status="{{ $comp->status }}" :dot="false" />
-                        </div>
-                    </x-table.mobile-card>
-                @empty
-                    <x-table.mobile-empty>Немає встановлених компонентів</x-table.mobile-empty>
-                @endforelse
-            </x-table.mobile-list>
-        </x-ui.tab-content>
 
         {{-- Комплектуючі --}}
         <x-ui.tab-content name="components">
@@ -134,9 +106,9 @@
 
         {{-- Рух --}}
         <x-ui.tab-content name="movements">
-            <x-table.mobile-list>
+            <div class="space-y-3">
                 @forelse($equipment->movements->sortByDesc('action_date') as $mov)
-                    <x-table.mobile-card>
+                    <div class="bg-surface-800/50 border border-white/5 rounded-xl p-4 flex items-center justify-between">
                         <div>
                             <x-ui.text-block
                                 title="{{ $mov->toHolder->organization->org_name ?? 'Організація не вказана' }}"
@@ -151,18 +123,18 @@
                         <div>
                             <p class="text-sm text-gray-400">{{ $mov->action_date }}</p>
                         </div>
-                    </x-table.mobile-card>
+                    </div>
                 @empty
-                    <x-table.mobile-empty>Історія переміщень порожня</x-table.mobile-empty>
+                    <div class="text-center py-10 text-gray-600 text-sm">Історія переміщень порожня</div>
                 @endforelse
-            </x-table.mobile-list>
+            </div>
         </x-ui.tab-content>
 
         {{-- МШП --}}
         <x-ui.tab-content name="lowValueMaterials">
-            <x-table.mobile-list>
+            <div class="space-y-3">
                 @forelse($equipment->lowValueMaterials as $m)
-                    <x-table.mobile-card>
+                    <div class="bg-surface-800/50 border border-white/5 rounded-xl p-4 flex items-center justify-between">
                         <div>
                             <x-ui.text-block
                                 title="{{ $m->material_account_name }}"
@@ -176,21 +148,21 @@
                         <div class="text-right">
                             <p class="text-sm font-semibold text-gray-200">{{ $m->count }} шт.</p>
                             @if($m->price)
-                                <x-table.cell-subtext>{{ $m->price }} грн</x-table.cell-subtext>
+                                <p class="text-sm text-gray-400">{{ $m->price }} грн</p>
                             @endif
                         </div>
-                    </x-table.mobile-card>
+                    </div>
                 @empty
-                    <x-table.mobile-empty>Немає закріплених малоцінних матеріалів (МШП)</x-table.mobile-empty>
+                    <div class="text-center py-10 text-gray-600 text-sm">Немає закріплених малоцінних матеріалів (МШП)</div>
                 @endforelse
-            </x-table.mobile-list>
+            </div>
         </x-ui.tab-content>
 
         {{-- ТО та ремонти --}}
         <x-ui.tab-content name="maintenance">
-            <x-table.mobile-list>
+            <div class="space-y-3">
                 @forelse($equipment->maintenanceLogs as $log)
-                    <x-table.mobile-card>
+                    <div class="bg-surface-800/50 border border-white/5 rounded-xl p-4 flex items-center justify-between">
                         <div>
                             <x-ui.text-block
                                 title="{{ $log->issue_description }}"
@@ -204,11 +176,11 @@
                                 <p class="text-sm text-gray-500 mb-1">Поверн: {{ $log->return_date }}</p>
                             @endif
                         </div>
-                    </x-table.mobile-card>
+                    </div>
                 @empty
-                    <x-table.mobile-empty>Журнал ТО порожній</x-table.mobile-empty>
+                    <div class="text-center py-10 text-gray-600 text-sm">Журнал ТО порожній</div>
                 @endforelse
-            </x-table.mobile-list>
+            </div>
         </x-ui.tab-content>
     </x-ui.tabs>
 
