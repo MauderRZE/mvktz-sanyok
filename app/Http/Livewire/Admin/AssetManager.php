@@ -160,7 +160,10 @@ class AssetManager extends Component
             'modelsList' => EquipmentType::with('brand')->get(),
             'locationsList' => Location::all(),
             'holdersList' => LocationHolder::with(['employee', 'organization'])->get(),
-            'parentAssetsList' => Asset::with(['componentType', 'equipment'])->get(),
+            'parentAssetsList' => Asset::with(['componentType', 'equipment'])
+                ->whereHas('componentType', function($q) {
+                    $q->where('component_name', 'Системний блок');
+                })->get(),
             'nomenclaturesList' => LowValueMaterial::all(),
             'writeOffActsList' => LowValueWriteOffAct::all(),
         ]);
