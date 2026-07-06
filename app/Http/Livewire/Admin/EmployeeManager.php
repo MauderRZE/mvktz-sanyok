@@ -3,34 +3,72 @@
 namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use App\Models\Employee;
 
 #[Layout('layouts.admin')]
 class EmployeeManager extends Component
 {
-    public $employees;
+    use WithPagination;
+
     public $employeeId;
     public $last_name, $first_name, $middle_name, $position, $department_id;
     public $departmentsList = [];
-    public $isOpen = 0;
+    
+    public $isOpen = false;
+
+    public $search = '';
+    public $filterDepartment = [];
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterDepartment()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
-        $this->employees = Employee::with('department')->get();
         $this->departmentsList = \App\Models\Department::all();
-        return view('livewire.admin.employee-manager');
+
+        $query = Employee::with('department');
+
+        if (!empty($this->search)) {
+            $search = $this->search;
+            $query->where(function($q) use ($search) {
+                $q->where('last_name', 'like', '%'.$search.'%')
+                  ->orWhere('first_name', 'like', '%'.$search.'%')
+                  ->orWhere('middle_name', 'like', '%'.$search.'%')
+                  ->orWhere('position', 'like', '%'.$search.'%');
+            });
+        }
+
+        if (!empty($this->filterDepartment)) {
+            $query->whereIn('department_id', $this->filterDepartment);
+        }
+
+        $employees = $query->orderBy('id', 'desc')->paginate(15);
+
+        return view('livewire.admin.employee-manager', [
+            'employees' => $employees
+        ]);
     }
 
     public function create()
     {
         $this->resetInputFields();
-        $this->openModal();
+        $this->isOpen = true;
     }
 
-    public function openModal()
+    public function resetFilters()
     {
-        $this->isOpen = true;
+        $this->search = '';
+        $this->filterDepartment = [];
+        $this->resetPage();
     }
 
     public function closeModal()
@@ -81,7 +119,7 @@ class EmployeeManager extends Component
         $this->position = $employee->position;
         $this->department_id = $employee->department_id;
     
-        $this->openModal();
+        $this->isOpen = true;
     }
 
     public function delete($id)

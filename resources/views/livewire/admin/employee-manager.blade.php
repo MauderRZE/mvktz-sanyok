@@ -1,10 +1,39 @@
 <div>
 <x-ui.page-wrapper>
     <x-ui.flash />
-<x-ui.toolbar :count="count($employees)" label="Всього" buttonLabel="Додати" />
+    <x-ui.toolbar :count="$employees->total()" label="Всього" buttonLabel="Додати" />
+
+    {{-- Filters Bar --}}
+    <x-ui.card class="p-4 space-y-4">
+        <div class="flex flex-col md:flex-row gap-4 items-center">
+            <div class="flex-1 w-full flex gap-2">
+                <div class="flex-1 relative">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input wire:model.live.debounce.300ms="search" type="text" placeholder="Пошук за ПІБ чи посадою..." class="w-full bg-surface-900 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                </div>
+                @if($search !== '' || !empty($filterDepartment))
+                    <button wire:click="resetFilters" class="px-4 py-2 bg-white/5 hover:bg-white/10 text-xs text-gray-400 hover:text-white rounded-xl border border-white/10 transition-colors shrink-0 flex items-center gap-1.5" title="Скинути всі фільтри">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        <span class="hidden sm:inline">Скинути</span>
+                    </button>
+                @endif
+            </div>
+            <div class="grid grid-cols-1 gap-3 w-full md:w-64">
+                <x-form.multi-select label="Відділи" :selectedCount="count($filterDepartment)">
+                    @foreach($departmentsList as $dep)
+                        <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
+                            <input type="checkbox" value="{{ $dep->id }}" wire:model.live="filterDepartment" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                            <span>{{ $dep->name }}</span>
+                        </label>
+                    @endforeach
+                </x-form.multi-select>
+            </div>
+        </div>
+    </x-ui.card>
 
     @if($isOpen)
-    <x-ui.modal title="{{ $employeeId ? 'Редагувати' : 'Додати' }} співробітника" maxWidth="lg">
+    <div wire:key="employee-modal-wrapper">
+    <x-ui.modal wire:key="employee-modal" title="{{ $employeeId ? 'Редагувати' : 'Додати' }} співробітника" maxWidth="lg">
             <div>
                     <x-form.input label="Прізвище" model="last_name" type="text" />
                 </div>
@@ -28,6 +57,7 @@
                     </div>
                 </div>
         </x-ui.modal>
+    </div>
     @endif
 
     {{-- Desktop Table --}}
@@ -57,6 +87,10 @@
                 @endforelse
             
         </x-table.wrapper>
+        
+        <div class="hidden md:block">
+            {{ $employees->links() }}
+        </div>
 
     {{-- Mobile Cards --}}
     <x-table.mobile-list>
@@ -69,5 +103,10 @@
         <x-table.mobile-empty />
         @endforelse
     </x-table.mobile-list>
+    
+    <div class="md:hidden">
+        {{ $employees->links() }}
+    </div>
+
 </x-ui.page-wrapper>
 </div>
