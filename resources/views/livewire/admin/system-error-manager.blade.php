@@ -4,7 +4,7 @@
     <x-ui.toolbar :count="count($errorsList)" label="Всього помилок" />
 
     @if($isOpen)
-    <x-ui.modal title="{{ $errorId ? 'Редагувати' : 'Додати' }} системну помилку" maxWidth="lg">
+    <x-ui.modal title="{{ $errorId ? 'Редагувати' : 'Додати' }} помилку сайту" maxWidth="lg">
         <div class="space-y-4">
             <div>
                 <x-form.select label="Сторінка / Місце" model="page_type">
@@ -20,7 +20,7 @@
                     <option value="Договори (Contracts)">Договори (Contracts)</option>
                     <option value="Постачальники (Suppliers)">Постачальники (Suppliers)</option>
                     <option value="Адміністратори (Users)">Адміністратори (Users)</option>
-                    <option value="Системні помилки (System Errors)">Системні помилки (System Errors)</option>
+                    <option value="помилку сайту (System Errors)">помилку сайту (System Errors)</option>
                     <option value="Довідники (Dictionaries)">Довідники (Dictionaries)</option>
                     <option value="Інше (Other)">Інше (Other)</option>
                 </x-form.select>
