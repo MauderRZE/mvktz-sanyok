@@ -1,7 +1,7 @@
 @props(['name', 'title', 'subtitle' => null, 'size' => 'md'])
 
 @php
-$letter = strtoupper(substr($name ?? $title ?? 'U', 0, 1));
+$letter = mb_strtoupper(mb_substr($name ?? $title ?? 'U', 0, 1, 'UTF-8'), 'UTF-8');
 $sizeClass = [
     'sm' => 'w-8 h-8 text-xs',
     'md' => 'w-8 h-8 text-xs',
