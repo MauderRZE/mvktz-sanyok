@@ -28,5 +28,23 @@
 </div>
 
 @livewireScripts
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkModals = () => {
+            if (document.querySelector('[aria-modal="true"]')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        };
+        
+        // Перевіряємо при завантаженні
+        checkModals();
+        
+        // Слідкуємо за змінами в DOM (Livewire оновлення)
+        const observer = new MutationObserver(checkModals);
+        observer.observe(document.body, { childList: true, subtree: true });
+    });
+</script>
 </body>
 </html>
