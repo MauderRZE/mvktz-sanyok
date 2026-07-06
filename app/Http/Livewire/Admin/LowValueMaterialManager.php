@@ -11,14 +11,14 @@ use App\Models\Contract;
 #[Layout('layouts.admin')]
 class LowValueMaterialManager extends Component
 {
-    public $materials, $materialId, $base_material_id, $equipment_id, $contract_id, $serial_number, $purchase_date, $installation_date, $quantity = 1, $notes;
+    public $materials, $materialId, $material_account_name, $equipment_id, $contract_id, $serial_number, $purchase_date, $installation_date, $quantity = 1, $notes;
     public $brand_model, $nomenclature_number, $status = 'На складі';
     public $equipmentList = [], $contractsList = [];
     public $isOpen = 0;
 
     public function render()
     {
-        $this->materials = LowValueMaterial::with(['material', 'equipment', 'contract'])->get();
+        $this->materials = LowValueMaterial::with(['equipment', 'contract'])->get();
         $this->equipmentList = Equipment::all();
         $this->contractsList = Contract::all();
         return view('livewire.admin.low-value-material-manager');
@@ -43,7 +43,7 @@ class LowValueMaterialManager extends Component
 
     private function resetInputFields(){
         $this->materialId = null;
-        $this->base_material_id = null;
+        $this->material_account_name = '';
         $this->brand_model = '';
         $this->equipment_id = null;
         $this->contract_id = null;
@@ -59,7 +59,7 @@ class LowValueMaterialManager extends Component
     public function store()
     {
         $this->validate([
-            'base_material_id' => 'required|exists:base_materials,id',
+            'material_account_name' => 'required|string|max:300',
             'brand_model' => 'nullable|string|max:150',
             'equipment_id' => 'nullable|exists:equipment,id',
             'contract_id' => 'nullable|exists:contracts,id',
@@ -73,7 +73,7 @@ class LowValueMaterialManager extends Component
         ]);
 
         LowValueMaterial::updateOrCreate(['id' => $this->materialId], [
-            'material_id' => $this->base_material_id,
+            'material_account_name' => $this->material_account_name,
             'brand_model' => $this->brand_model ?: null,
             'equipment_id' => $this->equipment_id ?: null,
             'contract_id' => $this->contract_id ?: null,
@@ -97,7 +97,7 @@ class LowValueMaterialManager extends Component
     {
         $material = LowValueMaterial::findOrFail($id);
         $this->materialId = $id;
-        $this->base_material_id = $material->material_id;
+        $this->material_account_name = $material->material_account_name;
         $this->brand_model = $material->brand_model;
         $this->equipment_id = $material->equipment_id;
         $this->contract_id = $material->contract_id;

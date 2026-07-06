@@ -5,6 +5,7 @@
 
     @if($isOpen)
     <x-ui.modal title="{{ $licenseId ? 'Редагувати' : 'Додати' }} ліцензію ПЗ" maxWidth="md">
+        <div class="space-y-4">
             <div>
                     <x-form.input label="Назва програмного забезпечення" model="software_name" type="text" placeholder="напр. Windows 11 Pro, Office 2021" />
                 </div>
@@ -24,7 +25,7 @@
                         </x-form.select>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                     <div>
                         <x-form.select label="Статус ліцензії" model="license_status">
                             <option value="Активна">Активна</option>
@@ -36,6 +37,7 @@
                         <x-form.input label="Дата закінчення" model="expiration_date" type="date" />
                     </div>
                 </div>
+        </div>
         </x-ui.modal>
     @endif
 

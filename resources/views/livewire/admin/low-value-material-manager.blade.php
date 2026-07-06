@@ -5,21 +5,17 @@
 
     @if($isOpen)
     <x-ui.modal title="{{ $materialId ? 'Редагувати' : 'Додати' }} МШП" maxWidth="lg">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                     <div>
-                        <x-form.select label="Назва матеріалу (базовий)" model="base_material_id">
-                            <option value="">Оберіть матеріал...</option>
-                            @foreach($baseMaterialsList as $bm)
-                                <option value="{{ $bm->id }}">{{ $bm->material_name }}</option>
-                            @endforeach
-                        </x-form.select>
+                        <x-form.input label="Облікова назва матеріалу" model="material_account_name" type="text" />
                     </div>
                     <div>
                         <x-form.input label="Кількість" model="quantity" type="number" />
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
                     <div>
                         <x-form.input label="Бренд / Модель" model="brand_model" type="text" />
                     </div>
@@ -35,7 +31,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                     <div>
                         <x-form.select label="Прив'язане обладнання (якщо встановлено)" model="equipment_id">
                             <option value="">Не встановлено (на складі)...</option>
@@ -54,7 +50,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
                     <div>
                         <x-form.input label="Серійний номер" model="serial_number" type="text" />
                     </div>
@@ -69,6 +65,7 @@
                 <div>
                     <x-form.textarea label="Примітки" model="notes" rows="2" />
                 </div>
+        </div>
         </x-ui.modal>
     @endif
 
@@ -87,7 +84,7 @@
                 @forelse($materials as $m)
                 <x-table.tr>
                     <x-table.td align="left" primary>
-                        {{ $m->material->material_name ?? '-' }}
+                        {{ $m->material_account_name ?? '-' }}
                         @if($m->brand_model)
                             <x-table.cell-accent class="block text-xs font-normal mt-0.5">{{ $m->brand_model }}</x-table.cell-accent>
                         @endif
@@ -143,7 +140,7 @@
                 <div>
                     <span class="text-xs text-gray-500">Кількість: {{ $m->quantity }} шт. ({{ $m->status ?? 'На складі' }})</span>
                     <x-ui.text-block 
-                        title="{{ $m->material->material_name ?? '-' }}" 
+                        title="{{ $m->material_account_name ?? '-' }}" 
                         subtitle="{{ $m->brand_model ? '(' . $m->brand_model . ')' : '' }}" 
                         subtitleClass="text-brand-400 font-normal mt-1"
                     />

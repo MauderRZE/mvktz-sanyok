@@ -5,7 +5,8 @@
 
     @if($isOpen)
     <x-ui.modal title="{{ $componentId ? 'Редагувати' : 'Додати' }} комплектуюче" maxWidth="lg">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                     <div>
                         <x-form.select label="Обладнання (ПК / Пристрій)" model="equipment_id">
                             <option value="">Оберіть обладнання...</option>
@@ -24,7 +25,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                     <div>
                         <x-form.input label="Виробник / Модель" model="brand_model" type="text" placeholder="напр. Kingston DDR4 16GB" />
                     </div>
@@ -33,7 +34,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                     <div>
                         <x-form.input label="Модель картриджа (якщо є)" model="cartridge_model" type="text" />
                     </div>
@@ -51,7 +52,7 @@
                     <x-form.checkbox label="Мережевий пристрій / інтерфейс" model="has_network" />
 
                     @if($has_network)
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 fade-in">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end mt-4 fade-in">
                         <div>
                             <x-form.input label="IP-Адреса" model="ip_address" type="text" placeholder="192.168.1.50" />
                         </div>
@@ -61,6 +62,7 @@
                     </div>
                     @endif
                 </div>
+        </div>
         </x-ui.modal>
     @endif
 
