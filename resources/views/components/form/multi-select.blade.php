@@ -26,7 +26,7 @@
         <svg class="w-3.5 h-3.5 text-gray-500 transition-transform duration-200 shrink-0" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
     </button>
     
-    <div x-show="open" @click.away="open = false; search = ''; filterItems();" x-transition class="absolute z-30 mt-1 w-full bg-surface-950 border border-white/10 rounded-xl p-2 shadow-2xl max-h-60 flex flex-col" style="display: none;">
+    <div x-show="open" @click.away="open = false; search = ''; filterItems();" x-transition class="absolute z-30 mt-1 w-full bg-surface-900 border border-white/10 rounded-xl p-2 shadow-2xl max-h-60 flex flex-col" style="display: none;">
         <!-- Search field inside multi-select -->
         <div class="p-1 shrink-0">
             <input x-model="search" @input="filterItems" type="text" placeholder="Пошук..." class="w-full bg-surface-900 border border-white/10 rounded-lg px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">

@@ -7,7 +7,7 @@
     options: @js($options),
     get selectedLabel() {
         let opt = this.options.find(o => o.value == this.value);
-        return opt ? opt.label : '{{ $placeholder }}';
+        return opt ? opt.label : @js($placeholder);
     },
     get filteredOptions() {
         if (!this.search) return this.options;
@@ -28,7 +28,7 @@
     </button>
 
     <!-- Dropdown Content -->
-    <div x-show="open" @click.away="open = false; search = '';" x-transition class="absolute z-50 mt-1 w-full bg-surface-950 border border-white/10 rounded-xl p-2 shadow-2xl space-y-2 max-h-60 flex flex-col" style="display: none;">
+    <div x-show="open" @click.away="open = false; search = '';" x-transition class="absolute z-50 mt-1 w-full bg-surface-900 border border-white/10 rounded-xl p-2 shadow-2xl space-y-2 max-h-60 flex flex-col" style="display: none;">
         <!-- Search Input -->
         <div class="relative shrink-0">
             <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
