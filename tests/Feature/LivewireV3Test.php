@@ -295,7 +295,7 @@ class LivewireV3Test extends TestCase
         Livewire::test(EquipmentForm::class)
             ->set('isOpen', true)
             ->call('store')
-            ->assertHasErrors(['inventory_number']);
+            ->assertHasErrors(['inv_number']);
     }
 
     public function test_equipment_detail_closes_on_close_call(): void

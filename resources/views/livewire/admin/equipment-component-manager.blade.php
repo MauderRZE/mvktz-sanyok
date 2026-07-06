@@ -11,7 +11,7 @@
                         <x-form.select label="Обладнання (ПК / Пристрій)" model="equipment_id">
                             <option value="">Оберіть обладнання...</option>
                             @foreach($equipmentList as $eq)
-                                <option value="{{ $eq->id }}">{{ $eq->inventory_number }} - {{ $eq->accounting_name }}</option>
+                                <option value="{{ $eq->id }}">{{ $eq->inv_number }} - {{ $eq->account_name }}</option>
                             @endforeach
                         </x-form.select>
                     </div>
@@ -78,8 +78,8 @@
                 @forelse($components as $c)
                 <x-table.tr>
                     <x-table.td align="left" primary>
-                        {{ $c->equipment->inventory_number ?? '-' }}
-                        <x-table.cell-subtext>{{ $c->equipment->accounting_name ?? '' }}</x-table.cell-subtext>
+                        {{ $c->equipment->inv_number ?? '-' }}
+                        <x-table.cell-subtext>{{ $c->equipment->account_name ?? '' }}</x-table.cell-subtext>
                     </x-table.td>
                     <x-table.td align="left">{{ $c->componentType->component_name ?? '-' }}</x-table.td>
                     <x-table.td align="left">
@@ -116,7 +116,7 @@
                     <span class="text-xs text-brand-400 font-semibold uppercase tracking-wider block mb-1">{{ $c->componentType->component_name ?? '-' }}</span>
                     <x-ui.text-block 
                         title="{{ $c->notes ?? '-' }}" 
-                        subtitle="Пристрій: {{ $c->equipment->inventory_number ?? '-' }}" 
+                        subtitle="Пристрій: {{ $c->equipment->inv_number ?? '-' }}" 
                     />
                 </div>
                 <x-ui.action-buttons id="{{ $c->id }}" />

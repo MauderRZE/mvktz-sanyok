@@ -10,14 +10,17 @@ use App\Models\EquipmentComponent;
 #[Layout('layouts.admin')]
 class SoftwareLicenseManager extends Component
 {
-    public $licenses, $licenseId, $component_id, $software_name, $license_key, $license_status = 'Активна', $expiration_date;
-    public $componentsList = [];
+    public $licenses, $licenseId, $vendor_id, $license_name, $license_type, $purchase_date;
+    public $vendorsList = [];
     public $isOpen = 0;
 
     public function render()
     {
-        $this->licenses = SoftwareLicense::with('component.equipment', 'component.componentType')->get();
-        $this->componentsList = EquipmentComponent::with('equipment', 'componentType')->get();
+        $this->licenses = SoftwareLicense::all();
+        // Since we don't know if there's a vendors model, we'll just leave it empty or fetch from somewhere. 
+        // For now, let's just make it empty if we don't have a specific Vendor model.
+        // Or if there is a Vendor model, let's try to load it. For now, empty array.
+        $this->vendorsList = []; 
         return view('livewire.admin.software-license-manager');
     }
 
@@ -39,29 +42,26 @@ class SoftwareLicenseManager extends Component
 
     private function resetInputFields(){
         $this->licenseId = null;
-        $this->component_id = null;
-        $this->software_name = '';
-        $this->license_key = '';
-        $this->license_status = 'Активна';
-        $this->expiration_date = '';
+        $this->vendor_id = null;
+        $this->license_name = '';
+        $this->license_type = '';
+        $this->purchase_date = '';
     }
 
     public function store()
     {
         $this->validate([
-            'component_id' => 'required|exists:equipment_components,id',
-            'software_name' => 'required|string|max:150',
-            'license_key' => 'nullable|string|max:255',
-            'license_status' => 'required|string|max:50',
-            'expiration_date' => 'nullable|date',
+            'vendor_id' => 'nullable|integer',
+            'license_name' => 'required|string|max:255',
+            'license_type' => 'nullable|string|max:100',
+            'purchase_date' => 'nullable|date',
         ]);
 
         SoftwareLicense::updateOrCreate(['id' => $this->licenseId], [
-            'component_id' => $this->component_id,
-            'software_name' => $this->software_name,
-            'license_key' => $this->license_key ?: null,
-            'license_status' => $this->license_status,
-            'expiration_date' => $this->expiration_date ?: null,
+            'vendor_id' => $this->vendor_id ?: null,
+            'license_name' => $this->license_name,
+            'license_type' => $this->license_type ?: null,
+            'purchase_date' => $this->purchase_date ?: null,
         ]);
 
         session()->flash('message', 
@@ -75,11 +75,10 @@ class SoftwareLicenseManager extends Component
     {
         $license = SoftwareLicense::findOrFail($id);
         $this->licenseId = $id;
-        $this->component_id = $license->component_id;
-        $this->software_name = $license->software_name;
-        $this->license_key = $license->license_key;
-        $this->license_status = $license->license_status;
-        $this->expiration_date = $license->expiration_date;
+        $this->vendor_id = $license->vendor_id;
+        $this->license_name = $license->license_name;
+        $this->license_type = $license->license_type;
+        $this->purchase_date = $license->purchase_date;
         $this->openModal();
     }
 

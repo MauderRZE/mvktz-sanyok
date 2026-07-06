@@ -12,7 +12,7 @@
         <div class="mt-4 p-4 border border-white/10 rounded-lg bg-white/5 space-y-4">
             <div class="text-sm text-gray-400">Прив'яжіть до активу АБО до матеріалу:</div>
             <x-form.select label="Прив'язка до Обладнання (Assets)" model="asset_id" :options="['' => 'Не вибрано'] + $assets->mapWithKeys(function($item) {
-                return [$item->id => $item->componentType->component_name . ' (Inv: ' . ($item->inventory_number ?? 'Немає') . ')'];
+                return [$item->id => $item->componentType->component_name . ' (Inv: ' . ($item->inv_number ?? 'Немає') . ')'];
             })->toArray()" />
             
             <x-form.select label="Прив'язка до Матеріалу (МШП)" model="nomenclature_id" :options="['' => 'Не вибрано'] + $materials->mapWithKeys(function($item) {

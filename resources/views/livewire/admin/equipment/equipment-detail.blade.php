@@ -40,9 +40,7 @@
         <x-slot name="nav">
             <x-ui.tab-nav name="components" label="Комплектуючі" icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>' />
             <x-ui.tab-nav name="movements" label="Рух" icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>' />
-            <x-ui.tab-nav name="licenses" label="Ліцензії ПЗ" icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>' />
             <x-ui.tab-nav name="lowValueMaterials" label="Матеріали / МШП" icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>' />
-            <x-ui.tab-nav name="complaints" label="Скарги" icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>' />
             <x-ui.tab-nav name="maintenance" label="ТО та ремонти" icon='<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>' />
         </x-slot>
 
@@ -76,52 +74,25 @@
         {{-- Рух --}}
         <x-ui.tab-content name="movements">
             <x-table.mobile-list>
-                @forelse($equipment->movements->sortByDesc('move_date') as $mov)
+                @forelse($equipment->movements->sortByDesc('action_date') as $mov)
                     <x-table.mobile-card>
                         <div>
                             <x-ui.text-block
-                                title="Каб. {{ $mov->location->room_number ?? 'Невідомо' }}"
+                                title="{{ $mov->toHolder->organization->org_name ?? 'Організація не вказана' }}"
                                 subtitle="Відповідальний: {{ $mov->employee?->last_name ?? '—' }} {{ $mov->employee?->first_name ?? '' }}"
                             />
-                            @if($mov->employee?->departmentRelationship)
+                            @if($mov->employee?->department)
                                 <p class="text-xs text-gray-500 mt-1">
-                                    🏬 {{ $mov->employee->departmentRelationship->name }}
+                                    🏬 {{ $mov->employee->department->name }}
                                 </p>
                             @endif
                         </div>
                         <div>
-                            <p class="text-sm text-gray-400">{{ $mov->move_date }}</p>
+                            <p class="text-sm text-gray-400">{{ $mov->action_date }}</p>
                         </div>
                     </x-table.mobile-card>
                 @empty
                     <x-table.mobile-empty>Історія переміщень порожня</x-table.mobile-empty>
-                @endforelse
-            </x-table.mobile-list>
-        </x-ui.tab-content>
-
-        {{-- Ліцензії --}}
-        <x-ui.tab-content name="licenses">
-            <x-table.mobile-list>
-                @forelse($equipment->softwareLicenses as $lic)
-                    <x-table.mobile-card>
-                        <div>
-                            <x-ui.text-block
-                                title="{{ $lic->software_name }}"
-                                subtitle="Ключ: {{ $lic->license_key ?? '—' }}"
-                                subtitleClass="text-xs text-gray-500 font-mono"
-                            />
-                            @if($lic->expiration_date)
-                                <p class="text-xs text-gray-500 mt-1">Діє до: {{ $lic->expiration_date }}</p>
-                            @else
-                                <p class="text-xs text-gray-600 mt-1">Безстрокова</p>
-                            @endif
-                        </div>
-                        <div>
-                            <x-ui.badge status="{{ $lic->license_status }}" :dot="false" />
-                        </div>
-                    </x-table.mobile-card>
-                @empty
-                    <x-table.mobile-empty>Немає встановленого ліцензійного ПЗ</x-table.mobile-empty>
                 @endforelse
             </x-table.mobile-list>
         </x-ui.tab-content>
@@ -133,42 +104,23 @@
                     <x-table.mobile-card>
                         <div>
                             <x-ui.text-block
-                                title="{{ $m->material->material_name ?? 'Невідомо' }}"
-                                subtitle="{{ $m->brand_model }}"
+                                title="{{ $m->material_account_name }}"
+                                subtitle="Договір: {{ $m->contract?->contract_number ?? '—' }}"
                                 subtitleClass="text-xs text-brand-400"
                             />
                             <p class="text-xs text-gray-500 mt-1">
-                                S/N: {{ $m->serial_number ?? '—' }}
-                                @if($m->nomenclature_number) <span class="text-gray-600">|</span> Ном: {{ $m->nomenclature_number }} @endif
+                                @if($m->nomenklature_number) Ном: {{ $m->nomenklature_number }} @endif
                             </p>
-                            @if($m->notes)
-                                <p class="text-xs text-gray-400 italic mt-1">{{ $m->notes }}</p>
-                            @endif
                         </div>
                         <div class="text-right">
-                            <p class="text-sm font-semibold text-gray-200">{{ $m->quantity }} шт.</p>
-                            <x-table.cell-subtext>{{ $m->status }}</x-table.cell-subtext>
+                            <p class="text-sm font-semibold text-gray-200">{{ $m->count }} шт.</p>
+                            @if($m->price)
+                                <x-table.cell-subtext>{{ $m->price }} грн</x-table.cell-subtext>
+                            @endif
                         </div>
                     </x-table.mobile-card>
                 @empty
                     <x-table.mobile-empty>Немає закріплених малоцінних матеріалів (МШП)</x-table.mobile-empty>
-                @endforelse
-            </x-table.mobile-list>
-        </x-ui.tab-content>
-
-        {{-- Скарги --}}
-        <x-ui.tab-content name="complaints">
-            <x-table.mobile-list>
-                @forelse($equipment->complaints as $comp)
-                    <x-table.mobile-card layout="none">
-                        <x-table.mobile-card-header align="start" class="mb-2">
-                            <x-ui.text-block title="{{ $comp->description }}" />
-                            <x-ui.badge status="{{ $comp->resolution_status }}" :dot="false" />
-                        </x-table.mobile-card-header>
-                        <x-table.cell-subtext>Дата: {{ $comp->created_at ?? 'Невідомо' }}</x-table.cell-subtext>
-                    </x-table.mobile-card>
-                @empty
-                    <x-table.mobile-empty>Скарг не знайдено</x-table.mobile-empty>
                 @endforelse
             </x-table.mobile-list>
         </x-ui.tab-content>
@@ -180,14 +132,16 @@
                     <x-table.mobile-card>
                         <div>
                             <x-ui.text-block
-                                title="{{ $log->performed_by }}"
-                                subtitle="{{ $log->cost ? number_format($log->cost, 2) . ' грн' : 'Безкоштовно' }}"
+                                title="{{ $log->issue_description }}"
+                                subtitle="{{ $log->status }}"
                                 subtitleClass="text-sm text-brand-400"
                             />
                         </div>
                         <div class="text-right">
-                            <p class="text-sm text-gray-400 mb-1">{{ $log->maintenance_date }}</p>
-                            <x-ui.badge status="{{ $log->status }}" :dot="false" />
+                            <p class="text-sm text-gray-400 mb-1">Відпр: {{ $log->sent_date }}</p>
+                            @if($log->return_date)
+                                <p class="text-sm text-gray-500 mb-1">Поверн: {{ $log->return_date }}</p>
+                            @endif
                         </div>
                     </x-table.mobile-card>
                 @empty

@@ -99,10 +99,10 @@ class EquipmentManager extends Component
     public function render()
     {
         $sortMap = [
-            'id'               => 'id',
-            'inventory_number' => 'inv_number',
-            'accounting_name'  => 'account_name',
-            'status'           => 'status',
+            'id'           => 'id',
+            'inv_number'   => 'inv_number',
+            'account_name' => 'account_name',
+            'status'       => 'status',
         ];
         $actualSort = $sortMap[$this->sortField] ?? 'id';
 

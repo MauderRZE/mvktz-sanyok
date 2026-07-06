@@ -3,10 +3,10 @@
 <x-ui.modal title="{{ $equipmentId ? 'Редагувати' : 'Додати' }} обладнання" maxWidth="lg">
     <div class="space-y-4" x-data x-init="document.body.style.overflow='hidden'" x-destroy="document.body.style.overflow=''">
         <div>
-            <x-form.input label="Інвентарний номер" model="inventory_number" type="text" />
+            <x-form.input label="Інвентарний номер" model="inv_number" type="text" />
         </div>
         <div>
-            <x-form.input label="Назва (бухгалтерська)" model="accounting_name" type="text" />
+            <x-form.input label="Назва (бухгалтерська)" model="account_name" type="text" />
         </div>
         <div>
             <x-form.input label="Ціна (грн)" model="buy_price" type="number" step="0.01" />

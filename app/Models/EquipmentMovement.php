@@ -20,30 +20,7 @@ class EquipmentMovement extends Model
         'to_holder_id',
         'employee_id',
         'action_date',
-        'equipment_id',
-        'location_id',
-        'move_date',
     ];
-
-    public function getEquipmentIdAttribute()
-    {
-        return $this->equip_id;
-    }
-
-    public function setEquipmentIdAttribute($value)
-    {
-        $this->equip_id = $value;
-    }
-
-    public function getLocationIdAttribute()
-    {
-        return $this->asset ? $this->asset->current_loc_id : null;
-    }
-
-    public function setLocationIdAttribute($value)
-    {
-        // Handled manually in store()
-    }
 
     public function equipment()
     {
@@ -65,20 +42,8 @@ class EquipmentMovement extends Model
         return $this->belongsTo(LocationHolder::class, 'to_holder_id');
     }
 
-    public function location()
-    {
-        // Table movements does not have location_id anymore. 
-        // We use a dummy self-referential relationship to avoid SQL exceptions during eager loading.
-        return $this->belongsTo(Location::class, 'id', 'id');
-    }
-
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id');
-    }
-
-    public function getMoveDateAttribute()
-    {
-        return $this->action_date;
     }
 }

@@ -11,34 +11,16 @@
                         <x-form.input label="Облікова назва матеріалу" model="material_account_name" type="text" />
                     </div>
                     <div>
-                        <x-form.input label="Кількість" model="quantity" type="number" />
+                        <x-form.input label="Кількість" model="count" type="number" />
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
                     <div>
-                        <x-form.input label="Бренд / Модель" model="brand_model" type="text" />
+                        <x-form.input label="Ціна (грн)" model="price" type="number" step="0.01" />
                     </div>
                     <div>
-                        <x-form.input label="Номенклатурний номер" model="nomenclature_number" type="text" />
-                    </div>
-                    <div>
-                        <x-form.select label="Статус" model="status">
-                            <option value="На складі">На складі</option>
-                            <option value="Видано">Видано</option>
-                            <option value="Списано">Списано</option>
-                        </x-form.select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                    <div>
-                        <x-form.select label="Прив'язане обладнання (якщо встановлено)" model="equipment_id">
-                            <option value="">Не встановлено (на складі)...</option>
-                            @foreach($equipmentList as $eq)
-                                <option value="{{ $eq->id }}">{{ $eq->inventory_number }} - {{ $eq->accounting_name }}</option>
-                            @endforeach
-                        </x-form.select>
+                        <x-form.input label="Номенклатурний номер" model="nomenklature_number" type="text" />
                     </div>
                     <div>
                         <x-form.select label="Договір закупівлі" model="contract_id">
@@ -49,22 +31,6 @@
                         </x-form.select>
                     </div>
                 </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
-                    <div>
-                        <x-form.input label="Серійний номер" model="serial_number" type="text" />
-                    </div>
-                    <div>
-                        <x-form.input label="Дата закупівлі" model="purchase_date" type="date" />
-                    </div>
-                    <div>
-                        <x-form.input label="Дата встановлення" model="installation_date" type="date" />
-                    </div>
-                </div>
-
-                <div>
-                    <x-form.textarea label="Примітки" model="notes" rows="2" />
-                </div>
         </div>
         </x-ui.modal>
     @endif
@@ -73,11 +39,10 @@
     <x-table.wrapper>
             <x-slot name="headers">
                     <x-table.th align="left">Матеріал (МШП)</x-table.th>
-                    <x-table.th align="left">Серійний</x-table.th>
+                    <x-table.th align="left">Номенклатурний №</x-table.th>
+                    <x-table.th align="left">Ціна</x-table.th>
                     <x-table.th align="left">К-сть</x-table.th>
-                    <x-table.th align="left">Встановлено на</x-table.th>
                     <x-table.th align="left">Договір</x-table.th>
-                    <x-table.th align="left">Дати</x-table.th>
                     <x-table.th align="right" width="24">Дії</x-table.th>
                 </x-slot>
             
@@ -85,30 +50,19 @@
                 <x-table.tr>
                     <x-table.td align="left" primary>
                         {{ $m->material_account_name ?? '-' }}
-                        @if($m->brand_model)
-                            <x-table.cell-accent class="block text-xs font-normal mt-0.5">{{ $m->brand_model }}</x-table.cell-accent>
-                        @endif
-                        @if($m->notes)
-                            <x-table.cell-subtext class="italic">{{ $m->notes }}</x-table.cell-subtext>
-                        @endif
                     </x-table.td>
                     <x-table.td align="left" class="text-gray-400 font-mono text-xs">
-                        <div>S/N: {{ $m->serial_number ?? '-' }}</div>
-                        @if($m->nomenclature_number)
-                            <x-table.cell-subtext>Ном: {{ $m->nomenclature_number }}</x-table.cell-subtext>
+                        @if($m->nomenklature_number)
+                            <x-table.cell-subtext>Ном: {{ $m->nomenklature_number }}</x-table.cell-subtext>
+                        @else
+                            -
                         @endif
+                    </x-table.td>
+                    <x-table.td align="left" class="text-emerald-400 font-medium">
+                        {{ $m->price ? number_format($m->price, 2) . ' грн' : '-' }}
                     </x-table.td>
                     <x-table.td align="left" class="text-gray-300 font-semibold">
-                        <div>{{ $m->quantity }} шт.</div>
-                        <x-table.cell-subtext class="font-normal">{{ $m->status ?? 'На складі' }}</x-table.cell-subtext>
-                    </x-table.td>
-                    <x-table.td align="left">
-                        @if($m->equipment)
-                            <x-table.cell-accent>{{ $m->equipment->inventory_number }}</x-table.cell-accent>
-                            <x-table.cell-subtext>{{ $m->equipment->accounting_name }}</x-table.cell-subtext>
-                        @else
-                            <span class="text-gray-500 italic">На складі</span>
-                        @endif
+                        <div>{{ $m->count }} шт.</div>
                     </x-table.td>
                     <x-table.td align="left" class="text-gray-400 text-xs">
                         @if($m->contract)
@@ -118,16 +72,12 @@
                             -
                         @endif
                     </x-table.td>
-                    <x-table.td align="left" class="text-xs text-gray-400 whitespace-nowrap">
-                        @if($m->purchase_date) <div>Придбано: {{ $m->purchase_date }}</div> @endif
-                        @if($m->installation_date) <div>Встановлено: {{ $m->installation_date }}</div> @endif
-                    </x-table.td>
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $m->id }}" />
                     </x-table.td>
                 </x-table.tr>
                 @empty
-                <x-table.empty colspan="7" />
+                <x-table.empty colspan="6" />
                 @endforelse
             
         </x-table.wrapper>
@@ -138,32 +88,24 @@
         <x-table.mobile-card layout="y-2">
             <x-table.mobile-card-header align="start">
                 <div>
-                    <span class="text-xs text-gray-500">Кількість: {{ $m->quantity }} шт. ({{ $m->status ?? 'На складі' }})</span>
+                    <span class="text-xs text-gray-500">Кількість: {{ $m->count }} шт.</span>
                     <x-ui.text-block 
                         title="{{ $m->material_account_name ?? '-' }}" 
-                        subtitle="{{ $m->brand_model ? '(' . $m->brand_model . ')' : '' }}" 
                         subtitleClass="text-brand-400 font-normal mt-1"
                     />
-                    @if($m->nomenclature_number || $m->serial_number)
-                        <p class="text-[11px] text-gray-400 font-mono">
-                            @if($m->serial_number) S/N: {{ $m->serial_number }} @endif
-                            @if($m->nomenclature_number) Ном: {{ $m->nomenclature_number }} @endif
+                    @if($m->nomenklature_number)
+                        <p class="text-[11px] text-gray-400 font-mono mt-1">
+                            Ном: {{ $m->nomenklature_number }}
                         </p>
                     @endif
-                    <p class="text-xs text-gray-400">
-                        Розташування: 
-                        @if($m->equipment)
-                            Встановлено на {{ $m->equipment->inventory_number }}
-                        @else
-                            На складі
-                        @endif
-                    </p>
+                    @if($m->price)
+                        <p class="text-sm text-emerald-400 mt-1 font-semibold">
+                            {{ number_format($m->price, 2) }} грн
+                        </p>
+                    @endif
                 </div>
                 <x-ui.action-buttons id="{{ $m->id }}" />
             </x-table.mobile-card-header>
-            @if($m->notes)
-                <x-table.mobile-card-note class="italic">{{ $m->notes }}</x-table.mobile-card-note>
-            @endif
         </x-table.mobile-card>
         @empty
         <x-table.mobile-empty />

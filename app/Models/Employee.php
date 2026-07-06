@@ -20,7 +20,6 @@ class Employee extends Model
         'position',
         'status',
         'department_id',
-        'department',
     ];
 
     public function getFullNameAttribute()
@@ -28,22 +27,7 @@ class Employee extends Model
         return "{$this->last_name} {$this->first_name} {$this->middle_name}";
     }
 
-    public function getDepartmentAttribute()
-    {
-        return $this->departmentRelationship ? $this->departmentRelationship->name : null;
-    }
-
-    public function setDepartmentAttribute($value)
-    {
-        if (empty($value)) {
-            $this->department_id = null;
-        } else {
-            $dept = Department::firstOrCreate(['name' => $value]);
-            $this->department_id = $dept->id;
-        }
-    }
-
-    public function departmentRelationship()
+    public function department()
     {
         return $this->belongsTo(Department::class, 'department_id');
     }

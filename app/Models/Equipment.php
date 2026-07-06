@@ -22,58 +22,7 @@ class Equipment extends Model
         'status',
         'retirement_act_id',
         'notes',
-        'inventory_number',
-        'accounting_name',
-        'equipment_type_id',
-        'commissioning_date',
     ];
-
-    public function getInventoryNumberAttribute()
-    {
-        return $this->inv_number;
-    }
-
-    public function setInventoryNumberAttribute($value)
-    {
-        $this->inv_number = $value;
-    }
-
-    public function getAccountingNameAttribute()
-    {
-        return $this->account_name;
-    }
-
-    public function setAccountingNameAttribute($value)
-    {
-        $this->account_name = $value;
-    }
-
-    public function getCommissioningDateAttribute()
-    {
-        return $this->notes;
-    }
-
-    public function setCommissioningDateAttribute($value)
-    {
-        $this->notes = $value;
-    }
-
-    public function getEquipmentTypeIdAttribute()
-    {
-        return $this->id;
-    }
-
-    public function setEquipmentTypeIdAttribute($value)
-    {
-        // No equipment_type_id column exists. We can ignore or store elsewhere.
-    }
-
-    public function type()
-    {
-        // Table equipment no longer has equipment_type_id.
-        // We use a dummy self-referential id relationship to avoid SQL exceptions during eager loading.
-        return $this->belongsTo(EquipmentType::class, 'id', 'id');
-    }
 
     public function components()
     {
@@ -99,18 +48,6 @@ class Equipment extends Model
         );
     }
 
-    public function softwareLicenses()
-    {
-        // Licenses are linked to assets (EquipmentComponent).
-        return $this->hasManyThrough(
-            SoftwareLicense::class,
-            EquipmentComponent::class,
-            'equipment_id',
-            'id',
-            'id',
-            'id'
-        );
-    }
 
     public function lowValueMaterials()
     {

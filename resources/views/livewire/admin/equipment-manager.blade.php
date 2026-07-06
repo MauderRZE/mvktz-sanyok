@@ -114,11 +114,11 @@
             <x-table.th align="left" wire:click="sortBy('id')" class="cursor-pointer hover:bg-white/5">
                 <div class="flex items-center gap-1">ID @if($sortField === 'id') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
             </x-table.th>
-            <x-table.th align="left" wire:click="sortBy('inventory_number')" class="cursor-pointer hover:bg-white/5">
-                <div class="flex items-center gap-1">Інв. № @if($sortField === 'inventory_number') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
+            <x-table.th align="left" wire:click="sortBy('inv_number')" class="cursor-pointer hover:bg-white/5">
+                <div class="flex items-center gap-1">Інв. № @if($sortField === 'inv_number') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
             </x-table.th>
-            <x-table.th align="left" wire:click="sortBy('accounting_name')" class="cursor-pointer hover:bg-white/5">
-                <div class="flex items-center gap-1">Назва @if($sortField === 'accounting_name') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
+            <x-table.th align="left" wire:click="sortBy('account_name')" class="cursor-pointer hover:bg-white/5">
+                <div class="flex items-center gap-1">Назва @if($sortField === 'account_name') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
             </x-table.th>
             <x-table.th align="left">Комплектуючі</x-table.th>
             <x-table.th align="left">Розташування / Відпов.</x-table.th>

@@ -19,7 +19,12 @@
                         <x-form.input label="Посада" model="position" type="text" />
                     </div>
                     <div>
-                        <x-form.input label="Відділ" model="department" type="text" />
+                        <x-form.select label="Відділ" model="department_id">
+                            <option value="">Оберіть відділ...</option>
+                            @foreach($departmentsList as $dep)
+                                <option value="{{ $dep->id }}">{{ $dep->name }}</option>
+                            @endforeach
+                        </x-form.select>
                     </div>
                 </div>
         </x-ui.modal>
@@ -42,7 +47,7 @@
                     <x-ui.avatar-cell :name="$employee->last_name" :title="$employee->last_name . ' ' . $employee->first_name" :subtitle="$employee->middle_name" />
                 </x-table.td>
                     <x-table.td align="left">{{ $employee->position ?? '—' }}</x-table.td>
-                    <x-table.td align="left"><span class="px-2.5 py-1 rounded-lg bg-white/5 text-gray-400 text-xs font-medium">{{ $employee->department ?? '—' }}</span></x-table.td>
+                    <x-table.td align="left"><span class="px-2.5 py-1 rounded-lg bg-white/5 text-gray-400 text-xs font-medium">{{ $employee->department->name ?? '—' }}</span></x-table.td>
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $employee->id }}" />
                     </x-table.td>
@@ -57,7 +62,7 @@
     <x-table.mobile-list>
         @forelse($employees as $employee)
         <x-table.mobile-card layout="gap-3">
-            <x-ui.avatar-cell class="flex-1" size="lg" :name="$employee->last_name" :title="$employee->last_name . ' ' . $employee->first_name . ' ' . $employee->middle_name" :subtitle="($employee->position ?? '—') . ' · ' . ($employee->department ?? '—')" />
+            <x-ui.avatar-cell class="flex-1" size="lg" :name="$employee->last_name" :title="$employee->last_name . ' ' . $employee->first_name . ' ' . $employee->middle_name" :subtitle="($employee->position ?? '—') . ' · ' . ($employee->department->name ?? '—')" />
             <x-ui.action-buttons id="{{ $employee->id }}" />
         </x-table.mobile-card>
         @empty

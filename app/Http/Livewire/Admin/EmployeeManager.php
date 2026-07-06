@@ -11,12 +11,14 @@ class EmployeeManager extends Component
 {
     public $employees;
     public $employeeId;
-    public $last_name, $first_name, $middle_name, $position, $department;
+    public $last_name, $first_name, $middle_name, $position, $department_id;
+    public $departmentsList = [];
     public $isOpen = 0;
 
     public function render()
     {
-        $this->employees = Employee::all();
+        $this->employees = Employee::with('department')->get();
+        $this->departmentsList = \App\Models\Department::all();
         return view('livewire.admin.employee-manager');
     }
 
@@ -42,7 +44,7 @@ class EmployeeManager extends Component
         $this->first_name = '';
         $this->middle_name = '';
         $this->position = '';
-        $this->department = '';
+        $this->department_id = null;
     }
 
     public function store()
@@ -51,7 +53,7 @@ class EmployeeManager extends Component
             'last_name' => 'required',
             'first_name' => 'required',
             'position' => 'nullable',
-            'department' => 'nullable',
+            'department_id' => 'nullable|exists:departments,id',
         ]);
 
         Employee::updateOrCreate(['id' => $this->employeeId], [
@@ -59,7 +61,7 @@ class EmployeeManager extends Component
             'first_name' => $this->first_name,
             'middle_name' => $this->middle_name,
             'position' => $this->position,
-            'department' => $this->department
+            'department_id' => $this->department_id
         ]);
 
         session()->flash('message', 
@@ -77,7 +79,7 @@ class EmployeeManager extends Component
         $this->first_name = $employee->first_name;
         $this->middle_name = $employee->middle_name;
         $this->position = $employee->position;
-        $this->department = $employee->department;
+        $this->department_id = $employee->department_id;
     
         $this->openModal();
     }

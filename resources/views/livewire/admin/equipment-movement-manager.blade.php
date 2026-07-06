@@ -6,10 +6,10 @@
     @if($isOpen)
     <x-ui.modal title="{{ $movementId ? 'Редагувати' : 'Зареєструвати' }} переміщення" maxWidth="md">
             <div>
-                    <x-form.select label="Обладнання (Інв. №)" model="equipment_id">
+                    <x-form.select label="Обладнання (Інв. №)" model="equip_id">
                             <option value="">Оберіть обладнання...</option>
                         @foreach($equipmentList as $eq)
-                            <option value="{{ $eq->id }}">{{ $eq->inventory_number }} - {{ $eq->accounting_name }}</option>
+                            <option value="{{ $eq->id }}">{{ $eq->inv_number }} - {{ $eq->account_name }}</option>
                         @endforeach
                         </x-form.select>
                 </div>
@@ -30,7 +30,7 @@
                         </x-form.select>
                 </div>
                 <div>
-                    <x-form.input label="Дата переміщення" model="move_date" type="date" />
+                    <x-form.input label="Дата переміщення" model="action_date" type="date" />
                 </div>
         </x-ui.modal>
     @endif
@@ -47,12 +47,12 @@
             
                 @forelse($movements as $m)
                 <x-table.tr>
-                    <x-table.td align="left" class="text-gray-400 whitespace-nowrap">{{ $m->move_date }}</x-table.td>
+                    <x-table.td align="left" class="text-gray-400 whitespace-nowrap">{{ $m->action_date }}</x-table.td>
                     <x-table.td align="left" primary>
-                        {{ $m->equipment->inventory_number ?? '-' }}
-                        <x-table.cell-subtext>{{ $m->equipment->accounting_name ?? '' }}</x-table.cell-subtext>
+                        {{ $m->equipment->inv_number ?? '-' }}
+                        <x-table.cell-subtext>{{ $m->equipment->account_name ?? '' }}</x-table.cell-subtext>
                     </x-table.td>
-                    <x-table.td align="left">Кабінет {{ $m->asset->location->room_number ?? ($m->location->room_number ?? '-') }}</x-table.td>
+                    <x-table.td align="left">{{ $m->toHolder->organization->org_name ?? '—' }}</x-table.td>
                     <x-table.td align="left">{{ $m->employee->fullName ?? 'На складі (без відповідального)' }}</x-table.td>
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $m->id }}" />
@@ -70,10 +70,10 @@
         <x-table.mobile-card layout="col">
             <x-table.mobile-card-header align="start">
                 <div>
-                    <x-table.cell-subtext>Дата: {{ $m->move_date }}</x-table.cell-subtext>
+                    <x-table.cell-subtext>Дата: {{ $m->action_date }}</x-table.cell-subtext>
                     <x-ui.text-block 
-                        title="Обладнання: {{ $m->equipment->inventory_number ?? '-' }}" 
-                        subtitle="Куди: Кабінет {{ $m->asset->location->room_number ?? ($m->location->room_number ?? '-') }}" 
+                        title="Обладнання: {{ $m->equipment->inv_number ?? '-' }}" 
+                        subtitle="Куди: {{ $m->toHolder->organization->org_name ?? '—' }}" 
                         subtitleClass="text-xs text-brand-400 font-medium"
                     />
                 </div>

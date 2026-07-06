@@ -12,13 +12,13 @@ use App\Models\Employee;
 #[Layout('layouts.admin')]
 class EquipmentMovementManager extends Component
 {
-    public $movements, $movementId, $equipment_id, $location_id, $employee_id, $move_date;
+    public $movements, $movementId, $equip_id, $location_id, $employee_id, $action_date;
     public $equipmentList = [], $locationsList = [], $employeesList = [];
     public $isOpen = 0;
 
     public function render()
     {
-        $this->movements = EquipmentMovement::with(['equipment', 'location', 'employee'])->get();
+        $this->movements = EquipmentMovement::with(['equipment', 'employee'])->get();
         $this->equipmentList = Equipment::all();
         $this->locationsList = Location::all();
         $this->employeesList = Employee::all();
@@ -28,7 +28,7 @@ class EquipmentMovementManager extends Component
     public function create()
     {
         $this->resetInputFields();
-        $this->move_date = date('Y-m-d');
+        $this->action_date = date('Y-m-d');
         $this->openModal();
     }
 
@@ -44,19 +44,19 @@ class EquipmentMovementManager extends Component
 
     private function resetInputFields(){
         $this->movementId = null;
-        $this->equipment_id = null;
+        $this->equip_id = null;
         $this->location_id = null;
         $this->employee_id = null;
-        $this->move_date = '';
+        $this->action_date = '';
     }
 
     public function store()
     {
         $this->validate([
-            'equipment_id' => 'required|exists:equipment,id',
+            'equip_id' => 'required|exists:equipment,id',
             'location_id' => 'required|exists:locations,id',
             'employee_id' => 'nullable|exists:employee,id',
-            'move_date' => 'required|date',
+            'action_date' => 'required|date',
         ]);
 
         // Знаходимо або створюємо LocationHolder для цільового співробітника
@@ -66,7 +66,7 @@ class EquipmentMovementManager extends Component
         ]);
 
         // Отримуємо обладнання та його перший компонент
-        $equipment = Equipment::findOrFail($this->equipment_id);
+        $equipment = Equipment::findOrFail($this->equip_id);
         $asset = $equipment->components()->first();
         $asset_id = $asset ? $asset->id : null;
 
@@ -83,12 +83,12 @@ class EquipmentMovementManager extends Component
 
         // Створюємо або оновлюємо запис переміщення
         EquipmentMovement::updateOrCreate(['id' => $this->movementId], [
-            'equip_id' => $this->equipment_id,
+            'equip_id' => $this->equip_id,
             'asset_id' => $asset_id,
             'from_holder_id' => $from_holder_id,
             'to_holder_id' => $toHolder->id,
             'employee_id' => $this->employee_id ?: null,
-            'action_date' => $this->move_date,
+            'action_date' => $this->action_date,
         ]);
 
         session()->flash('message', 
@@ -102,10 +102,10 @@ class EquipmentMovementManager extends Component
     {
         $move = EquipmentMovement::findOrFail($id);
         $this->movementId = $id;
-        $this->equipment_id = $move->equipment_id;
-        $this->location_id = $move->location_id;
+        $this->equip_id = $move->equip_id;
         $this->employee_id = $move->employee_id;
-        $this->move_date = $move->move_date;
+        $this->action_date = $move->action_date;
+        $this->location_id = null; // location is not stored historically in movements table
         $this->openModal();
     }
 

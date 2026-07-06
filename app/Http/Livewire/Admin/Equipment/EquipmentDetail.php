@@ -21,14 +21,10 @@ class EquipmentDetail extends Component
         $this->equipment = Equipment::with([
             'components.componentType',
             'components.holder.organization',
-            'components.location',
-            'movements.location',
-            'movements.employee.departmentRelationship',
-            'complaints',
+            'movements.employee.department',
             'maintenanceLogs',
-            'softwareLicenses',
-            'lowValueMaterials.material',
-            'contract.supplier',
+            'lowValueMaterials.contract',
+            'contract',
             'retirementAct',
         ])->findOrFail($id);
 

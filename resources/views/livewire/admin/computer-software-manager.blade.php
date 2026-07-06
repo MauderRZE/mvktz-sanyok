@@ -6,7 +6,7 @@
     @if($isOpen)
     <x-ui.modal title="{{ $softwareId ? 'Редагувати' : 'Додати' }} запис про ПЗ" maxWidth="md">
         <x-form.select label="Комп'ютер (Обладнання)" model="computer_id" :options="$computers->mapWithKeys(function($item) {
-            return [$item->id => $item->componentType->component_name . ' (Inv: ' . ($item->inventory_number ?? 'Немає') . ')'];
+            return [$item->id => $item->componentType->component_name . ' (Inv: ' . ($item->inv_number ?? 'Немає') . ')'];
         })->toArray()" />
         
         <x-form.input label="Назва ПЗ (Windows, Office...)" model="software_name" type="text" />

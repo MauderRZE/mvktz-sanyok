@@ -10,21 +10,21 @@ use App\Models\Equipment;
 #[Layout('layouts.admin')]
 class MaintenanceLogManager extends Component
 {
-    public $logs, $logId, $equipment_id, $action_type_id, $action_date, $description, $cost = 0;
-    public $equipmentList = [];
+    public $logs, $logId, $assets_id, $sent_date, $return_date, $issue_description, $status = 'В ремонті';
+    public $assetsList = [];
     public $isOpen = 0;
 
     public function render()
     {
-        $this->logs = MaintenanceLog::with(['equipment'])->get();
-        $this->equipmentList = Equipment::all();
+        $this->logs = MaintenanceLog::with(['asset.equipment', 'asset.componentType'])->get();
+        $this->assetsList = \App\Models\EquipmentComponent::with(['equipment', 'componentType'])->get();
         return view('livewire.admin.maintenance-log-manager');
     }
 
     public function create()
     {
         $this->resetInputFields();
-        $this->action_date = date('Y-m-d');
+        $this->sent_date = date('Y-m-d');
         $this->openModal();
     }
 
@@ -40,29 +40,29 @@ class MaintenanceLogManager extends Component
 
     private function resetInputFields(){
         $this->logId = null;
-        $this->equipment_id = null;
-        $this->action_type_id = null;
-        $this->action_date = '';
-        $this->description = '';
-        $this->cost = 0;
+        $this->assets_id = null;
+        $this->sent_date = '';
+        $this->return_date = '';
+        $this->issue_description = '';
+        $this->status = 'В ремонті';
     }
 
     public function store()
     {
         $this->validate([
-            'equipment_id' => 'required|exists:equipment,id',
-            'action_type_id' => 'nullable|integer',
-            'action_date' => 'required|date',
-            'description' => 'required|string',
-            'cost' => 'nullable|numeric|min:0',
+            'assets_id' => 'required|exists:equipment_components,id',
+            'sent_date' => 'required|date',
+            'return_date' => 'nullable|date',
+            'issue_description' => 'required|string',
+            'status' => 'required|string',
         ]);
 
         MaintenanceLog::updateOrCreate(['id' => $this->logId], [
-            'equipment_id' => $this->equipment_id,
-            'action_type_id' => $this->action_type_id,
-            'action_date' => $this->action_date,
-            'description' => $this->description,
-            'cost' => $this->cost ?: 0,
+            'assets_id' => $this->assets_id,
+            'sent_date' => $this->sent_date,
+            'return_date' => $this->return_date ?: null,
+            'issue_description' => $this->issue_description,
+            'status' => $this->status,
         ]);
 
         session()->flash('message', 
@@ -76,11 +76,11 @@ class MaintenanceLogManager extends Component
     {
         $log = MaintenanceLog::findOrFail($id);
         $this->logId = $id;
-        $this->equipment_id = $log->equipment_id;
-        $this->action_type_id = $log->action_type_id;
-        $this->action_date = $log->action_date;
-        $this->description = $log->description;
-        $this->cost = $log->cost;
+        $this->assets_id = $log->assets_id;
+        $this->sent_date = $log->sent_date;
+        $this->return_date = $log->return_date;
+        $this->issue_description = $log->issue_description;
+        $this->status = $log->status;
         $this->openModal();
     }
 
