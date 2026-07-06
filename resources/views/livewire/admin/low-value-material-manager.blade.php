@@ -26,7 +26,7 @@
                         <x-form.select label="Договір закупівлі" model="contract_id">
                             <option value="">Оберіть договір...</option>
                             @foreach($contractsList as $c)
-                                <option value="{{ $c->id }}">Договір №{{ $c->contract_number }} ({{ $c->contract_date }})</option>
+                                <option value="{{ $c->id }}">№{{ $c->contract_number }} ({{ $c->supplier->supplier_name ?? 'Без постачальника' }})</option>
                             @endforeach
                         </x-form.select>
                     </div>

@@ -18,7 +18,7 @@ class LowValueMaterialManager extends Component
     public function render()
     {
         $this->materials = LowValueMaterial::with(['contract'])->get();
-        $this->contractsList = Contract::all();
+        $this->contractsList = Contract::with('supplier')->get();
         return view('livewire.admin.low-value-material-manager');
     }
 
