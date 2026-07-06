@@ -512,7 +512,7 @@
             </div>
 
             <div class="mt-6 pt-4 border-t border-white/10 flex justify-end">
-                <button wire:click="closeView" class="px-4 py-2 text-sm text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl transition-colors">
+                <button wire:click="closeView" x-on:click="document.body.style.overflow=''" class="px-4 py-2 text-sm text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl transition-colors">
                     Закрити
                 </button>
             </div>

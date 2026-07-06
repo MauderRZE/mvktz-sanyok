@@ -13,9 +13,9 @@ $maxWidthClass = [
 ][$maxWidth] ?? 'max-w-md';
 @endphp
 
-<div class="fixed inset-0 z-50 overflow-hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true" x-data x-init="document.body.style.overflow='hidden'" x-destroy="document.body.style.overflow=''">
+<div class="fixed inset-0 z-50 overflow-hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true" x-data x-init="document.body.style.overflow='hidden'; $cleanup(() => document.body.style.overflow='')">
     <div class="absolute inset-0 overflow-hidden">
-        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" wire:click="close()"></div>
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" wire:click="close()" x-on:click="document.body.style.overflow=''"></div>
 
         <div class="fixed inset-y-0 right-0 max-w-full flex">
             <!-- Slide-over panel -->
@@ -23,7 +23,7 @@ $maxWidthClass = [
                 <div class="h-full flex flex-col bg-surface-900 border-l border-white/5 shadow-2xl">
                     <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between bg-surface-800">
                         <h2 class="text-xl font-semibold text-white" id="slide-over-title">{{ $title }}</h2>
-                        <button wire:click="close()" class="text-gray-500 hover:text-white transition-colors">
+                        <button wire:click="close()" x-on:click="document.body.style.overflow=''" class="text-gray-500 hover:text-white transition-colors">
                             <span class="sr-only">Закрити панель</span>
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
