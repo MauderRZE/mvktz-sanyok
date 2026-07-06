@@ -55,5 +55,6 @@ Route::group(['prefix' => 'admin', 'layout' => 'layouts.admin', 'middleware' => 
     Route::get('/computer-software', \App\Http\Livewire\Admin\ComputerSoftwareManager::class)->name('admin.computer-software');
     Route::get('/employee-phones', \App\Http\Livewire\Admin\EmployeePhoneManager::class)->name('admin.employee-phones');
     Route::get('/item-properties', \App\Http\Livewire\Admin\ItemPropertyManager::class)->name('admin.item-properties');
+    Route::get('/system-errors', \App\Http\Livewire\Admin\SystemErrorManager::class)->name('admin.system-errors');
 });
 

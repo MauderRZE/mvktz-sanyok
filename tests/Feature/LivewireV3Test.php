@@ -102,6 +102,7 @@ class LivewireV3Test extends TestCase
             'ComputerSoftwareManager'   => [ComputerSoftwareManager::class],
             'EmployeePhoneManager'      => [EmployeePhoneManager::class],
             'ItemPropertyManager'       => [ItemPropertyManager::class],
+            'SystemErrorManager'        => [\App\Http\Livewire\Admin\SystemErrorManager::class],
             'Login'                     => [Login::class],
         ];
     }
@@ -155,6 +156,7 @@ class LivewireV3Test extends TestCase
             'computer-software-manager'   => [$base . '/admin/computer-software-manager.blade.php'],
             'employee-phone-manager'      => [$base . '/admin/employee-phone-manager.blade.php'],
             'item-property-manager'       => [$base . '/admin/item-property-manager.blade.php'],
+            'system-error-manager'        => [$base . '/admin/system-error-manager.blade.php'],
             'auth-login'                  => [$base . '/auth/login.blade.php'],
         ];
     }
