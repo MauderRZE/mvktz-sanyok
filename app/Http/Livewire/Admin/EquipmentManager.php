@@ -108,7 +108,7 @@ class EquipmentManager extends Component
 
         // Полегшений eager-load: ТІЛЬКИ те, що потрібно для рядка таблиці
         $equipments = Equipment::with([
-            'components.componentType',
+            'assets.componentType',
             'movements.location',
             'movements.employee',
         ])
@@ -117,7 +117,7 @@ class EquipmentManager extends Component
               ->orWhere('account_name', 'like', '%' . $this->search . '%');
         })
         ->when(!empty($this->filterType), function ($q) {
-            $q->whereHas('components', function ($c) {
+            $q->whereHas('assets', function ($c) {
                 $c->whereIn('model_id', $this->filterType);
             });
         })
@@ -125,12 +125,12 @@ class EquipmentManager extends Component
             $q->whereIn('status', $this->filterStatus);
         })
         ->when(!empty($this->filterCategory), function ($q) {
-            $q->whereHas('components.componentType', function ($c) {
+            $q->whereHas('assets.componentType', function ($c) {
                 $c->whereIn('category_id', $this->filterCategory);
             });
         })
         ->when(!empty($this->filterLocation), function ($q) {
-            $q->whereHas('components', function ($c) {
+            $q->whereHas('assets', function ($c) {
                 $c->whereIn('current_loc_id', $this->filterLocation);
             });
         })
@@ -145,12 +145,12 @@ class EquipmentManager extends Component
             });
         })
         ->when(!empty($this->filterOrganization), function ($q) {
-            $q->whereHas('components.holder', function ($h) {
+            $q->whereHas('assets.holder', function ($h) {
                 $h->whereIn('organization_id', $this->filterOrganization);
             });
         })
         ->when(!empty($this->filterBrand), function ($q) {
-            $q->whereHas('components.model', function ($c) {
+            $q->whereHas('assets.model', function ($c) {
                 $c->whereIn('brand_id', $this->filterBrand);
             });
         })

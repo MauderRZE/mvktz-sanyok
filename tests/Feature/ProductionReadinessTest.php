@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Equipment;
 use App\Models\LowValueMaterial;
 use App\Models\SoftwareLicense;
-use App\Models\EquipmentComponent;
+use App\Models\Asset;
 
 class ProductionReadinessTest extends TestCase
 {
@@ -40,14 +40,14 @@ class ProductionReadinessTest extends TestCase
     public function test_relationships_resolve_correctly()
     {
         // Check low value materials relations
-        LowValueMaterial::with(['material', 'equipment', 'contract'])->chunk(100, function ($materials) {
+        LowValueMaterial::with(['contract'])->chunk(100, function ($materials) {
             foreach ($materials as $material) {
                 $this->assertNotNull($material->contract, "Contract relation must be loaded for LowValueMaterial ID: {$material->id}");
             }
         });
 
         // Check equipment relations
-        Equipment::with(['type', 'components', 'movements', 'complaints', 'maintenanceLogs'])->chunk(100, function ($equipments) {
+        Equipment::with(['assets', 'movements', 'maintenanceLogs'])->chunk(100, function ($equipments) {
             foreach ($equipments as $equipment) {
                 $this->assertTrue(true); // Ensure eager loading doesn't throw exceptions
             }

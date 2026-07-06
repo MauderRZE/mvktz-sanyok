@@ -25,6 +25,6 @@ class EquipmentType extends Model
 
     public function assets()
     {
-        return $this->hasMany(EquipmentComponent::class, 'model_id');
+        return $this->hasMany(Asset::class, 'model_id');
     }
 }

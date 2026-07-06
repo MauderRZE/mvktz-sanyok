@@ -4,23 +4,23 @@ namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
 use Livewire\Attributes\Layout;
-use App\Models\EquipmentComponent;
+use App\Models\Asset;
 use App\Models\Equipment;
 use App\Models\BaseComponent;
 
 #[Layout('layouts.admin')]
-class EquipmentComponentManager extends Component
+class AssetManager extends Component
 {
-    public $components, $componentId, $equipment_id, $base_component_id, $notes, $serial_number, $has_network = 0, $ip_address, $mac_address, $status = 'Працює';
+    public $assets, $assetId, $equipment_id, $base_component_id, $notes, $serial_number, $has_network = 0, $ip_address, $mac_address, $status = 'Працює';
     public $equipmentList = [], $baseComponentsList = [];
     public $isOpen = 0;
 
     public function render()
     {
-        $this->components = EquipmentComponent::with(['equipment', 'componentType'])->get();
+        $this->assets = Asset::with(['equipment', 'componentType'])->get();
         $this->equipmentList = Equipment::all();
         $this->baseComponentsList = BaseComponent::all();
-        return view('livewire.admin.equipment-component-manager');
+        return view('livewire.admin.asset-manager');
     }
 
     public function create()
@@ -40,7 +40,7 @@ class EquipmentComponentManager extends Component
     }
 
     private function resetInputFields(){
-        $this->componentId = null;
+        $this->assetId = null;
         $this->equipment_id = null;
         $this->base_component_id = null;
         $this->notes = '';
@@ -64,7 +64,7 @@ class EquipmentComponentManager extends Component
             'status' => 'required|string|max:50',
         ]);
 
-        EquipmentComponent::updateOrCreate(['id' => $this->componentId], [
+        Asset::updateOrCreate(['id' => $this->assetId], [
             'equipment_id' => $this->equipment_id,
             'base_component_id' => $this->base_component_id,
             'notes' => $this->notes ?: null,
@@ -75,7 +75,7 @@ class EquipmentComponentManager extends Component
         ]);
 
         session()->flash('message', 
-            $this->componentId ? 'Комплектуюче оновлено.' : 'Комплектуюче додано.');
+            $this->assetId ? 'Актив оновлено.' : 'Актив додано.');
 
         $this->closeModal();
         $this->resetInputFields();
@@ -83,8 +83,8 @@ class EquipmentComponentManager extends Component
 
     public function edit($id)
     {
-        $comp = EquipmentComponent::findOrFail($id);
-        $this->componentId = $id;
+        $comp = Asset::findOrFail($id);
+        $this->assetId = $id;
         $this->equipment_id = $comp->equipment_id;
         $this->base_component_id = $comp->base_component_id;
         $this->notes = $comp->notes;
@@ -98,7 +98,7 @@ class EquipmentComponentManager extends Component
 
     public function delete($id)
     {
-        EquipmentComponent::find($id)->delete();
-        session()->flash('message', 'Комплектуюче видалено.');
+        Asset::find($id)->delete();
+        session()->flash('message', 'Актив видалено.');
     }
 }

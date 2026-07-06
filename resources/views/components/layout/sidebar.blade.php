@@ -24,9 +24,9 @@
             Обладнання
         </a>
 
-        <a href="{{ route('admin.components') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.components') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">
+        <a href="{{ route('admin.assets') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.assets') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">
             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-            Комплектуючі
+            Активи
         </a>
 
         <a href="{{ route('admin.software-licenses') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.software-licenses') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">

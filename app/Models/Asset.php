@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EquipmentComponent extends Model
+class Asset extends Model
 {
     use HasFactory;
 
@@ -63,12 +63,12 @@ class EquipmentComponent extends Model
 
     public function parentAsset()
     {
-        return $this->belongsTo(EquipmentComponent::class, 'parent_asset_id');
+        return $this->belongsTo(Asset::class, 'parent_asset_id');
     }
 
     public function childAssets()
     {
-        return $this->hasMany(EquipmentComponent::class, 'parent_asset_id');
+        return $this->hasMany(Asset::class, 'parent_asset_id');
     }
 
     public function lowValueMaterial()

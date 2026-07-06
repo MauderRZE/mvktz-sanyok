@@ -20,6 +20,6 @@ class LowValueWriteOffAct extends Model
 
     public function assets()
     {
-        return $this->hasMany(EquipmentComponent::class, 'write_off_act_id');
+        return $this->hasMany(Asset::class, 'write_off_act_id');
     }
 }

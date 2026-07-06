@@ -30,6 +30,6 @@ class LocationHolder extends Model
 
     public function assets()
     {
-        return $this->hasMany(EquipmentComponent::class, 'current_holder_id');
+        return $this->hasMany(Asset::class, 'current_holder_id');
     }
 }

@@ -23,7 +23,7 @@ class MaintenanceLog extends Model
 
     public function asset()
     {
-        return $this->belongsTo(EquipmentComponent::class, 'assets_id');
+        return $this->belongsTo(Asset::class, 'assets_id');
     }
 
 }

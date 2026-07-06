@@ -1,10 +1,10 @@
 <div>
 <x-ui.page-wrapper>
     <x-ui.flash />
-<x-ui.toolbar :count="count($components)" label="Всього" buttonLabel="Додати" />
+<x-ui.toolbar :count="count($assets)" label="Всього" buttonLabel="Додати" />
 
     @if($isOpen)
-    <x-ui.modal title="{{ $componentId ? 'Редагувати' : 'Додати' }} комплектуюче" maxWidth="lg">
+    <x-ui.modal title="{{ $assetId ? 'Редагувати' : 'Додати' }} актив" maxWidth="lg">
         <div class="space-y-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                     <div>
@@ -75,7 +75,7 @@
                     <x-table.th align="right" width="24">Дії</x-table.th>
                 </x-slot>
             
-                @forelse($components as $c)
+                @forelse($assets as $c)
                 <x-table.tr>
                     <x-table.td align="left" primary>
                         {{ $c->equipment->inv_number ?? '-' }}
@@ -109,7 +109,7 @@
 
     {{-- Mobile --}}
     <x-table.mobile-list>
-        @forelse($components as $c)
+        @forelse($assets as $c)
         <x-table.mobile-card layout="y-2">
             <x-table.mobile-card-header align="start">
                 <div>

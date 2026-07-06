@@ -23,7 +23,7 @@ class ComputerSoftware extends Model
 
     public function computer()
     {
-        return $this->belongsTo(EquipmentComponent::class, 'computer_id');
+        return $this->belongsTo(Asset::class, 'computer_id');
     }
 
     public function license()

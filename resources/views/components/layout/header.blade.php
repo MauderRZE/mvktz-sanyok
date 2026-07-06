@@ -16,7 +16,7 @@
                 @elseif(request()->routeIs('admin.locations')) Кабінети та локації
                 @elseif(request()->routeIs('admin.maintenance-types')) Типи обслуговування
                 @elseif(request()->routeIs('admin.contracts')) Договори
-                @elseif(request()->routeIs('admin.components')) Комплектуючі
+                @elseif(request()->routeIs('admin.assets')) Активи
                 @elseif(request()->routeIs('admin.complaints')) Скарги та інциденти
                 @elseif(request()->routeIs('admin.movements')) Переміщення обладнання
                 @elseif(request()->routeIs('admin.low-value-materials')) Малоцінні матеріали

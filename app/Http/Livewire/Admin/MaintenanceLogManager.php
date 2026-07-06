@@ -17,7 +17,7 @@ class MaintenanceLogManager extends Component
     public function render()
     {
         $this->logs = MaintenanceLog::with(['asset.equipment', 'asset.componentType'])->get();
-        $this->assetsList = \App\Models\EquipmentComponent::with(['equipment', 'componentType'])->get();
+        $this->assetsList = \App\Models\Asset::with(['equipment', 'componentType'])->get();
         return view('livewire.admin.maintenance-log-manager');
     }
 

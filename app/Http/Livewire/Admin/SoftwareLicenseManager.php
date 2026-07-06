@@ -5,7 +5,7 @@ namespace App\Http\Livewire\Admin;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\SoftwareLicense;
-use App\Models\EquipmentComponent;
+use App\Models\Asset;
 
 #[Layout('layouts.admin')]
 class SoftwareLicenseManager extends Component

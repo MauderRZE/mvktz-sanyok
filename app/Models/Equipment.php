@@ -24,9 +24,9 @@ class Equipment extends Model
         'notes',
     ];
 
-    public function components()
+    public function assets()
     {
-        return $this->hasMany(EquipmentComponent::class, 'equipment_id');
+        return $this->hasMany(Asset::class, 'equipment_id');
     }
 
     public function movements()
@@ -37,10 +37,10 @@ class Equipment extends Model
 
     public function maintenanceLogs()
     {
-        // Repairs are now linked to assets (EquipmentComponent), which are linked to equipment.
+        // Repairs are now linked to assets (Asset), which are linked to equipment.
         return $this->hasManyThrough(
             MaintenanceLog::class,
-            EquipmentComponent::class,
+            Asset::class,
             'equipment_id', // Foreign key on assets table...
             'assets_id',    // Foreign key on repairs table...
             'id',           // Local key on equipment table...

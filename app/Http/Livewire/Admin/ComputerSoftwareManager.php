@@ -5,7 +5,7 @@ namespace App\Http\Livewire\Admin;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\ComputerSoftware;
-use App\Models\EquipmentComponent;
+use App\Models\Asset;
 use App\Models\SoftwareLicense;
 
 #[Layout('layouts.admin')]
@@ -17,7 +17,7 @@ class ComputerSoftwareManager extends Component
 
     public function mount()
     {
-        $this->computers = EquipmentComponent::with('componentType')->get();
+        $this->computers = Asset::with('componentType')->get();
         $this->licenses = SoftwareLicense::all();
     }
 

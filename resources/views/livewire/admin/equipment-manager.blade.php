@@ -135,10 +135,10 @@
             <x-table.td align="left" primary>{{ $eq->inv_number }}</x-table.td>
             <x-table.td align="left">{{ $eq->account_name }}</x-table.td>
             <x-table.td align="left" class="text-xs text-gray-300">
-                @if($eq->components->count() > 0)
-                    <div class="font-medium text-gray-200">{{ $eq->components->count() }} од.</div>
-                    <x-table.cell-subtext class="max-w-[150px] truncate" title="{{ $eq->components->map(fn($c) => ($c->componentType->component_name ?? '') . ($c->brand_model ? ' (' . $c->brand_model . ')' : ''))->implode(', ') }}">
-                        {{ $eq->components->map(fn($c) => $c->componentType->component_name ?? '')->unique()->implode(', ') }}
+                @if($eq->assets->count() > 0)
+                    <div class="font-medium text-gray-200">{{ $eq->assets->count() }} од.</div>
+                    <x-table.cell-subtext class="max-w-[150px] truncate" title="{{ $eq->assets->map(fn($c) => ($c->componentType->component_name ?? '') . ($c->brand_model ? ' (' . $c->brand_model . ')' : ''))->implode(', ') }}">
+                        {{ $eq->assets->map(fn($c) => $c->componentType->component_name ?? '')->unique()->implode(', ') }}
                     </x-table.cell-subtext>
                 @else
                     <span class="text-gray-600">—</span>
@@ -195,7 +195,7 @@
             </x-table.mobile-card-header>
             <x-table.mobile-card-footer flex="true">
                 <span class="px-2 py-0.5 rounded-lg bg-brand-500/10 text-brand-300 text-xs font-medium">
-                    {{ $eq->components->first()?->componentType?->component_name ?? 'Обладнання' }}
+                    {{ $eq->assets->first()?->componentType?->component_name ?? 'Обладнання' }}
                 </span>
                 <x-ui.action-buttons id="{{ $eq->id }}" :viewAction="true" />
             </x-table.mobile-card-footer>

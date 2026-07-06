@@ -8,7 +8,7 @@ use App\Models\Contract;
 use App\Models\Employee;
 use App\Models\Equipment;
 use App\Models\EquipmentCategory;
-use App\Models\EquipmentComponent;
+use App\Models\Asset;
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentType;
 use App\Models\Location;
@@ -34,8 +34,8 @@ class DatabaseRelationshipsTest extends TestCase
     {
         $relationsMap = [
             Contract::class => ['supplier'],
-            Equipment::class => ['components', 'movements', 'maintenanceLogs'],
-            EquipmentComponent::class => ['equipment', 'componentType', 'baseComponent', 'model', 'location', 'holder', 'parentAsset', 'childAssets', 'lowValueMaterial', 'writeOffAct', 'repairs', 'computerSoftwares', 'itemProperties'],
+            Equipment::class => ['assets', 'movements', 'maintenanceLogs'],
+            Asset::class => ['equipment', 'componentType', 'baseComponent', 'model', 'location', 'holder', 'parentAsset', 'childAssets', 'lowValueMaterial', 'writeOffAct', 'repairs', 'computerSoftwares', 'itemProperties'],
             EquipmentMovement::class => ['equipment', 'employee', 'asset', 'fromHolder', 'toHolder'],
             EquipmentType::class => ['brand', 'assets'],
             LowValueMaterial::class => ['contract'],

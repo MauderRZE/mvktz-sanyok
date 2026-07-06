@@ -9,7 +9,7 @@ use App\Models\Contract;
 use App\Models\Employee;
 use App\Models\Equipment;
 use App\Models\EquipmentCategory;
-use App\Models\EquipmentComponent;
+use App\Models\Asset;
 use App\Models\EquipmentMovement;
 use App\Models\EquipmentType;
 use App\Models\Location;
@@ -80,7 +80,7 @@ class DatabaseSchemaTest extends TestCase
             Employee::class,
             Equipment::class,
             EquipmentCategory::class,
-            EquipmentComponent::class,
+            Asset::class,
             EquipmentMovement::class,
             EquipmentType::class,
             Location::class,

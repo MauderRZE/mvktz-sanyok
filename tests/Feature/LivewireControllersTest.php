@@ -14,7 +14,7 @@ use App\Http\Livewire\Admin\BaseComponentManager;
 use App\Http\Livewire\Admin\SupplierManager;
 use App\Http\Livewire\Admin\LocationManager;
 use App\Http\Livewire\Admin\ContractManager;
-use App\Http\Livewire\Admin\EquipmentComponentManager;
+use App\Http\Livewire\Admin\AssetManager;
 use App\Http\Livewire\Admin\EquipmentMovementManager;
 use App\Http\Livewire\Admin\LowValueMaterialManager;
 use App\Http\Livewire\Admin\MaintenanceLogManager;
@@ -57,7 +57,7 @@ class LivewireControllersTest extends TestCase
             'admin.suppliers',
             'admin.locations',
             'admin.contracts',
-            'admin.components',
+            'admin.assets',
             'admin.movements',
             'admin.low-value-materials',
             'admin.maintenance-logs',
@@ -95,7 +95,7 @@ class LivewireControllersTest extends TestCase
             'admin.suppliers',
             'admin.locations',
             'admin.contracts',
-            'admin.components',
+            'admin.assets',
             'admin.movements',
             'admin.low-value-materials',
             'admin.maintenance-logs',

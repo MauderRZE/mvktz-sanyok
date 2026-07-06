@@ -18,7 +18,7 @@ use App\Http\Livewire\Admin\BaseComponentManager;
 use App\Http\Livewire\Admin\SupplierManager;
 use App\Http\Livewire\Admin\LocationManager;
 use App\Http\Livewire\Admin\ContractManager;
-use App\Http\Livewire\Admin\EquipmentComponentManager;
+use App\Http\Livewire\Admin\AssetManager;
 use App\Http\Livewire\Admin\EquipmentMovementManager;
 use App\Http\Livewire\Admin\LowValueMaterialManager;
 use App\Http\Livewire\Admin\MaintenanceLogManager;
@@ -87,7 +87,7 @@ class LivewireV3Test extends TestCase
             'SupplierManager'           => [SupplierManager::class],
             'LocationManager'           => [LocationManager::class],
             'ContractManager'           => [ContractManager::class],
-            'EquipmentComponentManager' => [EquipmentComponentManager::class],
+            'AssetManager' => [AssetManager::class],
             'EquipmentMovementManager'  => [EquipmentMovementManager::class],
             'LowValueMaterialManager'   => [LowValueMaterialManager::class],
             'MaintenanceLogManager'     => [MaintenanceLogManager::class],
@@ -141,7 +141,7 @@ class LivewireV3Test extends TestCase
             'supplier-manager'            => [$base . '/admin/supplier-manager.blade.php'],
             'location-manager'            => [$base . '/admin/location-manager.blade.php'],
             'contract-manager'            => [$base . '/admin/contract-manager.blade.php'],
-            'equipment-component-manager' => [$base . '/admin/equipment-component-manager.blade.php'],
+            'asset-manager' => [$base . '/admin/asset-manager.blade.php'],
             'equipment-movement-manager'  => [$base . '/admin/equipment-movement-manager.blade.php'],
             'low-value-material-manager'  => [$base . '/admin/low-value-material-manager.blade.php'],
             'maintenance-log-manager'     => [$base . '/admin/maintenance-log-manager.blade.php'],

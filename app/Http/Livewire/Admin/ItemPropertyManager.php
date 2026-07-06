@@ -5,7 +5,7 @@ namespace App\Http\Livewire\Admin;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\ItemProperty;
-use App\Models\EquipmentComponent;
+use App\Models\Asset;
 use App\Models\LowValueMaterial;
 use App\Models\AttributeDictionary;
 
@@ -18,7 +18,7 @@ class ItemPropertyManager extends Component
 
     public function mount()
     {
-        $this->assets = EquipmentComponent::with('componentType')->get();
+        $this->assets = Asset::with('componentType')->get();
         $this->materials = LowValueMaterial::all();
         $this->dictAttributes = AttributeDictionary::orderBy('name')->get();
     }

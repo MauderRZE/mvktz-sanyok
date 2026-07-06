@@ -39,7 +39,7 @@ Route::group(['prefix' => 'admin', 'layout' => 'layouts.admin', 'middleware' => 
     Route::get('/suppliers', \App\Http\Livewire\Admin\SupplierManager::class)->name('admin.suppliers');
     Route::get('/locations', \App\Http\Livewire\Admin\LocationManager::class)->name('admin.locations');
     Route::get('/contracts', \App\Http\Livewire\Admin\ContractManager::class)->name('admin.contracts');
-    Route::get('/components', \App\Http\Livewire\Admin\EquipmentComponentManager::class)->name('admin.components');
+    Route::get('/assets', \App\Http\Livewire\Admin\AssetManager::class)->name('admin.assets');
     Route::get('/movements', \App\Http\Livewire\Admin\EquipmentMovementManager::class)->name('admin.movements');
     Route::get('/low-value-materials', \App\Http\Livewire\Admin\LowValueMaterialManager::class)->name('admin.low-value-materials');
     Route::get('/maintenance-logs', \App\Http\Livewire\Admin\MaintenanceLogManager::class)->name('admin.maintenance-logs');
