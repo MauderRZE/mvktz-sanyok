@@ -30,6 +30,10 @@ class AssetManager extends Component
 
     public array $expandedRows = [];
 
+    public $isFilterOpen = false;
+    public $isViewOpen = false;
+    public $viewAsset = null;
+
     // Пошук та сортування
     public $search = '';
     public $sortField = 'id';
@@ -62,6 +66,16 @@ class AssetManager extends Component
         $this->resetPage();
     }
 
+    public function openFilters()
+    {
+        $this->isFilterOpen = true;
+    }
+
+    public function closeFilters()
+    {
+        $this->isFilterOpen = false;
+    }
+
     public function sortBy($field)
     {
         $this->sortDirection = ($this->sortField === $field)
@@ -92,7 +106,13 @@ class AssetManager extends Component
                 'holder.organization',
                 'parentAsset.componentType',
                 'lowValueMaterial',
-                'writeOffAct'
+                'writeOffAct',
+                'childAssets.componentType',
+                'childAssets.model.brand',
+                'childAssets.location',
+                'childAssets.holder.employee',
+                'childAssets.holder.organization',
+                'childAssets.equipment',
             ])
             ->when($this->search, function($q) {
                 $q->where(function($q) {
@@ -112,6 +132,9 @@ class AssetManager extends Component
             })
             ->when(!empty($this->filterBaseComponent), function($q) {
                 $q->whereIn('base_component_id', $this->filterBaseComponent);
+            })
+            ->when(empty($this->search) && empty($this->filterStatus) && empty($this->filterBaseComponent), function($q) {
+                $q->whereNull('parent_asset_id');
             });
 
         if (in_array($this->sortField, ['id', 'serial_number', 'status', 'ip_address', 'mac_address'])) {
@@ -147,6 +170,39 @@ class AssetManager extends Component
     public function closeModal()
     {
         $this->isOpen = false;
+    }
+
+    public function view($id)
+    {
+        $this->viewAsset = Asset::with([
+            'equipment', 
+            'componentType', 
+            'model.brand', 
+            'location', 
+            'holder.employee', 
+            'holder.organization',
+            'parentAsset.componentType',
+            'lowValueMaterial',
+            'writeOffAct'
+        ])->find($id);
+        $this->isViewOpen = true;
+    }
+
+    public function closeView()
+    {
+        $this->isViewOpen = false;
+        $this->viewAsset = null;
+    }
+
+    public function close()
+    {
+        if ($this->isFilterOpen) {
+            $this->isFilterOpen = false;
+        }
+        if ($this->isViewOpen) {
+            $this->isViewOpen = false;
+            $this->viewAsset = null;
+        }
     }
 
     private function resetInputFields(){
