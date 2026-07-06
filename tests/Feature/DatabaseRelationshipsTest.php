@@ -37,7 +37,7 @@ class DatabaseRelationshipsTest extends TestCase
             Equipment::class => ['type', 'components', 'movements', 'maintenanceLogs'],
             EquipmentComponent::class => ['equipment', 'componentType', 'baseComponent', 'model', 'location', 'holder', 'parentAsset', 'childAssets', 'lowValueMaterial', 'writeOffAct', 'repairs', 'computerSoftwares', 'itemProperties'],
             EquipmentMovement::class => ['equipment', 'location', 'employee', 'asset', 'fromHolder', 'toHolder'],
-            EquipmentType::class => ['category', 'brand', 'assets'],
+            EquipmentType::class => ['brand', 'assets'],
             LowValueMaterial::class => ['equipment', 'contract', 'itemProperties'],
             MaintenanceLog::class => ['equipment', 'asset'],
             SoftwareLicense::class => ['component'],

@@ -266,7 +266,7 @@ class LivewireV3Test extends TestCase
         return [
             'BrandManager'           => [BrandManager::class, 'brandtz_name'],
             'CategoryManager'        => [CategoryManager::class, 'category_name'],
-            'TypeManager'            => [TypeManager::class, 'type_name'],
+            'TypeManager'            => [TypeManager::class, 'model_name'],
             'LocationManager'        => [LocationManager::class, 'room_number'],
             'SupplierManager'        => [SupplierManager::class, 'supplier_name'],
             'DepartmentManager'      => [DepartmentManager::class, 'name'],
