@@ -1,6 +1,6 @@
 @props(['label', 'model', 'options' => [], 'placeholder' => 'Оберіть'])
 
-<div x-data="{
+<div wire:key="{{ $model }}" x-data="{
     open: false,
     search: '',
     value: @entangle($model),

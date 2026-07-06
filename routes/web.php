@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -57,4 +55,3 @@ Route::group(['prefix' => 'admin', 'layout' => 'layouts.admin', 'middleware' => 
     Route::get('/item-properties', \App\Http\Livewire\Admin\ItemPropertyManager::class)->name('admin.item-properties');
     Route::get('/system-errors', \App\Http\Livewire\Admin\SystemErrorManager::class)->name('admin.system-errors');
 });
-

@@ -77,134 +77,100 @@
     @endif
 
     @if($isOpen)
-    <x-ui.modal title="{{ $assetId ? 'Редагувати' : 'Додати' }} актив" maxWidth="2xl">
+    <div wire:key="asset-modal-wrapper">
+    <x-ui.modal wire:key="asset-modal" title="{{ $assetId ? 'Редагувати' : 'Додати' }} актив" maxWidth="2xl">
+        @php
+            $eqOptions = $equipmentList->map(fn($eq) => ['value' => $eq->id, 'label' => $eq->inv_number . ' - ' . $eq->account_name])->values()->toArray();
+            $bcOptions = $baseComponentsList->map(fn($bc) => ['value' => $bc->id, 'label' => $bc->component_name])->values()->toArray();
+            $modOptions = $modelsList->map(fn($m) => ['value' => $m->id, 'label' => trim(($m->brand->brandtz_name ?? '') . ' ' . $m->model_name)])->values()->toArray();
+            $paOptions = $parentAssetsList->map(fn($pa) => [
+                'value' => $pa->id,
+                'label' => '#' . $pa->id . ' - ' . ($pa->componentType->component_name ?? '') . ($pa->equipment?->inv_number ? ' [Інв. №' . $pa->equipment->inv_number . ']' : '') . ' (' . ($pa->serial_number ?: 'без S/N') . ')'
+            ])->values()->toArray();
+            $locOptions = $locationsList->map(fn($loc) => ['value' => $loc->id, 'label' => 'Каб. ' . $loc->room_number])->values()->toArray();
+            $nomOptions = $nomenclaturesList->map(fn($nom) => ['value' => $nom->id, 'label' => $nom->material_account_name . ' (' . $nom->nomenklature_number . ')'])->values()->toArray();
+            $actOptions = $writeOffActsList->map(fn($act) => ['value' => $act->id, 'label' => 'Акт №' . $act->act_number])->values()->toArray();
+            
+            $holdersOptions = $holdersList->map(function($holder) {
+                $empName = $holder->employee ? $holder->employee->last_name . ' ' . mb_substr($holder->employee->first_name, 0, 1) . '.' : null;
+                $orgName = $holder->organization->org_name ?? null;
+                if ($empName && $orgName) $dn = $empName . ' (' . $orgName . ')';
+                elseif ($empName) $dn = $empName;
+                elseif ($orgName) $dn = $orgName;
+                else $dn = 'Невідомий утримувач';
+                return ['value' => $holder->id, 'label' => $dn];
+            })->values()->toArray();
+
+            $isSystemUnit = false;
+            if ($base_component_id) {
+                $selectedComponent = $baseComponentsList->firstWhere('id', $base_component_id);
+                if ($selectedComponent && mb_strtolower($selectedComponent->component_name) === 'системний блок') {
+                    $isSystemUnit = true;
+                }
+            }
+        @endphp
         <div class="space-y-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                    <div>
-                        <x-form.select label="Обладнання (ПК / Пристрій)" model="equipment_id">
-                            <option value="">Оберіть обладнання...</option>
-                            @foreach($equipmentList as $eq)
-                                <option value="{{ $eq->id }}">{{ $eq->inv_number }} - {{ $eq->account_name }}</option>
-                            @endforeach
-                        </x-form.select>
-                    </div>
-                    <div>
-                        <x-form.select label="Базовий компонент" model="base_component_id" :live="true">
-                            <option value="">Оберіть компонент...</option>
-                            @foreach($baseComponentsList as $bc)
-                                <option value="{{ $bc->id }}">{{ $bc->component_name }}</option>
-                            @endforeach
-                        </x-form.select>
-                    </div>
+                <div>
+                    <x-form.searchable-select label="Обладнання (ПК / Пристрій)" model="equipment_id" placeholder="Оберіть обладнання..." :options="$eqOptions" />
                 </div>
+                <div>
+                    <x-form.searchable-select label="Базовий компонент" model="base_component_id" placeholder="Оберіть компонент..." :live="true" :options="$bcOptions" />
+                </div>
+            </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                    <div>
-                        <x-form.select label="Модель" model="model_id">
-                            <option value="">Оберіть модель...</option>
-                            @foreach($modelsList as $m)
-                                <option value="{{ $m->id }}">{{ $m->brand->brandtz_name ?? '' }} {{ $m->model_name }}</option>
-                            @endforeach
-                        </x-form.select>
-                    </div>
-                    <div>
-                        @php
-                            $isSystemUnit = false;
-                            if ($base_component_id) {
-                                $selectedComponent = $baseComponentsList->firstWhere('id', $base_component_id);
-                                if ($selectedComponent && mb_strtolower($selectedComponent->component_name) === 'системний блок') {
-                                    $isSystemUnit = true;
-                                }
-                            }
-                        @endphp
-                        @if($isSystemUnit)
-                            <div class="opacity-50 pointer-events-none" title="Системний блок не може мати батьківського активу">
-                                <x-form.select label="Батьківський актив" model="parent_asset_id">
-                                    <option value="">Не застосовується</option>
-                                </x-form.select>
-                            </div>
-                        @else
-                            <x-form.select label="Батьківський актив" model="parent_asset_id">
-                                <option value="">Немає (Основний актив)</option>
-                                @foreach($parentAssetsList as $pa)
-                                    <option value="{{ $pa->id }}">#{{ $pa->id }} - {{ $pa->componentType->component_name ?? '' }} @if($pa->equipment?->inv_number)[Інв. №{{ $pa->equipment->inv_number }}]@endif ({{ $pa->serial_number ?: 'без S/N' }})</option>
-                                @endforeach
-                            </x-form.select>
-                        @endif
-                    </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+                <div>
+                    <x-form.searchable-select label="Модель" model="model_id" placeholder="Оберіть модель..." :options="$modOptions" />
                 </div>
+                <div>
+                    @if($isSystemUnit)
+                        <div class="opacity-50 pointer-events-none" title="Системний блок не може мати батьківського активу">
+                            <x-form.searchable-select label="Батьківський актив" model="parent_asset_id" placeholder="Не застосовується" :options="[]" />
+                        </div>
+                    @else
+                        <x-form.searchable-select label="Батьківський актив" model="parent_asset_id" placeholder="Немає (Основний актив)" :options="$paOptions" />
+                    @endif
+                </div>
+            </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                    <div>
-                        <x-form.input label="Серійний номер" model="serial_number" type="text" />
-                    </div>
-                    <div>
-                        <x-form.input label="Додаткові примітки" model="notes" type="text" placeholder="напр. розширено пам'ять" />
-                    </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+                <div>
+                    <x-form.input label="Серійний номер" model="serial_number" type="text" />
                 </div>
+                <div>
+                    <x-form.input label="Додаткові примітки" model="notes" type="text" placeholder="напр. розширено пам'ять" />
+                </div>
+            </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                    <div>
-                        <x-form.select label="Локація (Кабінет)" model="current_loc_id">
-                            <option value="">Не задано...</option>
-                            @foreach($locationsList as $loc)
-                                <option value="{{ $loc->id }}">Каб. {{ $loc->room_number }}</option>
-                            @endforeach
-                        </x-form.select>
-                    </div>
-                    <div>
-                        <x-form.select label="Відповідальний" model="current_holder_id">
-                            <option value="">Не задано...</option>
-                            @foreach($holdersList as $holder)
-                                @php
-                                    $empName = $holder->employee ? $holder->employee->last_name . ' ' . mb_substr($holder->employee->first_name, 0, 1) . '.' : null;
-                                    $orgName = $holder->organization->org_name ?? null;
-                                    
-                                    if ($empName && $orgName) {
-                                        $displayName = $empName . ' (' . $orgName . ')';
-                                    } elseif ($empName) {
-                                        $displayName = $empName;
-                                    } elseif ($orgName) {
-                                        $displayName = $orgName;
-                                    } else {
-                                        $displayName = 'Невідомий утримувач';
-                                    }
-                                @endphp
-                                <option value="{{ $holder->id }}">{{ $displayName }}</option>
-                            @endforeach
-                        </x-form.select>
-                    </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+                <div>
+                    <x-form.searchable-select label="Локація (Кабінет)" model="current_loc_id" placeholder="Не задано..." :options="$locOptions" />
                 </div>
+                <div>
+                    <x-form.searchable-select label="Відповідальний" model="current_holder_id" placeholder="Не задано..." :options="$holdersOptions" />
+                </div>
+            </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                    <div>
-                        <x-form.select label="МШП (Малоцінка)" model="nomenclature_id">
-                            <option value="">Не прив'язано...</option>
-                            @foreach($nomenclaturesList as $nom)
-                                <option value="{{ $nom->id }}">{{ $nom->material_account_name }} ({{ $nom->nomenklature_number }})</option>
-                            @endforeach
-                        </x-form.select>
-                    </div>
-                    <div>
-                        <x-form.select label="Акт списання" model="write_off_act_id">
-                            <option value="">Не списано...</option>
-                            @foreach($writeOffActsList as $act)
-                                <option value="{{ $act->id }}">Акт №{{ $act->act_number }}</option>
-                            @endforeach
-                        </x-form.select>
-                    </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+                <div>
+                    <x-form.searchable-select label="МШП (Малоцінка)" model="nomenclature_id" placeholder="Не прив'язано..." :options="$nomOptions" />
                 </div>
+                <div>
+                    <x-form.searchable-select label="Акт списання" model="write_off_act_id" placeholder="Не списано..." :options="$actOptions" />
+                </div>
+            </div>
 
-                <div class="grid grid-cols-1 gap-4 items-end">
-                    <div>
-                        <x-form.select label="Стан роботи" model="status">
-                            <option value="Працює">Працює</option>
-                            <option value="Потребує уваги">Потребує уваги</option>
-                            <option value="В ремонті">В ремонті</option>
-                            <option value="Списано">Списано</option>
-                        </x-form.select>
-                    </div>
+            <div class="grid grid-cols-1 gap-4 items-end">
+                <div>
+                    <x-form.select label="Стан роботи" model="status">
+                        <option value="Працює">Працює</option>
+                        <option value="Потребує уваги">Потребує уваги</option>
+                        <option value="В ремонті">В ремонті</option>
+                        <option value="Списано">Списано</option>
+                    </x-form.select>
                 </div>
+            </div>
 
                 <div class="border-t border-white/5 pt-4">
                     <x-form.checkbox label="Мережевий пристрій / інтерфейс" model="has_network" :live="true" />
@@ -225,6 +191,7 @@
                 </div>
         </div>
         </x-ui.modal>
+    </div>
     @endif
 
     {{-- Desktop --}}
