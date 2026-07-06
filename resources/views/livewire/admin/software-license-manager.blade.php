@@ -20,8 +20,22 @@
                 </div>
 
                 <div>
-                    <x-form.input label="Тип ліцензії" model="license_type" type="text" />
+                    <x-form.select label="Тип ліцензії" model="license_type" live="true">
+                        <option value="">Оберіть тип ліцензії</option>
+                        <option value="OEM">OEM</option>
+                        <option value="Retail">Retail</option>
+                        <option value="Корпоративна">Корпоративна</option>
+                        <option value="Підписка">Підписка</option>
+                        <option value="Безкоштовна">Безкоштовна</option>
+                        <option value="Інше">Інше</option>
+                    </x-form.select>
                 </div>
+
+                @if($license_type === 'Інше')
+                <div>
+                    <x-form.input label="Свій тип ліцензії" model="custom_license_type" type="text" placeholder="напр. Донгл, Тріальна" />
+                </div>
+                @endif
 
                 <div>
                     <x-form.input label="Дата придбання" model="purchase_date" type="date" />
