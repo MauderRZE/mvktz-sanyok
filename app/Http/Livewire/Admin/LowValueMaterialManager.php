@@ -54,7 +54,7 @@ class LowValueMaterialManager extends Component
             'price' => 'nullable|numeric|min:0',
             'count' => 'required|integer|min:1',
             'nomenklature_number' => 'nullable|string|max:100',
-            'contract_id' => 'nullable|exists:contracts,id',
+            'contract_id' => 'nullable|exists:purchases,id',
         ]);
 
         LowValueMaterial::updateOrCreate(['id' => $this->materialId], [
