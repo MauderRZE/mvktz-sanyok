@@ -218,6 +218,7 @@ class LivewireV3Test extends TestCase
         // Лише компоненти з реальною публічною властивістю $search
         return [
             'EquipmentManager' => [EquipmentManager::class],
+            'AssetManager'     => [\App\Http\Livewire\Admin\AssetManager::class],
         ];
     }
 
@@ -244,6 +245,8 @@ class LivewireV3Test extends TestCase
         return [
             'EquipmentManager-id'     => [EquipmentManager::class, 'id'],
             'EquipmentManager-status' => [EquipmentManager::class, 'status'],
+            'AssetManager-notes'      => [\App\Http\Livewire\Admin\AssetManager::class, 'notes'],
+            'AssetManager-serial'     => [\App\Http\Livewire\Admin\AssetManager::class, 'serial_number'],
         ];
     }
 
@@ -273,6 +276,7 @@ class LivewireV3Test extends TestCase
             'SupplierManager'        => [SupplierManager::class, 'supplier_name'],
             'DepartmentManager'      => [DepartmentManager::class, 'name'],
             'OrganizationManager'    => [OrganizationManager::class, 'org_name'],
+            'AssetManager'           => [\App\Http\Livewire\Admin\AssetManager::class, 'equipment_id'],
         ];
     }
 
