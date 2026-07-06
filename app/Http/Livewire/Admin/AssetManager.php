@@ -28,6 +28,8 @@ class AssetManager extends Component
 
     public $isOpen = 0;
 
+    public array $expandedRows = [];
+
     // Пошук та сортування
     public $search = '';
     public $sortField = 'id';
@@ -68,6 +70,17 @@ class AssetManager extends Component
         $this->sortField = $field;
     }
 
+    public function toggleRow(int $id): void
+    {
+        if (in_array($id, $this->expandedRows)) {
+            $this->expandedRows = array_values(
+                array_filter($this->expandedRows, fn($r) => $r !== $id)
+            );
+        } else {
+            $this->expandedRows[] = $id;
+        }
+    }
+
     public function render()
     {
         $query = Asset::with([
@@ -76,7 +89,10 @@ class AssetManager extends Component
                 'model.brand', 
                 'location', 
                 'holder.employee', 
-                'holder.organization'
+                'holder.organization',
+                'parentAsset.componentType',
+                'lowValueMaterial',
+                'writeOffAct'
             ])
             ->when($this->search, function($q) {
                 $q->where(function($q) {
@@ -98,7 +114,7 @@ class AssetManager extends Component
                 $q->whereIn('base_component_id', $this->filterBaseComponent);
             });
 
-        if (in_array($this->sortField, ['id', 'serial_number', 'status', 'notes', 'ip_address', 'mac_address'])) {
+        if (in_array($this->sortField, ['id', 'serial_number', 'status', 'ip_address', 'mac_address'])) {
             $query->orderBy($this->sortField, $this->sortDirection);
         } else {
             $query->orderBy('id', 'desc');

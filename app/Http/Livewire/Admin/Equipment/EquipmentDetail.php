@@ -19,8 +19,8 @@ class EquipmentDetail extends Component
 
         // Важкий eager-load виконується ЛИШЕ при відкритті slide-over
         $this->equipment = Equipment::with([
-            'components.componentType',
-            'components.holder.organization',
+            'assets.componentType',
+            'assets.holder.organization',
             'movements.employee.department',
             'maintenanceLogs',
             'lowValueMaterials.contract',

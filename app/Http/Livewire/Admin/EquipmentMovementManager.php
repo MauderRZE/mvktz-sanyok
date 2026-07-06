@@ -67,7 +67,7 @@ class EquipmentMovementManager extends Component
 
         // Отримуємо обладнання та його перший компонент
         $equipment = Equipment::findOrFail($this->equip_id);
-        $asset = $equipment->components()->first();
+        $asset = $equipment->assets()->first();
         $asset_id = $asset ? $asset->id : null;
 
         // Попередній утримувач (from_holder_id)
@@ -75,7 +75,7 @@ class EquipmentMovementManager extends Component
 
         // Оновлюємо поточне розташування та утримувача для комплектуючих обладнання
         if ($asset) {
-            $equipment->components()->update([
+            $equipment->assets()->update([
                 'current_loc_id' => $this->location_id,
                 'current_holder_id' => $toHolder->id,
             ]);

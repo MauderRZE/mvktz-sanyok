@@ -10,6 +10,7 @@ $variants = [
     'В роботі' => 'bg-amber-500/10 text-amber-400',
     'Призупинена' => 'bg-amber-500/10 text-amber-400',
     'В ремонті' => 'bg-amber-500/10 text-amber-400',
+    'Потребує уваги' => 'bg-amber-500/10 text-amber-400',
     'Списано' => 'bg-red-500/10 text-red-400',
     'Відкрито' => 'bg-red-500/10 text-red-400',
     'Знято' => 'bg-gray-500/10 text-gray-400',
@@ -18,6 +19,7 @@ $variants = [
 $dotColors = [
     'В експлуатації' => 'bg-emerald-400',
     'На складі' => 'bg-amber-400',
+    'Потребує уваги' => 'bg-amber-400',
     'Списано' => 'bg-red-400',
 ];
 

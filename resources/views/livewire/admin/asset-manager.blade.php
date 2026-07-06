@@ -50,7 +50,7 @@
     </x-ui.card>
 
     @if($isOpen)
-    <x-ui.modal title="{{ $assetId ? 'Редагувати' : 'Додати' }} актив" maxWidth="lg">
+    <x-ui.modal title="{{ $assetId ? 'Редагувати' : 'Додати' }} актив" maxWidth="2xl">
         <div class="space-y-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                     <div>
@@ -155,10 +155,8 @@
                     <div>
                         <x-form.select label="Стан роботи" model="status">
                             <option value="Працює">Працює</option>
-                            <option value="Знято">Знято</option>
-                            <option value="Зламано">Зламано</option>
-                            <option value="В ремонті">В ремонті</option>
                             <option value="Потребує уваги">Потребує уваги</option>
+                            <option value="В ремонті">В ремонті</option>
                             <option value="Списано">Списано</option>
                         </x-form.select>
                     </div>
@@ -188,17 +186,16 @@
     {{-- Desktop --}}
     <x-table.wrapper>
             <x-slot name="headers">
+                    <x-table.th width="40"></x-table.th>
                     <x-table.th align="left">Пристрій (Інв. №)</x-table.th>
                     <x-table.th align="left">Тип компонента</x-table.th>
-                    <x-table.th align="left" wire:click="sortBy('notes')" class="cursor-pointer hover:bg-white/5">
-                        <div class="flex items-center gap-1">Модель @if($sortField === 'notes') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
-                    </x-table.th>
                     <x-table.th align="left" wire:click="sortBy('serial_number')" class="cursor-pointer hover:bg-white/5">
-                        <div class="flex items-center gap-1">Серійний @if($sortField === 'serial_number') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
+                        <div class="flex items-center gap-1">Модель / S/N @if($sortField === 'serial_number') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
                     </x-table.th>
                     <x-table.th align="left" wire:click="sortBy('ip_address')" class="cursor-pointer hover:bg-white/5">
                         <div class="flex items-center gap-1">Мережа @if($sortField === 'ip_address') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
                     </x-table.th>
+                    <x-table.th align="left">Місце / Власник</x-table.th>
                     <x-table.th align="left" wire:click="sortBy('status')" class="cursor-pointer hover:bg-white/5">
                         <div class="flex items-center gap-1">Статус @if($sortField === 'status') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
                     </x-table.th>
@@ -206,7 +203,12 @@
                 </x-slot>
             
                 @forelse($assets as $c)
-                <x-table.tr>
+                <x-table.tr class="{{ in_array($c->id, $expandedRows) ? 'bg-surface-900/50' : '' }}">
+                    <x-table.td align="center">
+                        <button wire:click="toggleRow({{ $c->id }})" class="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
+                            <svg class="w-4 h-4 transition-transform duration-200 {{ in_array($c->id, $expandedRows) ? 'rotate-90' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </button>
+                    </x-table.td>
                     <x-table.td align="left" primary>
                         {{ $c->equipment->inv_number ?? '-' }}
                         <x-table.cell-subtext>{{ $c->equipment->account_name ?? '' }}</x-table.cell-subtext>
@@ -215,23 +217,40 @@
                     <x-table.td align="left">
                         @if($c->model)
                             <div class="font-medium">{{ $c->model->brand->brandtz_name ?? '' }} {{ $c->model->model_name }}</div>
-                        @endif
-                        @if($c->notes)
-                            <x-table.cell-subtext>{{ $c->notes }}</x-table.cell-subtext>
-                        @endif
-                        @if(!$c->model && !$c->notes)
+                        @else
                             -
                         @endif
+                        @if($c->serial_number)
+                            <x-table.cell-subtext class="font-mono">SN: {{ $c->serial_number }}</x-table.cell-subtext>
+                        @endif
                     </x-table.td>
-                    <x-table.td align="left" class="text-gray-400 font-mono text-xs">{{ $c->serial_number ?? '-' }}</x-table.td>
                     <x-table.td align="left" class="text-gray-400">
                         @if(!empty($c->ip_address) || !empty($c->mac_address) || !empty($c->hostname))
                             @if(!empty($c->hostname))
                                 <span class="text-xs text-white block">{{ $c->hostname }}</span>
                             @endif
                             <span class="text-xs text-brand-400 block font-mono">{{ $c->ip_address }}</span>
-                            <x-table.cell-subtext class="font-mono">{{ $c->mac_address }}</x-table.cell-subtext>
+                            @if(!empty($c->mac_address))
+                                <x-table.cell-subtext class="font-mono">{{ $c->mac_address }}</x-table.cell-subtext>
+                            @endif
                         @else
+                            <span class="text-gray-600">-</span>
+                        @endif
+                    </x-table.td>
+                    <x-table.td align="left">
+                        @if($c->location)
+                            <div class="text-sm text-white">Каб. {{ $c->location->room_number }}</div>
+                        @endif
+                        @if($c->holder)
+                            <x-table.cell-subtext>
+                            @php
+                                $empName = $c->holder->employee ? $c->holder->employee->last_name . ' ' . mb_substr($c->holder->employee->first_name, 0, 1) . '.' : null;
+                                $orgName = $c->holder->organization->org_name ?? null;
+                                echo $empName ? $empName . ($orgName ? " ($orgName)" : '') : ($orgName ?? 'Невідомий');
+                            @endphp
+                            </x-table.cell-subtext>
+                        @endif
+                        @if(!$c->location && !$c->holder)
                             <span class="text-gray-600">-</span>
                         @endif
                     </x-table.td>
@@ -242,8 +261,49 @@
                         <x-ui.action-buttons id="{{ $c->id }}" />
                     </x-table.td>
                 </x-table.tr>
+
+                @if(in_array($c->id, $expandedRows))
+                <tr class="bg-surface-900/30 border-b border-white/5">
+                    <td colspan="8" class="px-4 py-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                            <div>
+                                <span class="text-gray-500 block mb-1 uppercase tracking-wider">📦 Облік МБП</span>
+                                @if($c->lowValueMaterial)
+                                    <div class="text-gray-300">{{ $c->lowValueMaterial->material_account_name }}</div>
+                                    <div class="text-gray-500 font-mono">{{ $c->lowValueMaterial->nomenklature_number }}</div>
+                                @else
+                                    <span class="text-gray-600">-</span>
+                                @endif
+                            </div>
+                            <div>
+                                <span class="text-gray-500 block mb-1 uppercase tracking-wider">📋 Акт списання</span>
+                                @if($c->writeOffAct)
+                                    <div class="text-gray-300">Акт №{{ $c->writeOffAct->act_number }}</div>
+                                @else
+                                    <span class="text-gray-600">-</span>
+                                @endif
+                            </div>
+                            <div>
+                                <span class="text-gray-500 block mb-1 uppercase tracking-wider">🔗 Батьківський актив</span>
+                                @if($c->parentAsset)
+                                    <div class="text-brand-400">#{{ $c->parentAsset->id }} — {{ $c->parentAsset->componentType->component_name ?? 'Актив' }}</div>
+                                    @if($c->parentAsset->serial_number)
+                                        <div class="text-gray-500 font-mono">SN: {{ $c->parentAsset->serial_number }}</div>
+                                    @endif
+                                @else
+                                    <span class="text-gray-600">-</span>
+                                @endif
+                            </div>
+                            <div>
+                                <span class="text-gray-500 block mb-1 uppercase tracking-wider">📝 Примітки (ID: {{ $c->id }})</span>
+                                <div class="text-gray-300">{{ $c->notes ?: '-' }}</div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                @endif
                 @empty
-                <x-table.empty colspan="7" />
+                <x-table.empty colspan="8" />
                 @endforelse
             
         </x-table.wrapper>
@@ -275,6 +335,32 @@
                     {{ $c->ip_address }}<br><span class="text-[9px]">{{ $c->mac_address }}</span>
                 </div>
                 @endif
+            </x-table.mobile-card-footer>
+
+            <x-table.mobile-card-footer class="grid grid-cols-2 gap-2">
+                <div>
+                    <x-table.cell-subtext>Місце / Власник:</x-table.cell-subtext>
+                    <div class="text-xs">
+                        @if($c->location) Каб. {{ $c->location->room_number }}<br> @endif
+                        @if($c->holder)
+                            @php
+                                $empName = $c->holder->employee ? mb_substr($c->holder->employee->first_name, 0, 1) . '. ' . $c->holder->employee->last_name : null;
+                                $orgName = $c->holder->organization->org_name ?? null;
+                                echo $empName ? $empName . ($orgName ? " ($orgName)" : '') : ($orgName ?? 'Невідомий');
+                            @endphp
+                        @endif
+                        @if(!$c->location && !$c->holder) - @endif
+                    </div>
+                </div>
+                <div>
+                    <x-table.cell-subtext>Деталі:</x-table.cell-subtext>
+                    <div class="text-xs">
+                        @if($c->parentAsset) 🔗 Батьківський: #{{ $c->parentAsset->id }}<br> @endif
+                        @if($c->lowValueMaterial) 📦 МБП: {{ $c->lowValueMaterial->nomenklature_number }}<br> @endif
+                        @if($c->writeOffAct) 📋 Списано: Акт №{{ $c->writeOffAct->act_number }}<br> @endif
+                        @if($c->notes) 📝 {{ mb_strimwidth($c->notes, 0, 30, '...') }} @endif
+                    </div>
+                </div>
             </x-table.mobile-card-footer>
 
             <x-table.mobile-card-footer flex="true">
