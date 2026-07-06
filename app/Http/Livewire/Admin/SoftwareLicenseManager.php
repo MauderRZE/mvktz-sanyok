@@ -16,11 +16,8 @@ class SoftwareLicenseManager extends Component
 
     public function render()
     {
-        $this->licenses = SoftwareLicense::all();
-        // Since we don't know if there's a vendors model, we'll just leave it empty or fetch from somewhere. 
-        // For now, let's just make it empty if we don't have a specific Vendor model.
-        // Or if there is a Vendor model, let's try to load it. For now, empty array.
-        $this->vendorsList = []; 
+        $this->licenses = SoftwareLicense::with('vendor')->get();
+        $this->vendorsList = \App\Models\Supplier::all();
         return view('livewire.admin.software-license-manager');
     }
 

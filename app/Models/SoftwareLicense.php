@@ -19,4 +19,9 @@ class SoftwareLicense extends Model
         'license_type',
         'purchase_date',
     ];
+
+    public function vendor()
+    {
+        return $this->belongsTo(Supplier::class, 'vendor_id');
+    }
 }

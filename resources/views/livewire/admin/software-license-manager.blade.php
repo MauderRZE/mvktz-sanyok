@@ -11,6 +11,15 @@
                 </div>
 
                 <div>
+                    <x-form.select label="Виробник/Постачальник" model="vendor_id">
+                        <option value="">Оберіть постачальника</option>
+                        @foreach($vendorsList as $vendor)
+                            <option value="{{ $vendor->id }}">{{ $vendor->supplier_name }}</option>
+                        @endforeach
+                    </x-form.select>
+                </div>
+
+                <div>
                     <x-form.input label="Тип ліцензії" model="license_type" type="text" />
                 </div>
 
@@ -26,6 +35,7 @@
             <x-slot name="headers">
                     <x-table.th align="left">ID</x-table.th>
                     <x-table.th align="left">Назва ліцензії</x-table.th>
+                    <x-table.th align="left">Виробник/Постачальник</x-table.th>
                     <x-table.th align="left">Тип ліцензії</x-table.th>
                     <x-table.th align="left">Дата придбання</x-table.th>
                     <x-table.th align="right" width="32">Дії</x-table.th>
@@ -35,6 +45,7 @@
                 <x-table.tr>
                     <x-table.td align="left" class="text-gray-400 font-mono text-xs">#{{ $lic->id }}</x-table.td>
                     <x-table.td align="left" primary>{{ $lic->license_name }}</x-table.td>
+                    <x-table.td align="left" class="text-gray-300 text-xs">{{ $lic->vendor?->supplier_name ?? '-' }}</x-table.td>
                     <x-table.td align="left" class="text-gray-300 text-xs">{{ $lic->license_type ?? '-' }}</x-table.td>
                     <x-table.td align="left" class="text-gray-400 whitespace-nowrap">{{ $lic->purchase_date ?? '-' }}</x-table.td>
                     <x-table.td align="right">
@@ -56,7 +67,7 @@
                     <span class="text-xs text-brand-400 font-semibold uppercase tracking-wider block mb-1">Ліцензія ПЗ</span>
                     <x-ui.text-block 
                         title="{{ $lic->license_name }}" 
-                        subtitle="Тип: {{ $lic->license_type ?: '-' }}" 
+                        subtitle="Виробник: {{ $lic->vendor?->supplier_name ?? '-' }} | Тип: {{ $lic->license_type ?: '-' }}" 
                         subtitleClass="text-xs text-gray-400 font-mono"
                     />
                 </div>
