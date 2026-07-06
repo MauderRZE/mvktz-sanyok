@@ -5,18 +5,18 @@ namespace App\Http\Livewire\Admin;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\EquipmentType;
-use App\Models\EquipmentCategory;
+use App\Models\BrandTz;
 
 #[Layout('layouts.admin')]
 class TypeManager extends Component
 {
-    public $types, $categories, $typeId, $type_name, $category_id;
+    public $types, $brands, $typeId, $model_name, $brand_id;
     public $isOpen = 0;
 
     public function render()
     {
-        $this->types = EquipmentType::with('category')->get();
-        $this->categories = EquipmentCategory::all();
+        $this->types = EquipmentType::with('brand')->get();
+        $this->brands = BrandTz::all();
         return view('livewire.admin.type-manager');
     }
 
@@ -38,24 +38,24 @@ class TypeManager extends Component
 
     private function resetInputFields(){
         $this->typeId = null;
-        $this->type_name = '';
-        $this->category_id = null;
+        $this->model_name = '';
+        $this->brand_id = null;
     }
 
     public function store()
     {
         $this->validate([
-            'type_name' => 'required',
-            'category_id' => 'required',
+            'model_name' => 'required',
+            'brand_id' => 'required',
         ]);
 
         EquipmentType::updateOrCreate(['id' => $this->typeId], [
-            'type_name' => $this->type_name,
-            'category_id' => $this->category_id,
+            'model_name' => $this->model_name,
+            'brand_id' => $this->brand_id,
         ]);
 
         session()->flash('message', 
-            $this->typeId ? 'Тип оновлено.' : 'Тип створено.');
+            $this->typeId ? 'Модель оновлено.' : 'Модель створено.');
 
         $this->closeModal();
         $this->resetInputFields();
@@ -65,14 +65,14 @@ class TypeManager extends Component
     {
         $type = EquipmentType::findOrFail($id);
         $this->typeId = $id;
-        $this->type_name = $type->type_name;
-        $this->category_id = $type->category_id;
+        $this->model_name = $type->model_name;
+        $this->brand_id = $type->brand_id;
         $this->openModal();
     }
 
     public function delete($id)
     {
         EquipmentType::find($id)->delete();
-        session()->flash('message', 'Тип видалено.');
+        session()->flash('message', 'Модель видалено.');
     }
 }

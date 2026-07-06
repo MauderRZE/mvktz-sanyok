@@ -51,11 +51,11 @@
                     @endforeach
                 </x-form.multi-select>
 
-                <x-form.multi-select label="Типи" :selectedCount="count($filterType)">
+                <x-form.multi-select label="Моделі" :selectedCount="count($filterType)">
                     @foreach($types as $t)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $t->id }}" wire:model.live="filterType" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
-                            <span>{{ $t->type_name }}</span>
+                            <span>{{ $t->model_name }}</span>
                         </label>
                     @endforeach
                 </x-form.multi-select>

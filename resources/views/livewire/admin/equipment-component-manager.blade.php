@@ -16,7 +16,7 @@
                         </x-form.select>
                     </div>
                     <div>
-                        <x-form.select label="Базовий компонент" model="component_type_id">
+                        <x-form.select label="Базовий компонент" model="base_component_id">
                             <option value="">Оберіть компонент...</option>
                             @foreach($baseComponentsList as $bc)
                                 <option value="{{ $bc->id }}">{{ $bc->component_name }}</option>
@@ -27,17 +27,14 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                     <div>
-                        <x-form.input label="Виробник / Модель" model="brand_model" type="text" placeholder="напр. Kingston DDR4 16GB" />
+                        <x-form.input label="Виробник / Модель / Примітки" model="notes" type="text" placeholder="напр. Kingston DDR4 16GB" />
                     </div>
                     <div>
                         <x-form.input label="Серійний номер" model="serial_number" type="text" />
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                    <div>
-                        <x-form.input label="Модель картриджа (якщо є)" model="cartridge_model" type="text" />
-                    </div>
+                <div class="grid grid-cols-1 gap-4 items-end">
                     <div>
                         <x-form.select label="Стан роботи" model="status">
                             <option value="Працює">Працює</option>
@@ -86,14 +83,11 @@
                     </x-table.td>
                     <x-table.td align="left">{{ $c->componentType->component_name ?? '-' }}</x-table.td>
                     <x-table.td align="left">
-                        {{ $c->brand_model ?? '-' }}
-                        @if($c->cartridge_model)
-                            <x-table.cell-subtext class="text-brand-400">Картридж: {{ $c->cartridge_model }}</x-table.cell-subtext>
-                        @endif
+                        {{ $c->notes ?? '-' }}
                     </x-table.td>
                     <x-table.td align="left" class="text-gray-400 font-mono text-xs">{{ $c->serial_number ?? '-' }}</x-table.td>
                     <x-table.td align="left" class="text-gray-400">
-                        @if($c->has_network)
+                        @if(!empty($c->ip_address) || !empty($c->mac_address))
                             <span class="text-xs text-brand-400 block font-mono">{{ $c->ip_address }}</span>
                             <x-table.cell-subtext class="font-mono">{{ $c->mac_address }}</x-table.cell-subtext>
                         @else
@@ -121,7 +115,7 @@
                 <div>
                     <span class="text-xs text-brand-400 font-semibold uppercase tracking-wider block mb-1">{{ $c->componentType->component_name ?? '-' }}</span>
                     <x-ui.text-block 
-                        title="{{ $c->brand_model ?? '-' }}" 
+                        title="{{ $c->notes ?? '-' }}" 
                         subtitle="Пристрій: {{ $c->equipment->inventory_number ?? '-' }}" 
                     />
                 </div>
@@ -133,7 +127,7 @@
                     <x-table.cell-subtext>Серійний:</x-table.cell-subtext>
                     {{ $c->serial_number ?: '-' }}
                 </div>
-                @if($c->has_network)
+                @if(!empty($c->ip_address) || !empty($c->mac_address))
                 <div>
                     <x-table.cell-subtext>IP / MAC:</x-table.cell-subtext>
                     {{ $c->ip_address }}<br><span class="text-[9px]">{{ $c->mac_address }}</span>
