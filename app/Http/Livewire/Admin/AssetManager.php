@@ -26,13 +26,11 @@ class AssetManager extends Component
     public $status = 'Працює';
     public $nomenclature_id, $write_off_act_id;
 
-    public $isOpen = 0;
-
-    public array $expandedRows = [];
-
-    public $isFilterOpen = false;
+    public $isOpen = false;
     public $isViewOpen = false;
     public $viewAsset = null;
+
+    public array $expandedRows = [];
 
     // Пошук та сортування
     public $search = '';
@@ -42,6 +40,10 @@ class AssetManager extends Component
     // Фільтри
     public $filterStatus = [];
     public $filterBaseComponent = [];
+    public $filterLocation = [];
+    public $filterHolder = [];
+    public $filterModel = [];
+    public $filterNetwork = [];
 
     public function updatingSearch()
     {
@@ -58,6 +60,11 @@ class AssetManager extends Component
         $this->resetPage();
     }
 
+    public function updatingFilterLocation() { $this->resetPage(); }
+    public function updatingFilterHolder() { $this->resetPage(); }
+    public function updatingFilterModel() { $this->resetPage(); }
+    public function updatingFilterNetwork() { $this->resetPage(); }
+
     public function updatedBaseComponentId($value)
     {
         if ($value) {
@@ -73,17 +80,11 @@ class AssetManager extends Component
         $this->search = '';
         $this->filterStatus = [];
         $this->filterBaseComponent = [];
+        $this->filterLocation = [];
+        $this->filterHolder = [];
+        $this->filterModel = [];
+        $this->filterNetwork = [];
         $this->resetPage();
-    }
-
-    public function openFilters()
-    {
-        $this->isFilterOpen = true;
-    }
-
-    public function closeFilters()
-    {
-        $this->isFilterOpen = false;
     }
 
     public function sortBy($field)
@@ -126,14 +127,42 @@ class AssetManager extends Component
             ])
             ->when($this->search, function($q) {
                 $q->where(function($q) {
-                    $q->where('serial_number', 'like', '%' . $this->search . '%')
-                      ->orWhere('notes', 'like', '%' . $this->search . '%')
-                      ->orWhere('ip_address', 'like', '%' . $this->search . '%')
-                      ->orWhere('mac_address', 'like', '%' . $this->search . '%')
-                      ->orWhere('hostname', 'like', '%' . $this->search . '%')
-                      ->orWhereHas('equipment', function($eq) {
-                          $eq->where('inv_number', 'like', '%' . $this->search . '%')
-                             ->orWhere('account_name', 'like', '%' . $this->search . '%');
+                    $search = '%' . $this->search . '%';
+                    $q->where('serial_number', 'like', $search)
+                      ->orWhere('notes', 'like', $search)
+                      ->orWhere('ip_address', 'like', $search)
+                      ->orWhere('mac_address', 'like', $search)
+                      ->orWhere('hostname', 'like', $search)
+                      ->orWhereHas('equipment', function($eq) use ($search) {
+                          $eq->where('inv_number', 'like', $search)
+                             ->orWhere('account_name', 'like', $search);
+                      })
+                      ->orWhereHas('componentType', function($ct) use ($search) {
+                          $ct->where('component_name', 'like', $search);
+                      })
+                      ->orWhereHas('model', function($m) use ($search) {
+                          $m->where('model_name', 'like', $search)
+                            ->orWhereHas('brand', function($b) use ($search) {
+                                $b->where('brandtz_name', 'like', $search);
+                            });
+                      })
+                      ->orWhereHas('location', function($loc) use ($search) {
+                          $loc->where('room_number', 'like', $search);
+                      })
+                      ->orWhereHas('holder', function($h) use ($search) {
+                          $h->whereHas('employee', function($emp) use ($search) {
+                              $emp->where('last_name', 'like', $search)
+                                  ->orWhere('first_name', 'like', $search);
+                          })->orWhereHas('organization', function($org) use ($search) {
+                              $org->where('org_name', 'like', $search);
+                          });
+                      })
+                      ->orWhereHas('lowValueMaterial', function($lvm) use ($search) {
+                          $lvm->where('nomenklature_number', 'like', $search)
+                              ->orWhere('material_account_name', 'like', $search);
+                      })
+                      ->orWhereHas('writeOffAct', function($woa) use ($search) {
+                          $woa->where('act_number', 'like', $search);
                       });
                 });
             })
@@ -143,7 +172,19 @@ class AssetManager extends Component
             ->when(!empty($this->filterBaseComponent), function($q) {
                 $q->whereIn('base_component_id', $this->filterBaseComponent);
             })
-            ->when(empty($this->search) && empty($this->filterStatus) && empty($this->filterBaseComponent), function($q) {
+            ->when(!empty($this->filterLocation), function($q) {
+                $q->whereIn('current_loc_id', $this->filterLocation);
+            })
+            ->when(!empty($this->filterHolder), function($q) {
+                $q->whereIn('current_holder_id', $this->filterHolder);
+            })
+            ->when(!empty($this->filterModel), function($q) {
+                $q->whereIn('model_id', $this->filterModel);
+            })
+            ->when(!empty($this->filterNetwork), function($q) {
+                $q->whereIn('has_network', $this->filterNetwork);
+            })
+            ->when(empty($this->search) && empty($this->filterStatus) && empty($this->filterBaseComponent) && empty($this->filterLocation) && empty($this->filterHolder) && empty($this->filterModel) && empty($this->filterNetwork), function($q) {
                 $q->whereNull('parent_asset_id');
             });
 
@@ -209,9 +250,6 @@ class AssetManager extends Component
 
     public function close()
     {
-        if ($this->isFilterOpen) {
-            $this->isFilterOpen = false;
-        }
         if ($this->isViewOpen) {
             $this->isViewOpen = false;
             $this->viewAsset = null;

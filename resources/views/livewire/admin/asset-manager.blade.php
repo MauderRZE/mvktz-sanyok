@@ -18,63 +18,76 @@
         <div class="flex flex-col lg:flex-row gap-4 items-center">
             <div class="flex-1 w-full flex gap-2">
                 <div class="flex-1">
-                    <x-form.search wire:model.live.debounce.300ms="search" placeholder="Пошук за серійним номером, IP/MAC, примітками або інв. номером обладнання..." />
+                    <x-form.search wire:model.live.debounce.300ms="search" placeholder="Пошук по всіх полях (серійний номер, IP, модель, кабінет, ПІБ, обладнання...)" />
                 </div>
-                @if($search !== '' || !empty($filterStatus) || !empty($filterBaseComponent))
+                @if($search !== '' || !empty($filterStatus) || !empty($filterBaseComponent) || !empty($filterModel) || !empty($filterLocation) || !empty($filterHolder) || !empty($filterNetwork))
                     <button wire:click="resetFilters" class="px-4 py-2 bg-white/5 hover:bg-white/10 text-xs text-gray-400 hover:text-white rounded-xl border border-white/10 transition-colors shrink-0 flex items-center gap-1.5" title="Скинути всі фільтри">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                         <span>Скинути</span>
                     </button>
                 @endif
-                <button wire:click="openFilters" class="px-4 py-2 bg-white/5 hover:bg-white/10 text-xs text-gray-300 hover:text-white rounded-xl border border-white/10 transition-colors shrink-0 flex items-center gap-1.5">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
-                    <span>Фільтри</span>
-                    @if(count($filterStatus) > 0 || count($filterBaseComponent) > 0)
-                        <span class="ml-1 bg-brand-500/20 text-brand-300 px-1.5 py-0.5 rounded text-[10px] font-bold">{{ count($filterStatus) + count($filterBaseComponent) }}</span>
-                    @endif
-                </button>
             </div>
-        </div>
-    </x-ui.card>
-
-    @if($isFilterOpen)
-    <x-ui.slide-over title="Фільтри активів" maxWidth="sm">
-        <div class="space-y-6">
-            <div>
-                <h4 class="text-sm font-medium text-white mb-3">Базові компоненти</h4>
-                <div class="space-y-2">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 w-full lg:w-auto">
+                <x-form.multi-select label="Тип компонента" :selectedCount="count($filterBaseComponent)">
                     @foreach($baseComponentsList as $bc)
-                        <label class="flex items-center gap-2 text-sm text-gray-300 hover:text-white cursor-pointer">
+                        <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $bc->id }}" wire:model.live="filterBaseComponent" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
                             <span>{{ $bc->component_name }}</span>
                         </label>
                     @endforeach
-                </div>
-            </div>
+                </x-form.multi-select>
 
-            <div class="border-t border-white/10 pt-6">
-                <h4 class="text-sm font-medium text-white mb-3">Статуси</h4>
-                <div class="space-y-2">
+                <x-form.multi-select label="Моделі" :selectedCount="count($filterModel)">
+                    @foreach($modelsList as $m)
+                        <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
+                            <input type="checkbox" value="{{ $m->id }}" wire:model.live="filterModel" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                            <span>{{ trim(($m->brand->brandtz_name ?? '') . ' ' . $m->model_name) }}</span>
+                        </label>
+                    @endforeach
+                </x-form.multi-select>
+
+                <x-form.multi-select label="Локації" :selectedCount="count($filterLocation)">
+                    @foreach($locationsList as $loc)
+                        <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
+                            <input type="checkbox" value="{{ $loc->id }}" wire:model.live="filterLocation" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                            <span>Каб. {{ $loc->room_number }}</span>
+                        </label>
+                    @endforeach
+                </x-form.multi-select>
+
+                <x-form.multi-select label="Власники" :selectedCount="count($filterHolder)">
+                    @foreach($holdersList as $h)
+                        <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
+                            <input type="checkbox" value="{{ $h->id }}" wire:model.live="filterHolder" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                            <span class="truncate" title="{{ $h->employee ? $h->employee->last_name . ' ' . mb_substr($h->employee->first_name, 0, 1) . '.' . ($h->organization ? ' (' . $h->organization->org_name . ')' : '') : ($h->organization->org_name ?? 'Невідомий') }}">
+                                {{ $h->employee ? $h->employee->last_name . ' ' . mb_substr($h->employee->first_name, 0, 1) . '.' : ($h->organization->org_name ?? 'Невідомий') }}
+                            </span>
+                        </label>
+                    @endforeach
+                </x-form.multi-select>
+
+                <x-form.multi-select label="Мережа" :selectedCount="count($filterNetwork)">
+                    <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
+                        <input type="checkbox" value="1" wire:model.live="filterNetwork" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>Є мережа</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
+                        <input type="checkbox" value="0" wire:model.live="filterNetwork" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>Немає мережі</span>
+                    </label>
+                </x-form.multi-select>
+
+                <x-form.multi-select label="Статуси" :selectedCount="count($filterStatus)">
                     @foreach(['Працює', 'Знято', 'Зламано', 'В ремонті', 'Потребує уваги', 'Списано'] as $st)
-                        <label class="flex items-center gap-2 text-sm text-gray-300 hover:text-white cursor-pointer">
+                        <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $st }}" wire:model.live="filterStatus" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
                             <span>{{ $st }}</span>
                         </label>
                     @endforeach
-                </div>
-            </div>
-            
-            <div class="mt-6 pt-4 border-t border-white/10 flex justify-between items-center">
-                <button wire:click="resetFilters" class="text-sm text-gray-400 hover:text-white transition-colors">
-                    Скинути все
-                </button>
-                <button wire:click="closeFilters" class="px-4 py-2 bg-white/5 hover:bg-white/10 text-sm text-white rounded-xl transition-colors">
-                    Закрити
-                </button>
+                </x-form.multi-select>
             </div>
         </div>
-    </x-ui.slide-over>
-    @endif
+    </x-ui.card>
 
     @if($isOpen)
     <div wire:key="asset-modal-wrapper">
