@@ -89,7 +89,7 @@
                         </x-form.select>
                     </div>
                     <div>
-                        <x-form.select label="Базовий компонент" model="base_component_id">
+                        <x-form.select label="Базовий компонент" model="base_component_id" :live="true">
                             <option value="">Оберіть компонент...</option>
                             @foreach($baseComponentsList as $bc)
                                 <option value="{{ $bc->id }}">{{ $bc->component_name }}</option>
@@ -108,12 +108,29 @@
                         </x-form.select>
                     </div>
                     <div>
-                        <x-form.select label="Батьківський актив" model="parent_asset_id">
-                            <option value="">Немає (Основний актив)</option>
-                            @foreach($parentAssetsList as $pa)
-                                <option value="{{ $pa->id }}">#{{ $pa->id }} - {{ $pa->componentType->component_name ?? '' }} ({{ $pa->serial_number ?: 'без S/N' }})</option>
-                            @endforeach
-                        </x-form.select>
+                        @php
+                            $isSystemUnit = false;
+                            if ($base_component_id) {
+                                $selectedComponent = $baseComponentsList->firstWhere('id', $base_component_id);
+                                if ($selectedComponent && mb_strtolower($selectedComponent->component_name) === 'системний блок') {
+                                    $isSystemUnit = true;
+                                }
+                            }
+                        @endphp
+                        @if($isSystemUnit)
+                            <div class="opacity-50 pointer-events-none" title="Системний блок не може мати батьківського активу">
+                                <x-form.select label="Батьківський актив" model="parent_asset_id">
+                                    <option value="">Не застосовується</option>
+                                </x-form.select>
+                            </div>
+                        @else
+                            <x-form.select label="Батьківський актив" model="parent_asset_id">
+                                <option value="">Немає (Основний актив)</option>
+                                @foreach($parentAssetsList as $pa)
+                                    <option value="{{ $pa->id }}">#{{ $pa->id }} - {{ $pa->componentType->component_name ?? '' }} @if($pa->equipment?->inv_number)[Інв. №{{ $pa->equipment->inv_number }}]@endif ({{ $pa->serial_number ?: 'без S/N' }})</option>
+                                @endforeach
+                            </x-form.select>
+                        @endif
                     </div>
                 </div>
 

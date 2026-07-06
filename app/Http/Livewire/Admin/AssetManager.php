@@ -58,6 +58,16 @@ class AssetManager extends Component
         $this->resetPage();
     }
 
+    public function updatedBaseComponentId($value)
+    {
+        if ($value) {
+            $component = BaseComponent::find($value);
+            if ($component && mb_strtolower($component->component_name) === 'системний блок') {
+                $this->parent_asset_id = null;
+            }
+        }
+    }
+
     public function resetFilters()
     {
         $this->search = '';
@@ -150,7 +160,7 @@ class AssetManager extends Component
             'modelsList' => EquipmentType::with('brand')->get(),
             'locationsList' => Location::all(),
             'holdersList' => LocationHolder::with(['employee', 'organization'])->get(),
-            'parentAssetsList' => Asset::with('componentType')->get(),
+            'parentAssetsList' => Asset::with(['componentType', 'equipment'])->get(),
             'nomenclaturesList' => LowValueMaterial::all(),
             'writeOffActsList' => LowValueWriteOffAct::all(),
         ]);
