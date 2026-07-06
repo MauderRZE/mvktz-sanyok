@@ -19,6 +19,9 @@
                         @endforeach
                         </x-form.select>
                 </div>
+                <div>
+                    <x-form.input label="Посилання на договір" model="contract_link" type="url" />
+                </div>
         </x-ui.modal>
     @endif
 
@@ -29,6 +32,7 @@
                     <x-table.th align="left">Номер</x-table.th>
                     <x-table.th align="left">Дата</x-table.th>
                     <x-table.th align="left">Постачальник</x-table.th>
+                    <x-table.th align="center">Посилання</x-table.th>
                     <x-table.th align="right" width="32">Дії</x-table.th>
                 </x-slot>
             
@@ -38,6 +42,15 @@
                     <x-table.td align="left" primary>{{ $c->contract_number }}</x-table.td>
                     <x-table.td align="left">{{ $c->contract_date }}</x-table.td>
                     <x-table.td align="left" class="text-gray-400">{{ $c->supplier->supplier_name ?? '-' }}</x-table.td>
+                    <x-table.td align="center">
+                        @if($c->contract_link)
+                            <a href="{{ $c->contract_link }}" target="_blank" class="text-blue-500 hover:text-blue-700" title="Відкрити">
+                                <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            </a>
+                        @else
+                            -
+                        @endif
+                    </x-table.td>
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $c->id }}" />
                     </x-table.td>
@@ -58,6 +71,9 @@
             </x-table.mobile-card-header>
             <x-table.mobile-card-footer>
                 Постачальник: {{ $c->supplier->supplier_name ?? '-' }}
+                @if($c->contract_link)
+                    | <a href="{{ $c->contract_link }}" target="_blank" class="text-blue-500 underline text-sm ml-2">Посилання</a>
+                @endif
             </x-table.mobile-card-footer>
         </x-table.mobile-card>
         @empty

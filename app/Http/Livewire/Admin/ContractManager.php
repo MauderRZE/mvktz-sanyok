@@ -10,7 +10,7 @@ use App\Models\Supplier;
 #[Layout('layouts.admin')]
 class ContractManager extends Component
 {
-    public $contracts, $contractId, $contract_number, $contract_date, $supplier_id;
+    public $contracts, $contractId, $contract_number, $contract_date, $supplier_id, $contract_link;
     public $suppliersList = [];
     public $isOpen = 0;
 
@@ -42,6 +42,7 @@ class ContractManager extends Component
         $this->contract_number = '';
         $this->contract_date = '';
         $this->supplier_id = null;
+        $this->contract_link = '';
     }
 
     public function store()
@@ -50,12 +51,14 @@ class ContractManager extends Component
             'contract_number' => 'required',
             'contract_date' => 'required|date',
             'supplier_id' => 'required|exists:suppliers,id',
+            'contract_link' => 'nullable|url|max:2048',
         ]);
 
         Contract::updateOrCreate(['id' => $this->contractId], [
             'contract_number' => $this->contract_number,
             'contract_date' => $this->contract_date,
             'supplier_id' => $this->supplier_id,
+            'contract_link' => $this->contract_link ?: null,
         ]);
 
         session()->flash('message', 
@@ -72,6 +75,7 @@ class ContractManager extends Component
         $this->contract_number = $contract->contract_number;
         $this->contract_date = $contract->contract_date;
         $this->supplier_id = $contract->supplier_id;
+        $this->contract_link = $contract->contract_link;
         $this->openModal();
     }
 
