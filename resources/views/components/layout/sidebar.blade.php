@@ -169,9 +169,41 @@
                 <p class="text-sm font-medium text-white truncate">{{ auth()->user()->name ?? 'Admin' }}</p>
                 <p class="text-xs text-gray-500 truncate">{{ auth()->user()->login ?? '' }}</p>
             </div>
-            <button onclick="window.toggleTheme()" class="text-gray-500 hover:text-brand-400 transition-colors mr-2" title="Змінити тему">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
-            </button>
+            <div x-data="{ open: false, themes: ['indigo','sky','emerald','rose','amber','violet','cyan','orange'], currentTheme: localStorage.getItem('theme') || 'indigo' }" class="relative mr-2">
+                <button @click="open = !open" @click.outside="open = false" class="text-gray-500 hover:text-brand-400 transition-colors" title="Змінити тему">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+                </button>
+                <div x-show="open" 
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 translate-y-2"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 translate-y-2"
+                     style="display: none;"
+                     class="absolute bottom-full mb-2 right-0 w-40 p-2 rounded-xl bg-surface-800 border border-white/10 shadow-xl z-50">
+                    <p class="text-[10px] text-gray-400 mb-2 px-1 font-medium tracking-wide uppercase">Колір теми</p>
+                    <div class="grid grid-cols-4 gap-2">
+                        <template x-for="theme in themes" :key="theme">
+                            <button @click="window.setTheme(theme); currentTheme = theme; open = false"
+                                    :title="theme"
+                                    class="w-6 h-6 rounded-full relative focus:outline-none transition-transform hover:scale-110"
+                                    :class="{
+                                        'bg-indigo-500': theme === 'indigo',
+                                        'bg-sky-500': theme === 'sky',
+                                        'bg-emerald-500': theme === 'emerald',
+                                        'bg-rose-500': theme === 'rose',
+                                        'bg-amber-500': theme === 'amber',
+                                        'bg-violet-500': theme === 'violet',
+                                        'bg-cyan-500': theme === 'cyan',
+                                        'bg-orange-500': theme === 'orange',
+                                        'ring-2 ring-white ring-offset-2 ring-offset-surface-800 scale-110': currentTheme === theme
+                                    }">
+                            </button>
+                        </template>
+                    </div>
+                </div>
+            </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="text-gray-500 hover:text-red-400 transition-colors" title="Вихід">
