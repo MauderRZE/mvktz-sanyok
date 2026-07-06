@@ -21,6 +21,9 @@ class EquipmentDetail extends Component
         $this->equipment = Equipment::with([
             'assets.componentType',
             'assets.holder.organization',
+            'assets.childAssets.componentType',
+            'assets.childAssets.model.brand',
+            'assets.childAssets.itemProperties.attribute',
             'movements.employee.department',
             'maintenanceLogs',
             'lowValueMaterials.contract',
