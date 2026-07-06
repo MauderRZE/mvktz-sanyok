@@ -163,7 +163,7 @@
                 </div>
 
                 <div class="border-t border-white/5 pt-4">
-                    <x-form.checkbox label="Мережевий пристрій / інтерфейс" model="has_network" />
+                    <x-form.checkbox label="Мережевий пристрій / інтерфейс" model="has_network" :live="true" />
 
                     @if($has_network)
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end mt-4 fade-in">
