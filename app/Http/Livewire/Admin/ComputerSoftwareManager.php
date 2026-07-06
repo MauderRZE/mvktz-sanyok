@@ -17,7 +17,7 @@ class ComputerSoftwareManager extends Component
 
     public function mount()
     {
-        $this->computers = Asset::with('componentType')->get();
+        $this->computers = Asset::with(['componentType', 'equipment'])->get();
         $this->licenses = SoftwareLicense::all();
     }
 
@@ -57,7 +57,7 @@ class ComputerSoftwareManager extends Component
     {
         $this->validate([
             'computer_id' => 'required|exists:assets,id',
-            'software_name' => 'required|string',
+            'software_name' => 'required|in:Windows,Office,ESET',
             'version' => 'required|string|max:50',
             'is_licensed' => 'boolean',
             'license_id' => 'nullable|exists:licenses,id',
