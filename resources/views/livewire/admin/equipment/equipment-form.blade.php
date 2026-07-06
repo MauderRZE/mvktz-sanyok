@@ -12,14 +12,12 @@
             <x-form.input label="Ціна (грн)" model="buy_price" type="number" step="0.01" />
         </div>
         <div>
-            <x-form.select label="Договір (Закупівля)" model="purchase_id">
-                <option value="" class="bg-surface-800">— Оберіть договір —</option>
-                @foreach($purchasesList as $p)
-                    <option value="{{ $p->id }}" class="bg-surface-800">
-                        № {{ $p->contract_number ?? $p->id }} (від {{ $p->contract_date ?? '—' }})
-                    </option>
-                @endforeach
-            </x-form.select>
+            <x-form.searchable-select 
+                label="Договір (Закупівля)" 
+                model="purchase_id"
+                placeholder="— Оберіть договір —"
+                :options="$purchasesList->map(fn($p) => ['value' => $p->id, 'label' => '№ ' . ($p->contract_number ?? $p->id) . ' (від ' . ($p->contract_date ?? '—') . ')'])->toArray()"
+            />
         </div>
         <div>
             <x-form.select label="Статус" model="status">
@@ -29,14 +27,12 @@
             </x-form.select>
         </div>
         <div>
-            <x-form.select label="Акт списання" model="retirement_act_id">
-                <option value="" class="bg-surface-800">— Оберіть акт —</option>
-                @foreach($retirementActsList as $act)
-                    <option value="{{ $act->id }}" class="bg-surface-800">
-                        № {{ $act->act_number ?? $act->id }} (від {{ $act->act_date ?? '—' }})
-                    </option>
-                @endforeach
-            </x-form.select>
+            <x-form.searchable-select 
+                label="Акт списання" 
+                model="retirement_act_id"
+                placeholder="— Оберіть акт —"
+                :options="$retirementActsList->map(fn($act) => ['value' => $act->id, 'label' => '№ ' . ($act->act_number ?? $act->id) . ' (від ' . ($act->act_date ?? '—') . ')'])->toArray()"
+            />
         </div>
         <div>
             <x-form.input label="Примітка" model="notes" type="text" />
