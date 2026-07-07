@@ -163,7 +163,7 @@
                                 <x-table.cell-subtext class="truncate max-w-xs" title="{{ $log->user_agent }}">{{ $log->user_agent }}</x-table.cell-subtext>
                             </x-table.td>
                             <x-table.td class="text-sm text-gray-400 whitespace-nowrap">
-                                {{ $log->created_at->format('d.m.Y H:i:s') }}
+                                {{ $log->created_at->timezone('Europe/Kyiv')->format('d.m.Y H:i:s') }}
                             </x-table.td>
                         </x-table.tr>
                     @empty
@@ -223,7 +223,7 @@
                                 @endif
                             </x-table.td>
                             <x-table.td class="text-sm text-gray-400 whitespace-nowrap">
-                                {{ $log->created_at->format('d.m.Y H:i:s') }}
+                                {{ $log->created_at->timezone('Europe/Kyiv')->format('d.m.Y H:i:s') }}
                             </x-table.td>
                         </x-table.tr>
                     @empty
@@ -265,7 +265,7 @@
                                 {{ $log->ip_address }}
                             </x-table.td>
                             <x-table.td class="text-sm text-gray-400 whitespace-nowrap">
-                                {{ $log->created_at->format('d.m.Y H:i:s') }}
+                                {{ $log->created_at->timezone('Europe/Kyiv')->format('d.m.Y H:i:s') }}
                             </x-table.td>
                         </x-table.tr>
                     @empty
