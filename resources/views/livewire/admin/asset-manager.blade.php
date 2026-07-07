@@ -2,6 +2,8 @@
 <x-ui.page-wrapper>
     <x-ui.flash />
     
+    <livewire:admin.equipment.equipment-move-modal />
+
     {{-- Header & Buttons --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -358,7 +360,7 @@
                         <x-ui.badge status="{{ $c->status }}" />
                     </x-table.td>
                     <x-table.td align="right">
-                        <x-ui.action-buttons id="{{ $c->id }}" :viewAction="true" />
+                        <x-ui.action-buttons id="{{ $c->id }}" :viewAction="true" moveAction="$dispatch('openMoveAsset', { id: {{ $c->id }} })" />
                     </x-table.td>
                 </x-table.tr>
 
@@ -431,7 +433,7 @@
                         subtitle="Пристрій: {{ $c->equipment->inv_number ?? '-' }}" 
                     />
                 </div>
-                <x-ui.action-buttons id="{{ $c->id }}" :viewAction="true" />
+                <x-ui.action-buttons id="{{ $c->id }}" :viewAction="true" moveAction="$dispatch('openMoveAsset', { id: {{ $c->id }} })" />
             </x-table.mobile-card-header>
             
             <x-table.mobile-card-footer class="grid grid-cols-2 gap-2 font-mono">

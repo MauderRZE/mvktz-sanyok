@@ -34,6 +34,15 @@ class EquipmentDetail extends Component
         $this->isOpen = true;
     }
 
+    #[On('assetSaved')]
+    #[On('equipmentSaved')]
+    public function refreshDetail(): void
+    {
+        if ($this->isOpen && $this->equipmentId) {
+            $this->open($this->equipmentId);
+        }
+    }
+
     public function close(): void
     {
         $this->isOpen      = false;

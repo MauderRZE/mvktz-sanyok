@@ -106,6 +106,12 @@ class AssetManager extends Component
         }
     }
 
+    #[\Livewire\Attributes\On('assetSaved')]
+    public function refreshAssets()
+    {
+        // just to trigger a re-render
+    }
+
     public function render()
     {
         $query = Asset::with([

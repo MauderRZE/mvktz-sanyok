@@ -64,8 +64,18 @@
                                 @if($asset->serial_number)
                                     <p class="text-xs text-gray-500 mt-0.5">s/n: {{ $asset->serial_number }}</p>
                                 @endif
+                                @if($asset->lowValueMaterial && $asset->lowValueMaterial->nomenklature_number)
+                                    <p class="text-xs text-brand-400 mt-0.5">Інв/Ном (МШП): {{ $asset->lowValueMaterial->nomenklature_number }}</p>
+                                @else
+                                    <p class="text-xs text-brand-400 mt-0.5">Інв. №: {{ $equipment->inv_number }}</p>
+                                @endif
                             </div>
-                            <x-ui.badge status="{{ $asset->status }}" :dot="false" />
+                            <div class="flex items-center gap-3">
+                                <x-ui.badge status="{{ $asset->status }}" :dot="false" />
+                                <button wire:click="$dispatch('openMoveAsset', { id: {{ $asset->id }} })" class="p-1.5 rounded-lg text-gray-500 hover:text-green-400 hover:bg-green-500/10 transition-colors" title="Перемістити актив">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                                </button>
+                            </div>
                         </div>
                         
                         @if($asset->childAssets->count() > 0)
@@ -78,6 +88,11 @@
                                                     title="{{ $child->componentType->component_name ?? 'Деталь' }}"
                                                     subtitle="{{ $child->model->brand->brandtz_name ?? '' }} {{ $child->model->model_name ?? '' }} {{ $child->serial_number ? '| s/n: ' . $child->serial_number : '' }}"
                                                 />
+                                                @if($child->lowValueMaterial && $child->lowValueMaterial->nomenklature_number)
+                                                    <p class="text-[10px] text-brand-400 mt-1">Інв/Ном (МШП): {{ $child->lowValueMaterial->nomenklature_number }}</p>
+                                                @else
+                                                    <p class="text-[10px] text-brand-400 mt-1">Інв. №: {{ $equipment->inv_number }}</p>
+                                                @endif
                                                 @if($child->itemProperties->count() > 0)
                                                     <div class="mt-2 flex flex-wrap gap-1">
                                                         @foreach($child->itemProperties as $prop)
@@ -88,8 +103,11 @@
                                                     </div>
                                                 @endif
                                             </div>
-                                            <div>
+                                            <div class="flex items-center gap-2">
                                                 <x-ui.badge status="{{ $child->status }}" :dot="false" />
+                                                <button wire:click="$dispatch('openMoveAsset', { id: {{ $child->id }} })" class="p-1.5 rounded-lg text-gray-500 hover:text-green-400 hover:bg-green-500/10 transition-colors" title="Перемістити деталь">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                                                </button>
                                             </div>
                                         </div>
                                     @endforeach

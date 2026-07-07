@@ -103,6 +103,7 @@ class EquipmentManager extends Component
             'inv_number'   => 'inv_number',
             'account_name' => 'account_name',
             'status'       => 'status',
+            'components_count' => 'assets_count',
         ];
         $actualSort = $sortMap[$this->sortField] ?? 'id';
 
@@ -112,6 +113,7 @@ class EquipmentManager extends Component
             'movements.asset.location',
             'movements.employee',
         ])
+        ->withCount('assets')
         ->when($this->search, function ($q) {
             $q->where('inv_number', 'like', '%' . $this->search . '%')
               ->orWhere('account_name', 'like', '%' . $this->search . '%');

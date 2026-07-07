@@ -6,6 +6,7 @@
     {{-- Дочірні Livewire v3 компоненти --}}
     <livewire:admin.equipment.equipment-form />
     <livewire:admin.equipment.equipment-detail />
+    <livewire:admin.equipment.equipment-move-modal />
 
     {{-- Header & Buttons --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -190,7 +191,9 @@
             <x-table.th align="left" wire:click="sortBy('account_name')" class="cursor-pointer hover:bg-white/5">
                 <div class="flex items-center gap-1">Назва @if($sortField === 'account_name') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
             </x-table.th>
-            <x-table.th align="left">Комплектуючі</x-table.th>
+            <x-table.th align="left" wire:click="sortBy('components_count')" class="cursor-pointer hover:bg-white/5">
+                <div class="flex items-center gap-1">Комплектуючі @if($sortField === 'components_count') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
+            </x-table.th>
             <x-table.th align="left">Розташування / Відпов.</x-table.th>
             <x-table.th align="left">Статистика</x-table.th>
             <x-table.th align="left" wire:click="sortBy('status')" class="cursor-pointer hover:bg-white/5">
