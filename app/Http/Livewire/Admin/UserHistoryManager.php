@@ -15,7 +15,17 @@ class UserHistoryManager extends Component
     public $tab = 'auth'; // auth, audit, access
     public $search = '';
 
-    protected $queryString = ['tab', 'search'];
+    public $filterUser = '';
+    public $filterMethod = '';
+    public $filterStatus = '';
+    public $filterController = '';
+    public $filterDateFrom = '';
+    public $filterDateTo = '';
+
+    protected $queryString = [
+        'tab', 'search',
+        'filterUser', 'filterMethod', 'filterStatus', 'filterController', 'filterDateFrom', 'filterDateTo'
+    ];
 
     public function setTab($tab)
     {
@@ -23,14 +33,17 @@ class UserHistoryManager extends Component
         $this->resetPage();
     }
 
-    public function updatingSearch()
+    public function updated($propertyName)
     {
-        $this->resetPage();
+        if (in_array($propertyName, ['search', 'filterUser', 'filterMethod', 'filterStatus', 'filterController', 'filterDateFrom', 'filterDateTo'])) {
+            $this->resetPage();
+        }
     }
 
     public function render()
     {
         $data = null;
+        $users = \App\Models\User::orderBy('name')->get();
 
         if ($this->tab === 'auth') {
             $data = AuthLog::with('user')
@@ -61,12 +74,31 @@ class UserHistoryManager extends Component
                           $u->where('name', 'like', '%'.$this->search.'%');
                       });
                 })
+                ->when($this->filterUser, function ($q) {
+                    $q->where('user_id', $this->filterUser);
+                })
+                ->when($this->filterMethod, function ($q) {
+                    $q->where('method', $this->filterMethod);
+                })
+                ->when($this->filterStatus, function ($q) {
+                    $q->where('status_code', $this->filterStatus);
+                })
+                ->when($this->filterController, function ($q) {
+                    $q->where('url', 'like', '%'.$this->filterController.'%');
+                })
+                ->when($this->filterDateFrom, function ($q) {
+                    $q->whereDate('created_at', '>=', $this->filterDateFrom);
+                })
+                ->when($this->filterDateTo, function ($q) {
+                    $q->whereDate('created_at', '<=', $this->filterDateTo);
+                })
                 ->orderBy('id', 'desc')
                 ->paginate(20);
         }
 
         return view('livewire.admin.user-history-manager', [
-            'logs' => $data
+            'logs' => $data,
+            'users' => $users
         ])->layout('layouts.admin');
     }
 }

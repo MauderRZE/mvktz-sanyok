@@ -14,9 +14,51 @@
         </div>
 
     <div class="space-y-4">
-        <!-- Search -->
-        <x-ui.card class="p-4">
-            <x-form.search wire:model.live.debounce.300ms="search" placeholder="Пошук..." />
+        <!-- Search & Filters -->
+        <x-ui.card class="p-4 space-y-4">
+            <x-form.search wire:model.live.debounce.300ms="search" placeholder="Глобальний пошук..." />
+            
+            @if($tab === 'access')
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-3 pt-4 border-t border-white/5">
+                    <div>
+                        <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">Користувач</label>
+                        <select wire:model.live="filterUser" class="w-full bg-surface-800 border-white/10 rounded-lg text-sm focus:ring-brand-500 focus:border-brand-500 text-gray-300">
+                            <option value="">Всі користувачі</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->login }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">Метод</label>
+                        <select wire:model.live="filterMethod" class="w-full bg-surface-800 border-white/10 rounded-lg text-sm focus:ring-brand-500 focus:border-brand-500 text-gray-300">
+                            <option value="">Всі методи</option>
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">Статус</label>
+                        <input type="number" wire:model.live.debounce.300ms="filterStatus" placeholder="Напр. 200, 404" class="w-full bg-surface-800 border-white/10 rounded-lg text-sm focus:ring-brand-500 focus:border-brand-500 text-gray-300">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">URL / Контролер</label>
+                        <input type="text" wire:model.live.debounce.300ms="filterController" placeholder="Частина URL..." class="w-full bg-surface-800 border-white/10 rounded-lg text-sm focus:ring-brand-500 focus:border-brand-500 text-gray-300">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">З дати</label>
+                            <input type="date" wire:model.live="filterDateFrom" class="w-full bg-surface-800 border-white/10 rounded-lg text-sm focus:ring-brand-500 focus:border-brand-500 text-gray-300 [color-scheme:dark]">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">По дату</label>
+                            <input type="date" wire:model.live="filterDateTo" class="w-full bg-surface-800 border-white/10 rounded-lg text-sm focus:ring-brand-500 focus:border-brand-500 text-gray-300 [color-scheme:dark]">
+                        </div>
+                    </div>
+                </div>
+            @endif
         </x-ui.card>
 
         <!-- Table -->
