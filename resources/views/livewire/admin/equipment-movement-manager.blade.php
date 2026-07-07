@@ -52,7 +52,18 @@
                         {{ $m->equipment->inv_number ?? '-' }}
                         <x-table.cell-subtext>{{ $m->equipment->account_name ?? '' }}</x-table.cell-subtext>
                     </x-table.td>
-                    <x-table.td align="left">{{ $m->toHolder->organization->org_name ?? '—' }}</x-table.td>
+                    <x-table.td align="left">
+                        @if($m->asset && $m->asset->location)
+                            Каб. {{ $m->asset->location->room_number }}
+                            @if($m->toHolder && $m->toHolder->organization)
+                                <span class="text-xs text-gray-500">({{ $m->toHolder->organization->org_name }})</span>
+                            @endif
+                        @elseif($m->toHolder && $m->toHolder->organization)
+                            {{ $m->toHolder->organization->org_name }}
+                        @else
+                            —
+                        @endif
+                    </x-table.td>
                     <x-table.td align="left">{{ $m->employee->fullName ?? 'На складі (без відповідального)' }}</x-table.td>
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $m->id }}" />
@@ -73,7 +84,7 @@
                     <x-table.cell-subtext>Дата: {{ $m->action_date }}</x-table.cell-subtext>
                     <x-ui.text-block 
                         title="Обладнання: {{ $m->equipment->inv_number ?? '-' }}" 
-                        subtitle="Куди: {{ $m->toHolder->organization->org_name ?? '—' }}" 
+                        subtitle="Куди: {{ $m->asset && $m->asset->location ? 'Каб. ' . $m->asset->location->room_number : ($m->toHolder->organization->org_name ?? '—') }}" 
                         subtitleClass="text-xs text-brand-400 font-medium"
                     />
                 </div>
