@@ -876,6 +876,12 @@ video {
 .animate-spin {
   animation: spin 1s linear infinite;
 }
+.cursor-default {
+  cursor: default;
+}
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
 .cursor-pointer {
   cursor: pointer;
 }
@@ -914,6 +920,9 @@ video {
 }
 .justify-between {
   justify-content: space-between;
+}
+.justify-items-center {
+  justify-items: center;
 }
 .gap-0\.5 {
   gap: 0.125rem;
@@ -1185,6 +1194,9 @@ video {
 }
 .bg-surface-900\/60 {
   background-color: rgb(var(--surface-900) / 0.6);
+}
+.bg-transparent {
+  background-color: transparent;
 }
 .bg-violet-500 {
   --tw-bg-opacity: 1;
