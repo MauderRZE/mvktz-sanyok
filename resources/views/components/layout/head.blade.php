@@ -3,30 +3,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Інвентар МВКТЗ — Панель керування</title>
     <meta name="description" content="Адмін-панель обліку техніки МВКТЗ">
-    <script src="/tailwind.js"></script>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <script>
         // Init theme before render to prevent flash
         const savedTheme = localStorage.getItem('theme') || 'indigo';
         document.documentElement.setAttribute('data-theme', savedTheme);
-
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        brand: {
-                            50: 'rgb(var(--brand-50) / <alpha-value>)', 100: 'rgb(var(--brand-100) / <alpha-value>)', 200: 'rgb(var(--brand-200) / <alpha-value>)',
-                            300: 'rgb(var(--brand-300) / <alpha-value>)', 400: 'rgb(var(--brand-400) / <alpha-value>)', 500: 'rgb(var(--brand-500) / <alpha-value>)',
-                            600: 'rgb(var(--brand-600) / <alpha-value>)', 700: 'rgb(var(--brand-700) / <alpha-value>)', 800: 'rgb(var(--brand-800) / <alpha-value>)', 900: 'rgb(var(--brand-900) / <alpha-value>)',
-                        },
-                        surface: {
-                            50: 'rgb(var(--surface-50) / <alpha-value>)', 100: 'rgb(var(--surface-100) / <alpha-value>)', 200: 'rgb(var(--surface-200) / <alpha-value>)',
-                            700: 'rgb(var(--surface-700) / <alpha-value>)', 800: 'rgb(var(--surface-800) / <alpha-value>)', 900: 'rgb(var(--surface-900) / <alpha-value>)',
-                        }
-                    }
-                }
-            }
-        }
 
         const THEMES = ['indigo','sky','emerald','rose','amber','violet','cyan','orange'];
 

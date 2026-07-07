@@ -17,11 +17,10 @@
         </div>
 
     <div class="space-y-4">
-        <!-- Search & Filters -->
-        <x-ui.card class="p-4 space-y-4">
-            <x-form.search wire:model.live.debounce.300ms="search" placeholder="Глобальний пошук..." />
-            
-            @if($tab === 'access')
+        <!-- Search & Filters separated per tab to prevent DOM morphing -->
+        @if($tab === 'access')
+            <x-ui.card wire:key="search-card-access" class="p-4 space-y-4">
+                <x-form.search wire:model.live.debounce.300ms="search" placeholder="Глобальний пошук..." />
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-4 pt-4 border-t border-white/5">
                     <div>
                         <x-form.select label="Користувач" model="filterUser" :live="true" placeholder="Всі користувачі">
@@ -55,8 +54,12 @@
                         </div>
                     </div>
                 </div>
-            @endif
-        </x-ui.card>
+            </x-ui.card>
+        @else
+            <x-ui.card wire:key="search-card-other" class="p-4 space-y-4">
+                <x-form.search wire:model.live.debounce.300ms="search" placeholder="Глобальний пошук..." />
+            </x-ui.card>
+        @endif
 
         @if($tab === 'stats')
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -135,37 +138,21 @@
                 </x-ui.card>
             </div>
         @else
-            <!-- Table -->
-            <x-table.wrapper>
-                <x-slot name="headers">
-                    @if($tab === 'auth')
-                        <x-table.th>Користувач</x-table.th>
-                        <x-table.th>Подія</x-table.th>
-                        <x-table.th>IP / Браузер</x-table.th>
-                        <x-table.th>Дата</x-table.th>
-                    @elseif($tab === 'audit')
-                        <x-table.th>Користувач</x-table.th>
-                        <x-table.th>Дія</x-table.th>
-                        <x-table.th>Об'єкт</x-table.th>
-                        <x-table.th>Зміни</x-table.th>
-                        <x-table.th>Дата</x-table.th>
-                    @elseif($tab === 'access')
-                        <x-table.th>Користувач</x-table.th>
-                        <x-table.th>Метод / Статус</x-table.th>
-                        <x-table.th>URL</x-table.th>
-                        <x-table.th>IP / Браузер</x-table.th>
-                        <x-table.th>Дата</x-table.th>
-                    @endif
-                </x-slot>
-
-                @forelse($logs as $log)
-                    <x-table.tr>
-                        <x-table.td primary>
-                            {{ $log->user->name ?? 'Невідомий / Гість' }}
-                            <x-table.cell-subtext>{{ $log->user->login ?? '' }}</x-table.cell-subtext>
-                        </x-table.td>
-                        
-                        @if($tab === 'auth')
+            <!-- Tables separated to prevent Livewire slot morphing bugs -->
+            @if($tab === 'auth')
+                <x-table.wrapper wire:key="table-auth">
+                    <x-slot name="headers">
+                        <x-table.th class="w-1/4">Користувач</x-table.th>
+                        <x-table.th class="w-1/6">Подія</x-table.th>
+                        <x-table.th class="w-1/3">IP / Браузер</x-table.th>
+                        <x-table.th class="w-1/4">Дата</x-table.th>
+                    </x-slot>
+                    @forelse($logs as $log)
+                        <x-table.tr wire:key="auth-{{ $log->id }}">
+                            <x-table.td primary>
+                                {{ $log->user->name ?? 'Невідомий / Гість' }}
+                                <x-table.cell-subtext>{{ $log->user->login ?? '' }}</x-table.cell-subtext>
+                            </x-table.td>
                             <x-table.td>
                                 <span class="px-2 py-1 text-xs rounded-lg {{ $log->event === 'login' ? 'bg-green-500/10 text-green-400' : ($log->event === 'logout' ? 'bg-gray-500/10 text-gray-400' : 'bg-red-500/10 text-red-400') }}">
                                     {{ strtoupper($log->event) }}
@@ -175,8 +162,29 @@
                                 {{ $log->ip_address }}
                                 <x-table.cell-subtext class="truncate max-w-xs" title="{{ $log->user_agent }}">{{ $log->user_agent }}</x-table.cell-subtext>
                             </x-table.td>
-
-                        @elseif($tab === 'audit')
+                            <x-table.td class="text-sm text-gray-400 whitespace-nowrap">
+                                {{ $log->created_at->format('d.m.Y H:i:s') }}
+                            </x-table.td>
+                        </x-table.tr>
+                    @empty
+                        <x-table.tr><x-table.td colspan="4" class="text-center text-gray-500 py-8">Дані відсутні</x-table.td></x-table.tr>
+                    @endforelse
+                </x-table.wrapper>
+            @elseif($tab === 'audit')
+                <x-table.wrapper wire:key="table-audit">
+                    <x-slot name="headers">
+                        <x-table.th class="w-[20%]">Користувач</x-table.th>
+                        <x-table.th class="w-[15%]">Дія</x-table.th>
+                        <x-table.th class="w-[20%]">Об'єкт</x-table.th>
+                        <x-table.th class="w-[30%]">Зміни</x-table.th>
+                        <x-table.th class="w-[15%]">Дата</x-table.th>
+                    </x-slot>
+                    @forelse($logs as $log)
+                        <x-table.tr wire:key="audit-{{ $log->id }}">
+                            <x-table.td primary>
+                                {{ $log->user->name ?? 'Невідомий / Гість' }}
+                                <x-table.cell-subtext>{{ $log->user->login ?? '' }}</x-table.cell-subtext>
+                            </x-table.td>
                             <x-table.td>
                                 <span class="px-2 py-1 text-xs rounded-lg {{ $log->event === 'created' ? 'bg-green-500/10 text-green-400' : ($log->event === 'updated' ? 'bg-blue-500/10 text-blue-400' : 'bg-red-500/10 text-red-400') }}">
                                     {{ strtoupper($log->event) }}
@@ -185,15 +193,58 @@
                             <x-table.td>
                                 {{ class_basename($log->auditable_type) }} #{{ $log->auditable_id }}
                             </x-table.td>
-                            <x-table.td>
+                            <x-table.td class="w-1/3">
                                 @if($log->event === 'updated')
-                                    <div class="text-xs text-gray-400 max-w-xs truncate" title="{{ json_encode($log->new_values, JSON_UNESCAPED_UNICODE) }}">
-                                        Оновлено полів: {{ count((array)$log->new_values) }}
+                                    <div class="text-xs space-y-1 max-h-32 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-surface-700 scrollbar-track-transparent">
+                                        @foreach((array)$log->new_values as $key => $newValue)
+                                            @php
+                                                $oldValue = ((array)$log->old_values)[$key] ?? null;
+                                                $displayOld = is_string($oldValue) || is_numeric($oldValue) ? $oldValue : json_encode($oldValue, JSON_UNESCAPED_UNICODE);
+                                                $displayNew = is_string($newValue) || is_numeric($newValue) ? $newValue : json_encode($newValue, JSON_UNESCAPED_UNICODE);
+                                            @endphp
+                                            <div class="flex flex-col gap-0.5 bg-surface-900/50 p-1.5 rounded border border-white/5">
+                                                <span class="text-gray-300 font-medium">{{ $key }}</span>
+                                                <div class="flex items-center gap-2 text-[10px] break-all">
+                                                    <span class="text-red-400 line-through opacity-75" title="Старе значення">{{ $displayOld ?: 'пусто' }}</span>
+                                                    <span class="text-gray-500 shrink-0">➔</span>
+                                                    <span class="text-green-400" title="Нове значення">{{ $displayNew ?: 'пусто' }}</span>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @elseif($log->event === 'created')
+                                    <div class="text-xs text-gray-400 truncate max-w-xs" title="{{ json_encode($log->new_values, JSON_UNESCAPED_UNICODE) }}">
+                                        Створено (полів: {{ count((array)$log->new_values) }})
+                                    </div>
+                                @elseif($log->event === 'deleted')
+                                    <div class="text-xs text-gray-400 truncate max-w-xs" title="{{ json_encode($log->old_values, JSON_UNESCAPED_UNICODE) }}">
+                                        Видалено (полів: {{ count((array)$log->old_values) }})
                                     </div>
                                 @endif
                             </x-table.td>
-
-                        @elseif($tab === 'access')
+                            <x-table.td class="text-sm text-gray-400 whitespace-nowrap">
+                                {{ $log->created_at->format('d.m.Y H:i:s') }}
+                            </x-table.td>
+                        </x-table.tr>
+                    @empty
+                        <x-table.tr><x-table.td colspan="5" class="text-center text-gray-500 py-8">Дані відсутні</x-table.td></x-table.tr>
+                    @endforelse
+                </x-table.wrapper>
+            @elseif($tab === 'access')
+                <x-table.wrapper wire:key="table-access">
+                    <x-slot name="headers">
+                        <x-table.th class="w-[20%]">Користувач</x-table.th>
+                        <x-table.th class="w-[15%]">Метод / Статус</x-table.th>
+                        <x-table.th class="w-[35%]">URL</x-table.th>
+                        <x-table.th class="w-[15%]">IP / Браузер</x-table.th>
+                        <x-table.th class="w-[15%]">Дата</x-table.th>
+                    </x-slot>
+                    @forelse($logs as $log)
+                        <x-table.tr wire:key="access-{{ $log->id }}">
+                            <x-table.td primary>
+                                {{ $log->user->name ?? 'Невідомий / Гість' }}
+                                <x-table.cell-subtext>{{ $log->user->login ?? '' }}</x-table.cell-subtext>
+                            </x-table.td>
                             <x-table.td>
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-mono {{ $log->method === 'GET' ? 'text-blue-400' : 'text-orange-400' }}">{{ $log->method }}</span>
@@ -213,18 +264,15 @@
                             <x-table.td>
                                 {{ $log->ip_address }}
                             </x-table.td>
-                        @endif
-
-                        <x-table.td class="text-sm text-gray-400 whitespace-nowrap">
-                            {{ $log->created_at->format('d.m.Y H:i:s') }}
-                        </x-table.td>
-                    </x-table.tr>
-                @empty
-                    <x-table.tr>
-                        <x-table.td colspan="5" class="text-center text-gray-500 py-8">Дані відсутні</x-table.td>
-                    </x-table.tr>
-                @endforelse
-            </x-table.wrapper>
+                            <x-table.td class="text-sm text-gray-400 whitespace-nowrap">
+                                {{ $log->created_at->format('d.m.Y H:i:s') }}
+                            </x-table.td>
+                        </x-table.tr>
+                    @empty
+                        <x-table.tr><x-table.td colspan="5" class="text-center text-gray-500 py-8">Дані відсутні</x-table.td></x-table.tr>
+                    @endforelse
+                </x-table.wrapper>
+            @endif
 
             <div class="mt-4">
                 {{ $logs->links() }}
