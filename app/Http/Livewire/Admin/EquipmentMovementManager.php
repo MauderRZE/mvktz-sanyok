@@ -14,20 +14,64 @@ class EquipmentMovementManager extends Component
 {
     public $movements, $movementId, $equip_id, $location_id, $employee_id, $action_date;
     public $equipmentList = [], $locationsList = [], $employeesList = [];
-    public $isOpen = 0;
+    public $isOpen = false;
+
+    public $search = '';
+    public $filterEquipment = [];
+    public $filterLocation = [];
+    public $filterEmployee = [];
 
     public function render()
     {
-        $this->movements = EquipmentMovement::with([
+        $query = EquipmentMovement::with([
             'equipment',
             'employee',
             'asset.location',
             'toHolder.organization'
-        ])->get();
+        ])
+        ->when($this->search, function($q) {
+            $search = '%' . $this->search . '%';
+            $q->where(function($sub) use ($search) {
+                $sub->whereHas('equipment', function($eq) use ($search) {
+                    $eq->where('inv_number', 'like', $search)
+                       ->orWhere('account_name', 'like', $search);
+                })
+                ->orWhereHas('employee', function($emp) use ($search) {
+                    $emp->where('last_name', 'like', $search)
+                        ->orWhere('first_name', 'like', $search)
+                        ->orWhere('middle_name', 'like', $search);
+                })
+                ->orWhereHas('asset.location', function($loc) use ($search) {
+                    $loc->where('room_number', 'like', $search);
+                });
+            });
+        })
+        ->when(!empty($this->filterEquipment), function($q) {
+            $q->whereIn('equip_id', $this->filterEquipment);
+        })
+        ->when(!empty($this->filterLocation), function($q) {
+            $q->whereHas('asset', function($a) {
+                $a->whereIn('current_loc_id', $this->filterLocation);
+            });
+        })
+        ->when(!empty($this->filterEmployee), function($q) {
+            $q->whereIn('employee_id', $this->filterEmployee);
+        })
+        ->orderBy('action_date', 'desc');
+
+        $this->movements = $query->get();
         $this->equipmentList = Equipment::all();
         $this->locationsList = Location::all();
         $this->employeesList = Employee::all();
         return view('livewire.admin.equipment-movement-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterEquipment = [];
+        $this->filterLocation = [];
+        $this->filterEmployee = [];
     }
 
     public function create()
