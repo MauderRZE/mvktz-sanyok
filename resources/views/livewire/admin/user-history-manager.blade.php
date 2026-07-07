@@ -19,42 +19,36 @@
             <x-form.search wire:model.live.debounce.300ms="search" placeholder="Глобальний пошук..." />
             
             @if($tab === 'access')
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-3 pt-4 border-t border-white/5">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 pt-4 border-t border-white/5">
                     <div>
-                        <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">Користувач</label>
-                        <select wire:model.live="filterUser" class="w-full bg-surface-800 border-white/10 rounded-lg text-sm focus:ring-brand-500 focus:border-brand-500 text-gray-300">
+                        <x-form.select label="Користувач" model="filterUser" :live="true" placeholder="Всі користувачі">
                             <option value="">Всі користувачі</option>
                             @foreach($users as $user)
                                 <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->login }})</option>
                             @endforeach
-                        </select>
+                        </x-form.select>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">Метод</label>
-                        <select wire:model.live="filterMethod" class="w-full bg-surface-800 border-white/10 rounded-lg text-sm focus:ring-brand-500 focus:border-brand-500 text-gray-300">
+                        <x-form.select label="Метод" model="filterMethod" :live="true" placeholder="Всі методи">
                             <option value="">Всі методи</option>
                             <option value="GET">GET</option>
                             <option value="POST">POST</option>
                             <option value="PUT">PUT</option>
                             <option value="DELETE">DELETE</option>
-                        </select>
+                        </x-form.select>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">Статус</label>
-                        <input type="number" wire:model.live.debounce.300ms="filterStatus" placeholder="Напр. 200, 404" class="w-full bg-surface-800 border-white/10 rounded-lg text-sm focus:ring-brand-500 focus:border-brand-500 text-gray-300">
+                        <x-form.input label="Статус" type="number" model="filterStatus" :live="true" debounce="300ms" placeholder="Напр. 200, 404" />
                     </div>
                     <div>
-                        <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">URL / Контролер</label>
-                        <input type="text" wire:model.live.debounce.300ms="filterController" placeholder="Частина URL..." class="w-full bg-surface-800 border-white/10 rounded-lg text-sm focus:ring-brand-500 focus:border-brand-500 text-gray-300">
+                        <x-form.input label="URL / Контролер" type="text" model="filterController" :live="true" debounce="300ms" placeholder="Частина URL..." />
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">З дати</label>
-                            <input type="date" wire:model.live="filterDateFrom" class="w-full bg-surface-800 border-white/10 rounded-lg text-sm focus:ring-brand-500 focus:border-brand-500 text-gray-300 [color-scheme:dark]">
+                            <x-form.input label="З дати" type="date" model="filterDateFrom" :live="true" class="[color-scheme:dark]" />
                         </div>
                         <div>
-                            <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">По дату</label>
-                            <input type="date" wire:model.live="filterDateTo" class="w-full bg-surface-800 border-white/10 rounded-lg text-sm focus:ring-brand-500 focus:border-brand-500 text-gray-300 [color-scheme:dark]">
+                            <x-form.input label="По дату" type="date" model="filterDateTo" :live="true" class="[color-scheme:dark]" />
                         </div>
                     </div>
                 </div>
