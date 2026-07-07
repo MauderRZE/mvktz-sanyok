@@ -94,6 +94,39 @@ class UserHistoryManager extends Component
                 })
                 ->orderBy('id', 'desc')
                 ->paginate(20);
+        } elseif ($this->tab === 'stats') {
+            $data = [
+                'db_size' => round(filesize(database_path('history.sqlite')) / 1024 / 1024, 2) . ' MB',
+                'total_auth' => AuthLog::count(),
+                'total_audit' => AuditLog::count(),
+                'total_access' => AccessLog::count(),
+                
+                'top_users_access' => AccessLog::selectRaw('user_id, count(*) as count')
+                    ->with('user')
+                    ->whereNotNull('user_id')
+                    ->groupBy('user_id')
+                    ->orderByDesc('count')
+                    ->limit(5)
+                    ->get(),
+
+                'top_urls' => AccessLog::selectRaw('url, count(*) as count')
+                    ->groupBy('url')
+                    ->orderByDesc('count')
+                    ->limit(5)
+                    ->get(),
+
+                'auth_stats' => AuthLog::selectRaw('event, count(*) as count')
+                    ->groupBy('event')
+                    ->get()
+                    ->pluck('count', 'event')->toArray(),
+
+                'status_stats' => AccessLog::selectRaw('status_code, count(*) as count')
+                    ->whereNotNull('status_code')
+                    ->groupBy('status_code')
+                    ->orderByDesc('count')
+                    ->limit(5)
+                    ->get(),
+            ];
         }
 
         return view('livewire.admin.user-history-manager', [

@@ -11,6 +11,9 @@
             <button wire:click="setTab('access')" class="px-4 py-2 text-sm rounded-lg transition-colors {{ $tab === 'access' ? 'bg-surface-700 text-white font-medium' : 'text-gray-400 hover:text-white' }}">
                 Доступ (Логи)
             </button>
+            <button wire:click="setTab('stats')" class="px-4 py-2 text-sm rounded-lg transition-colors {{ $tab === 'stats' ? 'bg-surface-700 text-white font-medium' : 'text-gray-400 hover:text-white' }}">
+                Статистика
+            </button>
         </div>
 
     <div class="space-y-4">
@@ -55,100 +58,178 @@
             @endif
         </x-ui.card>
 
-        <!-- Table -->
-        <x-table.wrapper>
-            <x-slot name="headers">
-                @if($tab === 'auth')
-                    <x-table.th>Користувач</x-table.th>
-                    <x-table.th>Подія</x-table.th>
-                    <x-table.th>IP / Браузер</x-table.th>
-                    <x-table.th>Дата</x-table.th>
-                @elseif($tab === 'audit')
-                    <x-table.th>Користувач</x-table.th>
-                    <x-table.th>Дія</x-table.th>
-                    <x-table.th>Об'єкт</x-table.th>
-                    <x-table.th>Зміни</x-table.th>
-                    <x-table.th>Дата</x-table.th>
-                @elseif($tab === 'access')
-                    <x-table.th>Користувач</x-table.th>
-                    <x-table.th>Метод / Статус</x-table.th>
-                    <x-table.th>URL</x-table.th>
-                    <x-table.th>IP / Браузер</x-table.th>
-                    <x-table.th>Дата</x-table.th>
-                @endif
-            </x-slot>
+        @if($tab === 'stats')
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <x-ui.card class="p-4">
+                    <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Розмір бази</p>
+                    <p class="text-2xl font-bold text-white">{{ $logs['db_size'] }}</p>
+                </x-ui.card>
+                <x-ui.card class="p-4">
+                    <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Авторизації</p>
+                    <p class="text-2xl font-bold text-white">{{ $logs['total_auth'] }} <span class="text-xs font-normal text-gray-500">записів</span></p>
+                </x-ui.card>
+                <x-ui.card class="p-4">
+                    <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Аудит даних</p>
+                    <p class="text-2xl font-bold text-white">{{ $logs['total_audit'] }} <span class="text-xs font-normal text-gray-500">записів</span></p>
+                </x-ui.card>
+                <x-ui.card class="p-4">
+                    <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Логи доступу</p>
+                    <p class="text-2xl font-bold text-white">{{ $logs['total_access'] }} <span class="text-xs font-normal text-gray-500">записів</span></p>
+                </x-ui.card>
+            </div>
 
-            @forelse($logs as $log)
-                <x-table.tr>
-                    <x-table.td primary>
-                        {{ $log->user->name ?? 'Невідомий / Гість' }}
-                        <x-table.cell-subtext>{{ $log->user->login ?? '' }}</x-table.cell-subtext>
-                    </x-table.td>
-                    
-                    @if($tab === 'auth')
-                        <x-table.td>
-                            <span class="px-2 py-1 text-xs rounded-lg {{ $log->event === 'login' ? 'bg-green-500/10 text-green-400' : ($log->event === 'logout' ? 'bg-gray-500/10 text-gray-400' : 'bg-red-500/10 text-red-400') }}">
-                                {{ strtoupper($log->event) }}
-                            </span>
-                        </x-table.td>
-                        <x-table.td>
-                            {{ $log->ip_address }}
-                            <x-table.cell-subtext class="truncate max-w-xs" title="{{ $log->user_agent }}">{{ $log->user_agent }}</x-table.cell-subtext>
-                        </x-table.td>
-
-                    @elseif($tab === 'audit')
-                        <x-table.td>
-                            <span class="px-2 py-1 text-xs rounded-lg {{ $log->event === 'created' ? 'bg-green-500/10 text-green-400' : ($log->event === 'updated' ? 'bg-blue-500/10 text-blue-400' : 'bg-red-500/10 text-red-400') }}">
-                                {{ strtoupper($log->event) }}
-                            </span>
-                        </x-table.td>
-                        <x-table.td>
-                            {{ class_basename($log->auditable_type) }} #{{ $log->auditable_id }}
-                        </x-table.td>
-                        <x-table.td>
-                            @if($log->event === 'updated')
-                                <div class="text-xs text-gray-400 max-w-xs truncate" title="{{ json_encode($log->new_values, JSON_UNESCAPED_UNICODE) }}">
-                                    Оновлено полів: {{ count((array)$log->new_values) }}
-                                </div>
-                            @endif
-                        </x-table.td>
-
-                    @elseif($tab === 'access')
-                        <x-table.td>
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-mono {{ $log->method === 'GET' ? 'text-blue-400' : 'text-orange-400' }}">{{ $log->method }}</span>
-                                @if($log->status_code)
-                                    <span class="px-1.5 py-0.5 rounded text-[10px] font-bold 
-                                        {{ $log->status_code >= 200 && $log->status_code < 300 ? 'bg-green-500/10 text-green-400' : 
-                                           ($log->status_code >= 300 && $log->status_code < 400 ? 'bg-blue-500/10 text-blue-400' : 
-                                           ($log->status_code >= 400 && $log->status_code < 500 ? 'bg-yellow-500/10 text-yellow-400' : 'bg-red-500/10 text-red-400')) }}">
-                                        {{ $log->status_code }}
-                                    </span>
-                                @endif
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <x-ui.card class="p-4">
+                    <h3 class="text-sm font-semibold text-white mb-4">Топ-5 відвідувачів</h3>
+                    <div class="space-y-3">
+                        @foreach($logs['top_users_access'] as $item)
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-300">{{ $item->user->name ?? 'Невідомий' }}</span>
+                                <span class="text-brand-400 font-bold">{{ $item->count }} запитів</span>
                             </div>
-                        </x-table.td>
-                        <x-table.td>
-                            <span class="text-xs break-all max-w-md {{ $log->status_code >= 400 ? 'text-red-400' : '' }}">{{ $log->url }}</span>
-                        </x-table.td>
-                        <x-table.td>
-                            {{ $log->ip_address }}
-                        </x-table.td>
+                        @endforeach
+                    </div>
+                </x-ui.card>
+
+                <x-ui.card class="p-4">
+                    <h3 class="text-sm font-semibold text-white mb-4">Топ-5 популярних сторінок</h3>
+                    <div class="space-y-3">
+                        @foreach($logs['top_urls'] as $item)
+                            <div class="flex justify-between items-center text-sm gap-4">
+                                <span class="text-gray-300 truncate">{{ $item->url }}</span>
+                                <span class="text-brand-400 font-bold whitespace-nowrap">{{ $item->count }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </x-ui.card>
+
+                <x-ui.card class="p-4">
+                    <h3 class="text-sm font-semibold text-white mb-4">Статистика статусів</h3>
+                    <div class="space-y-3">
+                        @foreach($logs['status_stats'] as $item)
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="px-2 py-0.5 rounded text-xs font-bold 
+                                    {{ $item->status_code >= 200 && $item->status_code < 300 ? 'bg-green-500/10 text-green-400' : 
+                                       ($item->status_code >= 300 && $item->status_code < 400 ? 'bg-blue-500/10 text-blue-400' : 
+                                       ($item->status_code >= 400 && $item->status_code < 500 ? 'bg-yellow-500/10 text-yellow-400' : 'bg-red-500/10 text-red-400')) }}">
+                                    {{ $item->status_code }}
+                                </span>
+                                <span class="text-brand-400 font-bold">{{ $item->count }} запитів</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </x-ui.card>
+
+                <x-ui.card class="p-4">
+                    <h3 class="text-sm font-semibold text-white mb-4">Авторизації</h3>
+                    <div class="space-y-3">
+                        @foreach($logs['auth_stats'] as $event => $count)
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="px-2 py-0.5 rounded text-xs {{ $event === 'login' ? 'bg-green-500/10 text-green-400' : ($event === 'logout' ? 'bg-gray-500/10 text-gray-400' : 'bg-red-500/10 text-red-400') }}">
+                                    {{ strtoupper($event) }}
+                                </span>
+                                <span class="text-brand-400 font-bold">{{ $count }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </x-ui.card>
+            </div>
+        @else
+            <!-- Table -->
+            <x-table.wrapper>
+                <x-slot name="headers">
+                    @if($tab === 'auth')
+                        <x-table.th>Користувач</x-table.th>
+                        <x-table.th>Подія</x-table.th>
+                        <x-table.th>IP / Браузер</x-table.th>
+                        <x-table.th>Дата</x-table.th>
+                    @elseif($tab === 'audit')
+                        <x-table.th>Користувач</x-table.th>
+                        <x-table.th>Дія</x-table.th>
+                        <x-table.th>Об'єкт</x-table.th>
+                        <x-table.th>Зміни</x-table.th>
+                        <x-table.th>Дата</x-table.th>
+                    @elseif($tab === 'access')
+                        <x-table.th>Користувач</x-table.th>
+                        <x-table.th>Метод / Статус</x-table.th>
+                        <x-table.th>URL</x-table.th>
+                        <x-table.th>IP / Браузер</x-table.th>
+                        <x-table.th>Дата</x-table.th>
                     @endif
+                </x-slot>
 
-                    <x-table.td class="text-sm text-gray-400 whitespace-nowrap">
-                        {{ $log->created_at->format('d.m.Y H:i:s') }}
-                    </x-table.td>
-                </x-table.tr>
-            @empty
-                <x-table.tr>
-                    <x-table.td colspan="5" class="text-center text-gray-500 py-8">Дані відсутні</x-table.td>
-                </x-table.tr>
-            @endforelse
-        </x-table.wrapper>
+                @forelse($logs as $log)
+                    <x-table.tr>
+                        <x-table.td primary>
+                            {{ $log->user->name ?? 'Невідомий / Гість' }}
+                            <x-table.cell-subtext>{{ $log->user->login ?? '' }}</x-table.cell-subtext>
+                        </x-table.td>
+                        
+                        @if($tab === 'auth')
+                            <x-table.td>
+                                <span class="px-2 py-1 text-xs rounded-lg {{ $log->event === 'login' ? 'bg-green-500/10 text-green-400' : ($log->event === 'logout' ? 'bg-gray-500/10 text-gray-400' : 'bg-red-500/10 text-red-400') }}">
+                                    {{ strtoupper($log->event) }}
+                                </span>
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $log->ip_address }}
+                                <x-table.cell-subtext class="truncate max-w-xs" title="{{ $log->user_agent }}">{{ $log->user_agent }}</x-table.cell-subtext>
+                            </x-table.td>
 
-        <div class="mt-4">
-            {{ $logs->links() }}
-        </div>
+                        @elseif($tab === 'audit')
+                            <x-table.td>
+                                <span class="px-2 py-1 text-xs rounded-lg {{ $log->event === 'created' ? 'bg-green-500/10 text-green-400' : ($log->event === 'updated' ? 'bg-blue-500/10 text-blue-400' : 'bg-red-500/10 text-red-400') }}">
+                                    {{ strtoupper($log->event) }}
+                                </span>
+                            </x-table.td>
+                            <x-table.td>
+                                {{ class_basename($log->auditable_type) }} #{{ $log->auditable_id }}
+                            </x-table.td>
+                            <x-table.td>
+                                @if($log->event === 'updated')
+                                    <div class="text-xs text-gray-400 max-w-xs truncate" title="{{ json_encode($log->new_values, JSON_UNESCAPED_UNICODE) }}">
+                                        Оновлено полів: {{ count((array)$log->new_values) }}
+                                    </div>
+                                @endif
+                            </x-table.td>
+
+                        @elseif($tab === 'access')
+                            <x-table.td>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-mono {{ $log->method === 'GET' ? 'text-blue-400' : 'text-orange-400' }}">{{ $log->method }}</span>
+                                    @if($log->status_code)
+                                        <span class="px-1.5 py-0.5 rounded text-[10px] font-bold 
+                                            {{ $log->status_code >= 200 && $log->status_code < 300 ? 'bg-green-500/10 text-green-400' : 
+                                               ($log->status_code >= 300 && $log->status_code < 400 ? 'bg-blue-500/10 text-blue-400' : 
+                                               ($log->status_code >= 400 && $log->status_code < 500 ? 'bg-yellow-500/10 text-yellow-400' : 'bg-red-500/10 text-red-400')) }}">
+                                            {{ $log->status_code }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </x-table.td>
+                            <x-table.td>
+                                <span class="text-xs break-all max-w-md {{ $log->status_code >= 400 ? 'text-red-400' : '' }}">{{ $log->url }}</span>
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $log->ip_address }}
+                            </x-table.td>
+                        @endif
+
+                        <x-table.td class="text-sm text-gray-400 whitespace-nowrap">
+                            {{ $log->created_at->format('d.m.Y H:i:s') }}
+                        </x-table.td>
+                    </x-table.tr>
+                @empty
+                    <x-table.tr>
+                        <x-table.td colspan="5" class="text-center text-gray-500 py-8">Дані відсутні</x-table.td>
+                    </x-table.tr>
+                @endforelse
+            </x-table.wrapper>
+
+            <div class="mt-4">
+                {{ $logs->links() }}
+            </div>
+        @endif
     </div>
     </x-ui.page-wrapper>
 </div>
