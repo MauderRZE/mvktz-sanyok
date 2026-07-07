@@ -16,7 +16,7 @@
                 label="Договір (Закупівля)" 
                 model="purchase_id"
                 placeholder="— Оберіть договір —"
-                :options="$purchasesList->map(fn($p) => ['value' => $p->id, 'label' => '№ ' . ($p->contract_number ?? $p->id) . ' (від ' . ($p->contract_date ?? '—') . ')'])->toArray()"
+                :options="$purchasesList->mapWithKeys(fn($p) => [$p->id => '№ ' . ($p->contract_number ?? $p->id) . ' (від ' . ($p->contract_date ?? '—') . ')'])->toArray()"
             />
         </div>
         <div>
@@ -31,7 +31,7 @@
                 label="Акт списання" 
                 model="retirement_act_id"
                 placeholder="— Оберіть акт —"
-                :options="$retirementActsList->map(fn($act) => ['value' => $act->id, 'label' => '№ ' . ($act->act_number ?? $act->id) . ' (від ' . ($act->act_date ?? '—') . ')'])->toArray()"
+                :options="$retirementActsList->mapWithKeys(fn($act) => [$act->id => '№ ' . ($act->act_number ?? $act->id) . ' (від ' . ($act->act_date ?? '—') . ')'])->toArray()"
             />
         </div>
         <div>

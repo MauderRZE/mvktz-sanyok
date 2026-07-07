@@ -1,14 +1,12 @@
 <div>
 @php
-    $computersOptions = $computers->map(fn($item) => [
-        'value' => $item->id,
-        'label' => ($item->componentType->component_name ?? 'Асет') . ' (Inv: ' . ($item->equipment?->inv_number ?? 'Немає') . ')'
-    ])->values()->toArray();
+    $computersOptions = $computers->mapWithKeys(fn($item) => [
+        $item->id => ($item->componentType->component_name ?? 'Асет') . ' (Inv: ' . ($item->equipment?->inv_number ?? 'Немає') . ')'
+    ])->toArray();
 
-    $licensesOptions = $licenses->map(fn($lic) => [
-        'value' => $lic->id,
-        'label' => $lic->license_name
-    ])->values()->toArray();
+    $licensesOptions = $licenses->mapWithKeys(fn($lic) => [
+        $lic->id => $lic->license_name
+    ])->toArray();
 @endphp
 <x-ui.page-wrapper>
     <x-ui.flash />

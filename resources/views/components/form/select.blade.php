@@ -76,6 +76,6 @@
             </div>
         </div>
     </div>
-    @error($model) <span class="text-xs text-red-400 mt-1 block">{{ $message }}</span> @enderror
+    @error($model) <span class="text-xs text-red-400 mt-1 block">{{ is_array($message) ? json_encode($message) : $message }}</span> @enderror
 </div>
 

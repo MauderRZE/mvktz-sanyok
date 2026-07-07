@@ -4,10 +4,12 @@ namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Layout;
 use App\Models\AuthLog;
 use App\Models\AuditLog;
 use App\Models\AccessLog;
 
+#[Layout('layouts.admin')]
 class UserHistoryManager extends Component
 {
     use WithPagination;

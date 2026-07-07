@@ -161,26 +161,25 @@
     <div wire:key="asset-modal-wrapper">
     <x-ui.modal wire:key="asset-modal" title="{{ $assetId ? 'Редагувати' : 'Додати' }} актив" maxWidth="2xl">
         @php
-            $eqOptions = $equipmentList->map(fn($eq) => ['value' => $eq->id, 'label' => $eq->inv_number . ' - ' . $eq->account_name])->values()->toArray();
-            $bcOptions = $baseComponentsList->map(fn($bc) => ['value' => $bc->id, 'label' => $bc->component_name])->values()->toArray();
-            $modOptions = $modelsList->map(fn($m) => ['value' => $m->id, 'label' => trim(($m->brand->brandtz_name ?? '') . ' ' . $m->model_name)])->values()->toArray();
-            $paOptions = $parentAssetsList->map(fn($pa) => [
-                'value' => $pa->id,
-                'label' => '#' . $pa->id . ' - ' . ($pa->componentType->component_name ?? '') . ($pa->equipment?->inv_number ? ' [Інв. №' . $pa->equipment->inv_number . ']' : '') . ' (' . ($pa->serial_number ?: 'без S/N') . ')'
-            ])->values()->toArray();
-            $locOptions = $locationsList->map(fn($loc) => ['value' => $loc->id, 'label' => 'Каб. ' . $loc->room_number])->values()->toArray();
-            $nomOptions = $nomenclaturesList->map(fn($nom) => ['value' => $nom->id, 'label' => $nom->material_account_name . ' (' . $nom->nomenklature_number . ')'])->values()->toArray();
-            $actOptions = $writeOffActsList->map(fn($act) => ['value' => $act->id, 'label' => 'Акт №' . $act->act_number])->values()->toArray();
+            $eqOptions = $equipmentList->mapWithKeys(fn($eq) => [$eq->id => $eq->inv_number . ' - ' . $eq->account_name])->toArray();
+            $bcOptions = $baseComponentsList->mapWithKeys(fn($bc) => [$bc->id => $bc->component_name])->toArray();
+            $modOptions = $modelsList->mapWithKeys(fn($m) => [$m->id => trim(($m->brand->brandtz_name ?? '') . ' ' . $m->model_name)])->toArray();
+            $paOptions = $parentAssetsList->mapWithKeys(fn($pa) => [
+                $pa->id => '#' . $pa->id . ' - ' . ($pa->componentType->component_name ?? '') . ($pa->equipment?->inv_number ? ' [Інв. №' . $pa->equipment->inv_number . ']' : '') . ' (' . ($pa->serial_number ?: 'без S/N') . ')'
+            ])->toArray();
+            $locOptions = $locationsList->mapWithKeys(fn($loc) => [$loc->id => 'Каб. ' . $loc->room_number])->toArray();
+            $nomOptions = $nomenclaturesList->mapWithKeys(fn($nom) => [$nom->id => $nom->material_account_name . ' (' . $nom->nomenklature_number . ')'])->toArray();
+            $actOptions = $writeOffActsList->mapWithKeys(fn($act) => [$act->id => 'Акт №' . $act->act_number])->toArray();
             
-            $holdersOptions = $holdersList->map(function($holder) {
+            $holdersOptions = $holdersList->mapWithKeys(function($holder) {
                 $empName = $holder->employee ? $holder->employee->last_name . ' ' . mb_substr($holder->employee->first_name, 0, 1) . '.' : null;
                 $orgName = $holder->organization->org_name ?? null;
                 if ($empName && $orgName) $dn = $empName . ' (' . $orgName . ')';
                 elseif ($empName) $dn = $empName;
                 elseif ($orgName) $dn = $orgName;
                 else $dn = 'Невідомий утримувач';
-                return ['value' => $holder->id, 'label' => $dn];
-            })->values()->toArray();
+                return [$holder->id => $dn];
+            })->toArray();
 
             $isSystemUnit = false;
             if ($base_component_id) {
