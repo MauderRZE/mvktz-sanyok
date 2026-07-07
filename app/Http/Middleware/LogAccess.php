@@ -30,6 +30,7 @@ class LogAccess
             AccessLog::create([
                 'user_id' => auth()->id(),
                 'method' => $request->method(),
+                'status_code' => $response->getStatusCode(),
                 'url' => $request->fullUrl(),
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),

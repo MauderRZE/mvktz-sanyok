@@ -13,6 +13,7 @@ class AccessLog extends Model
     protected $fillable = [
         'user_id',
         'method',
+        'status_code',
         'url',
         'ip_address',
         'user_agent',

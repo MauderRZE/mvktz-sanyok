@@ -35,7 +35,7 @@
                     <x-table.th>Дата</x-table.th>
                 @elseif($tab === 'access')
                     <x-table.th>Користувач</x-table.th>
-                    <x-table.th>Метод</x-table.th>
+                    <x-table.th>Метод / Статус</x-table.th>
                     <x-table.th>URL</x-table.th>
                     <x-table.th>IP / Браузер</x-table.th>
                     <x-table.th>Дата</x-table.th>
@@ -79,10 +79,20 @@
 
                     @elseif($tab === 'access')
                         <x-table.td>
-                            <span class="text-xs font-mono {{ $log->method === 'GET' ? 'text-blue-400' : 'text-orange-400' }}">{{ $log->method }}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-mono {{ $log->method === 'GET' ? 'text-blue-400' : 'text-orange-400' }}">{{ $log->method }}</span>
+                                @if($log->status_code)
+                                    <span class="px-1.5 py-0.5 rounded text-[10px] font-bold 
+                                        {{ $log->status_code >= 200 && $log->status_code < 300 ? 'bg-green-500/10 text-green-400' : 
+                                           ($log->status_code >= 300 && $log->status_code < 400 ? 'bg-blue-500/10 text-blue-400' : 
+                                           ($log->status_code >= 400 && $log->status_code < 500 ? 'bg-yellow-500/10 text-yellow-400' : 'bg-red-500/10 text-red-400')) }}">
+                                        {{ $log->status_code }}
+                                    </span>
+                                @endif
+                            </div>
                         </x-table.td>
                         <x-table.td>
-                            <span class="text-xs break-all max-w-md">{{ $log->url }}</span>
+                            <span class="text-xs break-all max-w-md {{ $log->status_code >= 400 ? 'text-red-400' : '' }}">{{ $log->url }}</span>
                         </x-table.td>
                         <x-table.td>
                             {{ $log->ip_address }}
