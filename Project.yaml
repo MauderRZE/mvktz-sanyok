@@ -1,0 +1,413 @@
+project: mvktz
+meta:
+  laravel: 11.0
+  livewire: 3.0
+  php: 8.2
+  auth: Session-based, Custom Middleware IsAdmin
+
+architectural_features:
+  AuditableTrait:
+    description: Automatically logs Eloquent lifecycle events (created, updated, deleted) of models using this trait into audit_logs.
+    models_using: [Asset, Equipment, BaseComponent, BrandTz, Contract, Employee, EmployeePhone, LowValueMaterial, Supplier]
+  IsAdminMiddleware:
+    description: Custom middleware protecting routes, ensuring the user has auth session and user.is_admin is true. Otherwise aborts with 403.
+  LogAccessMiddleware:
+    description: Custom middleware logging HTTP request details to access_logs (user_id, method, status_code, url, ip, user_agent) for authenticated users.
+
+database:
+  users:
+    cols:
+      id: bigint PK AI
+      name: varchar(255)
+      login: varchar(255) UK
+      password: varchar(255)
+      remember_token: varchar(100) NULL
+      created_at: timestamp NULL
+      updated_at: timestamp NULL
+      is_admin: tinyint(1) DEFAULT 0
+  departments:
+    cols:
+      id: int PK AI
+      name: varchar(150)
+    relations:
+      employees: hasMany(Employee)
+  employee:
+    cols:
+      id: int PK AI
+      last_name: varchar(100)
+      first_name: varchar(100)
+      middle_name: varchar(100) NULL
+      position: varchar(150) NULL
+      status: enum('Працює','Звільнений') DEFAULT 'Працює'
+    relations:
+      department_id: belongsTo(Department)
+      phones: hasMany(EmployeePhone)
+      equipmentMovements: hasMany(EquipmentMovement)
+  employee_phones:
+    cols:
+      id: int PK AI
+      phone_number: varchar(20)
+      phone_type: enum('Робочий','Особистий','Додатковий') DEFAULT 'Робочий'
+    relations:
+      employee_id: belongsTo(Employee)
+  organizations:
+    cols:
+      id: int PK AI
+      org_name: varchar(255)
+      org_type: varchar(100) DEFAULT 'Стороння'
+    relations:
+      locationHolders: hasMany(LocationHolder)
+  location_holders:
+    cols:
+      id: int PK AI
+    relations:
+      employee_id: belongsTo(Employee)
+      organization_id: belongsTo(Organization)
+      assets: hasMany(Asset)
+      movementsFrom: hasMany(EquipmentMovement)
+      movementsTo: hasMany(EquipmentMovement)
+  locations:
+    cols:
+      id: int PK AI
+      room_number: varchar(100)
+    relations:
+      assets: hasMany(Asset)
+  brands_tz:
+    cols:
+      id: int PK AI
+      brandtz_name: varchar(45) UK
+    relations:
+      equipmentTypes: hasMany(EquipmentType)
+  categories_tz:
+    cols:
+      id: int PK AI
+      category_name: varchar(45) UK
+    relations:
+      baseComponents: hasMany(BaseComponent)
+  models_tz:
+    cols:
+      id: int PK AI
+      model_name: varchar(45) UK
+    relations:
+      brand_id: belongsTo(BrandTz)
+      assets: hasMany(Asset)
+  base_components:
+    cols:
+      id: int PK AI
+      component_name: varchar(100)
+    relations:
+      category_id: belongsTo(EquipmentCategory)
+      assets: hasMany(Asset)
+  supplier_types:
+    cols:
+      id: int PK AI
+      type_name: varchar(20)
+    relations:
+      suppliers: hasMany(Supplier)
+  suppliers:
+    cols:
+      id: int PK AI
+      supplier_name: varchar(255)
+      tax_code: varchar(12) NULL
+    relations:
+      supplier_type_id: belongsTo(SupplierType)
+      contracts: hasMany(Contract)
+  purchases:
+    cols:
+      id: int PK AI
+      contract_number: varchar(100)
+      contract_date: date NULL
+      contract_link: varchar(100) NULL
+    relations:
+      supplier_id: belongsTo(Supplier)
+      lowValueMaterials: hasMany(LowValueMaterial)
+      equipment: hasMany(Equipment)
+  equipment_retirement_acts:
+    cols:
+      id: int PK AI
+      act_number: varchar(100) NULL
+      act_date: date NULL
+      reason: text NULL
+    relations:
+      equipment: hasMany(Equipment)
+  equipment:
+    cols:
+      id: int PK AI
+      inv_number: int UK NULL
+      account_name: varchar(300) NULL
+      buy_price: decimal(10,2) NULL
+      status: enum('в експлуатації','в аренді','списано') NULL
+      notes: varchar(45) NULL
+    relations:
+      purchase_id: belongsTo(Contract)
+      retirement_act_id: belongsTo(EquipmentRetirementAct)
+      assets: hasMany(Asset)
+      movements: hasMany(EquipmentMovement)
+      lowValueMaterials: hasMany(LowValueMaterial)
+  low_value_write_off_acts:
+    cols:
+      id: int PK AI
+      act_number: varchar(45) NULL
+      act_date: date NULL
+    relations:
+      assets: hasMany(Asset)
+  low_value_materials:
+    cols:
+      id: int PK AI
+      material_account_name: varchar(300) NULL
+      price: decimal(10,2) NULL
+      count: int NULL
+      nomenklature_number: varchar(45) NULL
+    relations:
+      contract_id: belongsTo(Contract)
+      itemProperties: hasMany(ItemProperty)
+  assets:
+    cols:
+      id: int PK AI
+      serial_number: varchar(45) NULL
+      notes: varchar(255) NULL
+      ip_address: varchar(45) NULL
+      mac_address: varchar(17) NULL
+      hostname: varchar(100) NULL
+      status: enum('Працює','Потребує уваги','В ремонті','Списано') DEFAULT 'Працює'
+    relations:
+      base_component_id: belongsTo(BaseComponent)
+      model_id: belongsTo(EquipmentType)
+      current_loc_id: belongsTo(Location)
+      current_holder_id: belongsTo(LocationHolder)
+      equipment_id: belongsTo(Equipment)
+      parent_asset_id: belongsTo(Asset)
+      nomenclature_id: belongsTo(LowValueMaterial)
+      write_off_act_id: belongsTo(LowValueWriteOffAct)
+      childAssets: hasMany(Asset)
+      repairs: hasMany(MaintenanceLog)
+      computerSoftwares: hasMany(ComputerSoftware)
+      itemProperties: hasMany(ItemProperty)
+  attributes_dictionary:
+    cols:
+      id: int PK AI
+      name: varchar(100)
+    relations:
+      itemProperties: hasMany(ItemProperty)
+  item_properties:
+    cols:
+      id: int PK AI
+      attr_value: varchar(255) NULL
+    relations:
+      asset_id: belongsTo(Asset)
+      nomenclature_id: belongsTo(LowValueMaterial)
+      attribute_id: belongsTo(AttributeDictionary)
+  licenses:
+    cols:
+      id: int PK AI
+      license_name: varchar(150)
+      license_type: varchar(50) NULL
+      purchase_date: date NULL
+    relations:
+      vendor_id: belongsTo(Supplier)
+      computerSoftwares: hasMany(ComputerSoftware)
+  computer_software:
+    cols:
+      id: int PK AI
+      software_name: enum('Windows','Office','ESET')
+      version: varchar(50) NULL
+      is_licensed: tinyint(1) DEFAULT 0
+    relations:
+      computer_id: belongsTo(Asset)
+      license_id: belongsTo(SoftwareLicense)
+  movements:
+    cols:
+      id: int PK AI
+      action_date: datetime DEFAULT CURRENT_TIMESTAMP
+    relations:
+      equip_id: belongsTo(Equipment)
+      asset_id: belongsTo(Asset)
+      from_holder_id: belongsTo(LocationHolder)
+      to_holder_id: belongsTo(LocationHolder)
+      employee_id: belongsTo(Employee)
+  repairs:
+    cols:
+      id: int PK AI
+      sent_date: date
+      return_date: date NULL
+      issue_description: text NULL
+      status: enum('В ремонті','Повернено') DEFAULT 'В ремонті'
+    relations:
+      assets_id: belongsTo(Asset)
+  access_logs:
+    cols:
+      id: bigint PK AI
+      user_id: int FK->users
+      method: varchar(10)
+      status_code: int
+      url: varchar(255)
+      ip_address: varchar(45)
+      user_agent: text
+      created_at: timestamp
+  audit_logs:
+    cols:
+      id: bigint PK AI
+      user_id: int FK->users
+      event: varchar(50)
+      auditable_type: varchar(255)
+      auditable_id: bigint
+      old_values: text NULL
+      new_values: text NULL
+      url: varchar(255)
+      ip_address: varchar(45)
+      user_agent: text
+      created_at: timestamp
+  auth_logs:
+    cols:
+      id: bigint PK AI
+      user_id: int FK->users
+      event: varchar(50)
+      ip_address: varchar(45)
+      user_agent: text
+      created_at: timestamp
+
+routing_and_views:
+  web_routes:
+    /login:
+      type: Livewire
+      component: App\Http\Livewire\Auth\Login
+      view: resources/views/livewire/auth/login.blade.php
+      middleware: guest
+    /admin/equipment/report:
+      type: Controller
+      action: App\Http\Controllers\Admin\EquipmentReportController@index
+      middleware: auth
+    /admin/assets/report:
+      type: Controller
+      action: App\Http\Controllers\Admin\AssetReportController@index
+      middleware: auth
+    /admin/equipment:
+      type: Livewire
+      component: App\Http\Livewire\Admin\EquipmentManager
+      view: resources/views/livewire/admin/equipment-manager.blade.php
+      middleware: auth
+    /admin/employees:
+      type: Livewire
+      component: App\Http\Livewire\Admin\EmployeeManager
+      view: resources/views/livewire/admin/employee-manager.blade.php
+      middleware: auth
+    /admin/categories:
+      type: Livewire
+      component: App\Http\Livewire\Admin\CategoryManager
+      view: resources/views/livewire/admin/category-manager.blade.php
+      middleware: auth
+    /admin/types:
+      type: Livewire
+      component: App\Http\Livewire\Admin\TypeManager
+      view: resources/views/livewire/admin/type-manager.blade.php
+      middleware: auth
+    /admin/users:
+      type: Livewire
+      component: App\Http\Livewire\Admin\UserManager
+      view: resources/views/livewire/admin/user-manager.blade.php
+      middleware: auth
+    /admin/base-components:
+      type: Livewire
+      component: App\Http\Livewire\Admin\BaseComponentManager
+      view: resources/views/livewire/admin/base-component-manager.blade.php
+      middleware: auth
+    /admin/suppliers:
+      type: Livewire
+      component: App\Http\Livewire\Admin\SupplierManager
+      view: resources/views/livewire/admin/supplier-manager.blade.php
+      middleware: auth
+    .env/locations:
+      type: Livewire
+      component: App\Http\Livewire\Admin\LocationManager
+      view: resources/views/livewire/admin/location-manager.blade.php
+      middleware: auth
+    /admin/contracts:
+      type: Livewire
+      component: App\Http\Livewire\Admin\ContractManager
+      view: resources/views/livewire/admin/contract-manager.blade.php
+      middleware: auth
+    /admin/assets:
+      type: Livewire
+      component: App\Http\Livewire\Admin\AssetManager
+      view: resources/views/livewire/admin/asset-manager.blade.php
+      middleware: auth
+    /admin/history:
+      type: Livewire
+      component: App\Http\Livewire\Admin\UserHistoryManager
+      view: resources/views/livewire/admin/user-history-manager.blade.php
+      middleware: [auth, IsAdmin]
+    /admin/movements:
+      type: Livewire
+      component: App\Http\Livewire\Admin\EquipmentMovementManager
+      view: resources/views/livewire/admin/equipment-movement-manager.blade.php
+      middleware: auth
+    /admin/low-value-materials:
+      type: Livewire
+      component: App\Http\Livewire\Admin\LowValueMaterialManager
+      view: resources/views/livewire/admin/low-value-material-manager.blade.php
+      middleware: auth
+    /admin/maintenance-logs:
+      type: Livewire
+      component: App\Http\Livewire\Admin\MaintenanceLogManager
+      view: resources/views/livewire/admin/maintenance-log-manager.blade.php
+      middleware: auth
+    /admin/software-licenses:
+      type: Livewire
+      component: App\Http\Livewire\Admin\SoftwareLicenseManager
+      view: resources/views/livewire/admin/software-license-manager.blade.php
+      middleware: auth
+    /admin/brands:
+      type: Livewire
+      component: App\Http\Livewire\Admin\BrandManager
+      view: resources/views/livewire/admin/brand-manager.blade.php
+      middleware: auth
+    /admin/departments:
+      type: Livewire
+      component: App\Http\Livewire\Admin\DepartmentManager
+      view: resources/views/livewire/admin/department-manager.blade.php
+      middleware: auth
+    /admin/organizations:
+      type: Livewire
+      component: App\Http\Livewire\Admin\OrganizationManager
+      view: resources/views/livewire/admin/organization-manager.blade.php
+      middleware: auth
+    /admin/retirement-acts:
+      type: Livewire
+      component: App\Http\Livewire\Admin\RetirementActManager
+      view: resources/views/livewire/admin/retirement-act-manager.blade.php
+      middleware: auth
+    /admin/write-off-acts:
+      type: Livewire
+      component: App\Http\Livewire\Admin\WriteOffActManager
+      view: resources/views/livewire/admin/write-off-act-manager.blade.php
+      middleware: auth
+    /admin/attribute-dictionaries:
+      type: Livewire
+      component: App\Http\Livewire\Admin\AttributeDictionaryManager
+      view: resources/views/livewire/admin/attribute-dictionary-manager.blade.php
+      middleware: auth
+    /admin/supplier-types:
+      type: Livewire
+      component: App\Http\Livewire\Admin\SupplierTypeManager
+      view: resources/views/livewire/admin/supplier-type-manager.blade.php
+      middleware: auth
+    /admin/computer-software:
+      type: Livewire
+      component: App\Http\Livewire\Admin\ComputerSoftwareManager
+      view: resources/views/livewire/admin/computer-software-manager.blade.php
+      middleware: auth
+    /admin/employee-phones:
+      type: Livewire
+      component: App\Http\Livewire\Admin\EmployeePhoneManager
+      view: resources/views/livewire/admin/employee-phone-manager.blade.php
+      middleware: auth
+    /admin/item-properties:
+      type: Livewire
+      component: App\Http\Livewire\Admin\ItemPropertyManager
+      view: resources/views/livewire/admin/item-property-manager.blade.php
+      middleware: auth
+    /admin/system-errors:
+      type: Livewire
+      component: App\Http\Livewire\Admin\SystemErrorManager
+      view: resources/views/livewire/admin/system-error-manager.blade.php
+      middleware: auth
