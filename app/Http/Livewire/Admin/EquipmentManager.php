@@ -161,13 +161,13 @@ class EquipmentManager extends Component
 
         return view('livewire.admin.equipment-manager', [
             'equipments'        => $equipments,
-            'types'             => EquipmentType::all(),
-            'categoriesList'    => EquipmentCategory::all(),
-            'locationsList'     => Location::all(),
-            'employeesList'     => Employee::all(),
-            'departmentsList'   => Department::all(),
-            'organizationsList' => Organization::all(),
-            'brandsList'        => BrandTz::all(),
+            'types'             => EquipmentType::select('id', 'model_name')->get(),
+            'categoriesList'    => EquipmentCategory::select('id', 'category_name')->get(),
+            'locationsList'     => Location::select('id', 'room_number')->get(),
+            'employeesList'     => Employee::select('id', 'first_name', 'last_name')->get(),
+            'departmentsList'   => Department::select('id', 'name')->get(),
+            'organizationsList' => Organization::select('id', 'org_name')->get(),
+            'brandsList'        => BrandTz::select('id', 'brandtz_name')->get(),
         ]);
     }
 }

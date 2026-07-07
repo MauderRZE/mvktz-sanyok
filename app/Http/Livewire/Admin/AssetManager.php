@@ -124,14 +124,20 @@ class AssetManager extends Component
                 'parentAsset.componentType',
                 'lowValueMaterial',
                 'writeOffAct',
+            ])->withCount('childAssets');
+
+        if (!empty($this->expandedRows)) {
+            $query->with([
                 'childAssets.componentType',
                 'childAssets.model.brand',
                 'childAssets.location',
                 'childAssets.holder.employee',
                 'childAssets.holder.organization',
                 'childAssets.equipment',
-            ])
-            ->when($this->search, function($q) {
+            ]);
+        }
+        
+        $query->when($this->search, function($q) {
                 $q->where(function($q) {
                     $search = '%' . $this->search . '%';
                     $q->where('serial_number', 'like', $search)
@@ -214,17 +220,18 @@ class AssetManager extends Component
 
         return view('livewire.admin.asset-manager', [
             'assets' => $query->paginate(15),
-            'equipmentList' => Equipment::all(),
-            'baseComponentsList' => BaseComponent::all(),
-            'modelsList' => EquipmentType::with('brand')->get(),
-            'locationsList' => Location::all(),
-            'holdersList' => LocationHolder::with(['employee', 'organization'])->get(),
-            'parentAssetsList' => Asset::with(['componentType', 'equipment'])
+            'equipmentList' => Equipment::select('id', 'inv_number', 'account_name')->get(),
+            'baseComponentsList' => BaseComponent::select('id', 'component_name')->get(),
+            'modelsList' => EquipmentType::with('brand:id,brandtz_name')->select('id', 'model_name', 'brand_id')->get(),
+            'locationsList' => Location::select('id', 'room_number')->get(),
+            'holdersList' => LocationHolder::with(['employee:id,first_name,last_name', 'organization:id,org_name'])->select('id', 'employee_id', 'organization_id')->get(),
+            'parentAssetsList' => Asset::with(['componentType:id,component_name', 'equipment:id,inv_number'])
+                ->select('id', 'base_component_id', 'equipment_id', 'serial_number')
                 ->whereHas('componentType', function($q) {
                     $q->where('component_name', 'Системний блок');
                 })->get(),
-            'nomenclaturesList' => LowValueMaterial::all(),
-            'writeOffActsList' => LowValueWriteOffAct::all(),
+            'nomenclaturesList' => LowValueMaterial::select('id', 'material_account_name', 'nomenklature_number')->get(),
+            'writeOffActsList' => LowValueWriteOffAct::select('id', 'act_number')->get(),
         ]);
     }
 
