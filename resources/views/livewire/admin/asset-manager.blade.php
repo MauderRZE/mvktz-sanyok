@@ -211,15 +211,21 @@
     <x-table.wrapper>
             <x-slot name="headers">
                     <x-table.th width="40"></x-table.th>
-                    <x-table.th align="left">Пристрій (Інв. №)</x-table.th>
-                    <x-table.th align="left">Тип компонента</x-table.th>
-                    <x-table.th align="left" wire:click="sortBy('serial_number')" class="cursor-pointer hover:bg-white/5">
-                        <div class="flex items-center gap-1">Модель / S/N @if($sortField === 'serial_number') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
+                    <x-table.th align="left" wire:click="sortBy('equipment')" class="cursor-pointer hover:bg-white/5">
+                        <div class="flex items-center gap-1">Пристрій (Інв. №) @if($sortField === 'equipment') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
+                    </x-table.th>
+                    <x-table.th align="left" wire:click="sortBy('component_type')" class="cursor-pointer hover:bg-white/5">
+                        <div class="flex items-center gap-1">Тип компонента @if($sortField === 'component_type') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
+                    </x-table.th>
+                    <x-table.th align="left">
+                        <div class="flex items-center gap-1">Модель / S/N</div>
                     </x-table.th>
                     <x-table.th align="left" wire:click="sortBy('ip_address')" class="cursor-pointer hover:bg-white/5">
                         <div class="flex items-center gap-1">Мережа @if($sortField === 'ip_address') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
                     </x-table.th>
-                    <x-table.th align="left">Місце / Власник</x-table.th>
+                    <x-table.th align="left" wire:click="sortBy('location')" class="cursor-pointer hover:bg-white/5">
+                        <div class="flex items-center gap-1">Місце / Власник @if($sortField === 'location') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
+                    </x-table.th>
                     <x-table.th align="left" wire:click="sortBy('status')" class="cursor-pointer hover:bg-white/5">
                         <div class="flex items-center gap-1">Статус @if($sortField === 'status') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
                     </x-table.th>
@@ -321,7 +327,9 @@
                                                         @endif
                                                     </td>
                                                     <td class="py-2 px-3">
-                                                        <x-ui.badge status="{{ $child->status }}" :dot="false" />
+                                                        @if($child->status !== 'Працює')
+                                                            <x-ui.badge status="{{ $child->status }}" :dot="false" />
+                                                        @endif
                                                     </td>
                                                     <td class="py-2 px-3 text-right">
                                                         <button wire:click="edit({{ $child->id }})" class="p-1 text-gray-400 hover:text-brand-400 transition-colors" title="Редагувати компонент">

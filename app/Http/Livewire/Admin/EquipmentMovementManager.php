@@ -18,7 +18,12 @@ class EquipmentMovementManager extends Component
 
     public function render()
     {
-        $this->movements = EquipmentMovement::with(['equipment', 'employee'])->get();
+        $this->movements = EquipmentMovement::with([
+            'equipment',
+            'employee',
+            'asset.location',
+            'toHolder.organization'
+        ])->get();
         $this->equipmentList = Equipment::all();
         $this->locationsList = Location::all();
         $this->employeesList = Employee::all();
@@ -105,7 +110,7 @@ class EquipmentMovementManager extends Component
         $this->equip_id = $move->equip_id;
         $this->employee_id = $move->employee_id;
         $this->action_date = $move->action_date;
-        $this->location_id = null; // location is not stored historically in movements table
+        $this->location_id = $move->asset ? $move->asset->current_loc_id : null;
         $this->openModal();
     }
 

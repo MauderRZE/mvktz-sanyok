@@ -188,10 +188,22 @@ class AssetManager extends Component
                 $q->whereNull('parent_asset_id');
             });
 
-        if (in_array($this->sortField, ['id', 'serial_number', 'status', 'ip_address', 'mac_address'])) {
-            $query->orderBy($this->sortField, $this->sortDirection);
+        if ($this->sortField === 'equipment') {
+            $query->leftJoin('equipment', 'assets.equipment_id', '=', 'equipment.id')
+                ->select('assets.*')
+                ->orderBy('equipment.inv_number', $this->sortDirection);
+        } elseif ($this->sortField === 'component_type') {
+            $query->leftJoin('base_components', 'assets.base_component_id', '=', 'base_components.id')
+                ->select('assets.*')
+                ->orderBy('base_components.component_name', $this->sortDirection);
+        } elseif ($this->sortField === 'location') {
+            $query->leftJoin('locations', 'assets.current_loc_id', '=', 'locations.id')
+                ->select('assets.*')
+                ->orderBy('locations.room_number', $this->sortDirection);
+        } elseif (in_array($this->sortField, ['id', 'serial_number', 'status', 'ip_address', 'mac_address'])) {
+            $query->orderBy('assets.' . $this->sortField, $this->sortDirection);
         } else {
-            $query->orderBy('id', 'desc');
+            $query->orderBy('assets.id', 'desc');
         }
 
         return view('livewire.admin.asset-manager', [

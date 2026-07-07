@@ -147,7 +147,7 @@
             <x-table.td align="left" class="text-xs text-gray-300">
                 @php $latestMove = $eq->movements->sortByDesc('move_date')->first(); @endphp
                 @if($latestMove)
-                    <div class="font-medium text-brand-300">Каб. {{ $latestMove->location->room_number ?? '—' }}</div>
+                    <div class="font-medium text-brand-300">Каб. {{ $latestMove->asset->location->room_number ?? '—' }}</div>
                     <x-table.cell-subtext>
                         {{ $latestMove->employee ? ($latestMove->employee->last_name . ' ' . mb_substr($latestMove->employee->first_name, 0, 1) . '.') : '—' }}
                     </x-table.cell-subtext>

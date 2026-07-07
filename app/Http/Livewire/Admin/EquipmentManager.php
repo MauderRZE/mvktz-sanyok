@@ -109,7 +109,7 @@ class EquipmentManager extends Component
         // Полегшений eager-load: ТІЛЬКИ те, що потрібно для рядка таблиці
         $equipments = Equipment::with([
             'assets.componentType',
-            'movements.location',
+            'movements.asset.location',
             'movements.employee',
         ])
         ->when($this->search, function ($q) {
