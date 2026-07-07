@@ -1,0 +1,109 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use Illuminate\Routing\Controller;
+use Illuminate\Http\Request;
+use App\Models\Asset;
+
+class AssetReportController extends Controller
+{
+    public function index(Request $request)
+    {
+        $search = $request->get('search', '');
+        $filterStatus = $request->get('filterStatus', []);
+        $filterBaseComponent = $request->get('filterBaseComponent', []);
+        $filterLocation = $request->get('filterLocation', []);
+        $filterHolder = $request->get('filterHolder', []);
+        $filterModel = $request->get('filterModel', []);
+        $filterNetwork = $request->get('filterNetwork', []);
+
+        $query = Asset::with([
+                'equipment', 
+                'componentType', 
+                'model.brand', 
+                'location', 
+                'holder.employee', 
+                'holder.organization',
+                'parentAsset.componentType',
+                'lowValueMaterial',
+                'writeOffAct',
+                'childAssets.componentType',
+                'childAssets.model.brand',
+                'childAssets.location',
+                'childAssets.holder.employee',
+                'childAssets.holder.organization',
+                'childAssets.equipment',
+            ])
+            ->when($search, function($q) use ($search) {
+                $q->where(function($q) use ($search) {
+                    $searchLike = '%' . $search . '%';
+                    $q->where('serial_number', 'like', $searchLike)
+                      ->orWhere('notes', 'like', $searchLike)
+                      ->orWhere('ip_address', 'like', $searchLike)
+                      ->orWhere('mac_address', 'like', $searchLike)
+                      ->orWhere('hostname', 'like', $searchLike)
+                      ->orWhereHas('equipment', function($eq) use ($searchLike) {
+                          $eq->where('inv_number', 'like', $searchLike)
+                             ->orWhere('account_name', 'like', $searchLike);
+                      })
+                      ->orWhereHas('componentType', function($ct) use ($searchLike) {
+                          $ct->where('component_name', 'like', $searchLike);
+                      })
+                      ->orWhereHas('model', function($m) use ($searchLike) {
+                          $m->where('model_name', 'like', $searchLike)
+                            ->orWhereHas('brand', function($b) use ($searchLike) {
+                                $b->where('brandtz_name', 'like', $searchLike);
+                            });
+                      })
+                      ->orWhereHas('location', function($loc) use ($searchLike) {
+                          $loc->where('room_number', 'like', $searchLike);
+                      })
+                      ->orWhereHas('holder', function($h) use ($searchLike) {
+                          $h->whereHas('employee', function($emp) use ($searchLike) {
+                              $emp->where('last_name', 'like', $searchLike)
+                                  ->orWhere('first_name', 'like', $searchLike);
+                          })->orWhereHas('organization', function($org) use ($searchLike) {
+                              $org->where('org_name', 'like', $searchLike);
+                          });
+                      })
+                      ->orWhereHas('lowValueMaterial', function($lvm) use ($searchLike) {
+                          $lvm->where('nomenklature_number', 'like', $searchLike)
+                              ->orWhere('material_account_name', 'like', $searchLike);
+                      })
+                      ->orWhereHas('writeOffAct', function($woa) use ($searchLike) {
+                          $woa->where('act_number', 'like', $searchLike);
+                      });
+                });
+            })
+            ->when(!empty($filterStatus), function($q) use ($filterStatus) {
+                $q->whereIn('status', $filterStatus);
+            })
+            ->when(!empty($filterBaseComponent), function($q) use ($filterBaseComponent) {
+                $q->whereIn('base_component_id', $filterBaseComponent);
+            })
+            ->when(!empty($filterLocation), function($q) use ($filterLocation) {
+                $q->whereIn('current_loc_id', $filterLocation);
+            })
+            ->when(!empty($filterHolder), function($q) use ($filterHolder) {
+                $q->whereIn('current_holder_id', $filterHolder);
+            })
+            ->when(!empty($filterModel), function($q) use ($filterModel) {
+                $q->whereIn('model_id', $filterModel);
+            })
+            ->when(!empty($filterNetwork), function($q) use ($filterNetwork) {
+                $q->whereIn('has_network', $filterNetwork);
+            })
+            ->when(empty($search) && empty($filterStatus) && empty($filterBaseComponent) && empty($filterLocation) && empty($filterHolder) && empty($filterModel) && empty($filterNetwork), function($q) {
+                $q->whereNull('parent_asset_id');
+            });
+
+        $assets = $query->orderBy('id', 'desc')->get();
+
+        return view('admin.asset-report', [
+            'assets' => $assets,
+            'filters' => $request->all(),
+            'generatedAt' => now()->format('d.m.Y H:i'),
+        ]);
+    }
+}
