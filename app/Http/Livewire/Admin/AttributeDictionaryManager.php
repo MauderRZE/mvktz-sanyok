@@ -12,10 +12,21 @@ class AttributeDictionaryManager extends Component
     public $dictAttributes, $attributeId, $name;
     public $isOpen = false;
 
+    public $search = '';
+
     public function render()
     {
-        $this->dictAttributes = AttributeDictionary::all();
+        $this->dictAttributes = AttributeDictionary::when($this->search, function($q) {
+            $q->where('name', 'like', '%' . $this->search . '%');
+        })
+        ->orderBy('id', 'desc')
+        ->get();
         return view('livewire.admin.attribute-dictionary-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
     }
 
     public function create()

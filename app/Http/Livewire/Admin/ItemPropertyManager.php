@@ -16,6 +16,9 @@ class ItemPropertyManager extends Component
     public $assets, $materials, $dictAttributes;
     public $isOpen = false;
 
+    public $search = '';
+    public $filterAttribute = [];
+
     public function mount()
     {
         $this->assets = Asset::with('componentType')->get();
@@ -25,8 +28,35 @@ class ItemPropertyManager extends Component
 
     public function render()
     {
-        $this->properties = ItemProperty::with(['asset.componentType', 'nomenclature', 'attribute'])->get();
+        $query = ItemProperty::with(['asset.componentType', 'nomenclature', 'attribute'])
+            ->when($this->search, function($q) {
+                $search = '%' . $this->search . '%';
+                $q->where(function($sub) use ($search) {
+                    $sub->where('attr_value', 'like', $search)
+                        ->orWhereHas('attribute', function($attr) use ($search) {
+                            $attr->where('name', 'like', $search);
+                        })
+                        ->orWhereHas('asset.componentType', function($ct) use ($search) {
+                            $ct->where('component_name', 'like', $search);
+                        })
+                        ->orWhereHas('nomenclature', function($nom) use ($search) {
+                            $nom->where('material_account_name', 'like', $search);
+                        });
+                });
+            })
+            ->when(!empty($this->filterAttribute), function($q) {
+                $q->whereIn('attribute_id', $this->filterAttribute);
+            })
+            ->orderBy('id', 'desc');
+
+        $this->properties = $query->get();
         return view('livewire.admin.item-property-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterAttribute = [];
     }
 
     public function create()

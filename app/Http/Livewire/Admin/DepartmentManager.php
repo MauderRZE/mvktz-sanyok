@@ -12,10 +12,21 @@ class DepartmentManager extends Component
     public $departments, $departmentId, $name;
     public $isOpen = 0;
 
+    public $search = '';
+
     public function render()
     {
-        $this->departments = Department::all();
+        $this->departments = Department::when($this->search, function($q) {
+            $q->where('name', 'like', '%' . $this->search . '%');
+        })
+        ->orderBy('id', 'desc')
+        ->get();
         return view('livewire.admin.department-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
     }
 
     public function create()

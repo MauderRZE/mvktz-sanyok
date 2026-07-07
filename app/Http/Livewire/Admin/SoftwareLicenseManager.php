@@ -14,11 +14,40 @@ class SoftwareLicenseManager extends Component
     public $vendorsList = [];
     public $isOpen = 0;
 
+    public $search = '';
+    public $filterType = [];
+    public $filterVendor = [];
+
     public function render()
     {
-        $this->licenses = SoftwareLicense::with('vendor')->get();
+        $query = SoftwareLicense::with('vendor')
+            ->when($this->search, function($q) {
+                $search = '%' . $this->search . '%';
+                $q->where(function($sub) use ($search) {
+                    $sub->where('license_name', 'like', $search)
+                        ->orWhereHas('vendor', function($v) use ($search) {
+                            $v->where('supplier_name', 'like', $search);
+                        });
+                });
+            })
+            ->when(!empty($this->filterType), function($q) {
+                $q->whereIn('license_type', $this->filterType);
+            })
+            ->when(!empty($this->filterVendor), function($q) {
+                $q->whereIn('vendor_id', $this->filterVendor);
+            })
+            ->orderBy('id', 'desc');
+
+        $this->licenses = $query->get();
         $this->vendorsList = \App\Models\Supplier::all();
         return view('livewire.admin.software-license-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterType = [];
+        $this->filterVendor = [];
     }
 
     public function create()

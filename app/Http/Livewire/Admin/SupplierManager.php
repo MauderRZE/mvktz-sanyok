@@ -12,12 +12,34 @@ class SupplierManager extends Component
     public $suppliers, $supplierId, $supplier_name, $supplier_type_id, $tax_code;
     public $isOpen = 0;
 
+    public $search = '';
+    public $filterType = [];
+
     public function render()
     {
-        $this->suppliers = Supplier::with('supplierType')->get();
+        $query = Supplier::with('supplierType')
+            ->when($this->search, function($q) {
+                $search = '%' . $this->search . '%';
+                $q->where(function($sub) use ($search) {
+                    $sub->where('supplier_name', 'like', $search)
+                        ->orWhere('tax_code', 'like', $search);
+                });
+            })
+            ->when(!empty($this->filterType), function($q) {
+                $q->whereIn('supplier_type_id', $this->filterType);
+            })
+            ->orderBy('id', 'desc');
+
+        $this->suppliers = $query->get();
         return view('livewire.admin.supplier-manager', [
             'supplierTypes' => \App\Models\SupplierType::all(),
         ]);
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterType = [];
     }
 
     public function create()

@@ -15,11 +15,33 @@ class LowValueMaterialManager extends Component
     public $contractsList = [];
     public $isOpen = 0;
 
+    public $search = '';
+    public $filterContract = [];
+
     public function render()
     {
-        $this->materials = LowValueMaterial::with(['contract'])->get();
+        $query = LowValueMaterial::with(['contract'])
+            ->when($this->search, function($q) {
+                $search = '%' . $this->search . '%';
+                $q->where(function($sub) use ($search) {
+                    $sub->where('material_account_name', 'like', $search)
+                        ->orWhere('nomenklature_number', 'like', $search);
+                });
+            })
+            ->when(!empty($this->filterContract), function($q) {
+                $q->whereIn('contract_id', $this->filterContract);
+            })
+            ->orderBy('id', 'desc');
+
+        $this->materials = $query->get();
         $this->contractsList = Contract::with('supplier')->get();
         return view('livewire.admin.low-value-material-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterContract = [];
     }
 
     public function create()

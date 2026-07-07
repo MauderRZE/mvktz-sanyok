@@ -15,6 +15,10 @@ class ComputerSoftwareManager extends Component
     public $computers, $licenses;
     public $isOpen = false;
 
+    public $search = '';
+    public $filterSoftwareName = [];
+    public $filterIsLicensed = '';
+
     public function mount()
     {
         $this->computers = Asset::with(['componentType', 'equipment'])->get();
@@ -23,8 +27,37 @@ class ComputerSoftwareManager extends Component
 
     public function render()
     {
-        $this->software = ComputerSoftware::with(['computer.componentType', 'license'])->get();
+        $query = ComputerSoftware::with(['computer.componentType', 'license'])
+            ->when($this->search, function($q) {
+                $search = '%' . $this->search . '%';
+                $q->where(function($sub) use ($search) {
+                    $sub->where('software_name', 'like', $search)
+                        ->orWhere('version', 'like', $search)
+                        ->orWhereHas('computer.componentType', function($ct) use ($search) {
+                            $ct->where('component_name', 'like', $search);
+                        })
+                        ->orWhereHas('computer.equipment', function($eq) use ($search) {
+                            $eq->where('inv_number', 'like', $search);
+                        });
+                });
+            })
+            ->when(!empty($this->filterSoftwareName), function($q) {
+                $q->whereIn('software_name', $this->filterSoftwareName);
+            })
+            ->when($this->filterIsLicensed !== '', function($q) {
+                $q->where('is_licensed', $this->filterIsLicensed);
+            })
+            ->orderBy('id', 'desc');
+
+        $this->software = $query->get();
         return view('livewire.admin.computer-software-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterSoftwareName = [];
+        $this->filterIsLicensed = '';
     }
 
     public function create()

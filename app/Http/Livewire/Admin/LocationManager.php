@@ -12,10 +12,21 @@ class LocationManager extends Component
     public $locations, $locationId, $room_number;
     public $isOpen = 0;
 
+    public $search = '';
+
     public function render()
     {
-        $this->locations = Location::all();
+        $this->locations = Location::when($this->search, function($q) {
+            $q->where('room_number', 'like', '%' . $this->search . '%');
+        })
+        ->orderBy('id', 'desc')
+        ->get();
         return view('livewire.admin.location-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
     }
 
     public function create()

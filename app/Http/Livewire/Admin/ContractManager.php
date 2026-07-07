@@ -14,11 +14,35 @@ class ContractManager extends Component
     public $suppliersList = [];
     public $isOpen = 0;
 
+    public $search = '';
+    public $filterSupplier = [];
+
     public function render()
     {
-        $this->contracts = Contract::with('supplier')->get();
+        $query = Contract::with('supplier')
+            ->when($this->search, function($q) {
+                $search = '%' . $this->search . '%';
+                $q->where(function($sub) use ($search) {
+                    $sub->where('contract_number', 'like', $search)
+                        ->orWhereHas('supplier', function($sup) use ($search) {
+                            $sup->where('supplier_name', 'like', $search);
+                        });
+                });
+            })
+            ->when(!empty($this->filterSupplier), function($q) {
+                $q->whereIn('supplier_id', $this->filterSupplier);
+            })
+            ->orderBy('id', 'desc');
+
+        $this->contracts = $query->get();
         $this->suppliersList = Supplier::all();
         return view('livewire.admin.contract-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterSupplier = [];
     }
 
     public function create()

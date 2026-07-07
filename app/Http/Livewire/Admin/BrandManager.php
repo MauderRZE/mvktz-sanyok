@@ -12,10 +12,21 @@ class BrandManager extends Component
     public $brands, $brandId, $brandtz_name;
     public $isOpen = 0;
 
+    public $search = '';
+
     public function render()
     {
-        $this->brands = BrandTz::all();
+        $this->brands = BrandTz::when($this->search, function($q) {
+            $q->where('brandtz_name', 'like', '%' . $this->search . '%');
+        })
+        ->orderBy('id', 'desc')
+        ->get();
         return view('livewire.admin.brand-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
     }
 
     public function create()

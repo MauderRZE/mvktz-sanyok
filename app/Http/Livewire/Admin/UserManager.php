@@ -13,10 +13,25 @@ class UserManager extends Component
     public $users, $userId, $name, $login, $password;
     public $isOpen = 0;
 
+    public $search = '';
+
     public function render()
     {
-        $this->users = User::all();
+        $this->users = User::when($this->search, function($q) {
+            $search = '%' . $this->search . '%';
+            $q->where(function($sub) use ($search) {
+                $sub->where('name', 'like', $search)
+                    ->orWhere('login', 'like', $search);
+            });
+        })
+        ->orderBy('id', 'desc')
+        ->get();
         return view('livewire.admin.user-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
     }
 
     public function create()

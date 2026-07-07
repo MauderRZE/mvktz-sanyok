@@ -12,10 +12,37 @@ class OrganizationManager extends Component
     public $organizations, $orgId, $org_name, $org_type = 'Стороння';
     public $isOpen = 0;
 
+    public $search = '';
+    public $filterType = [];
+
     public function render()
     {
-        $this->organizations = Organization::all();
-        return view('livewire.admin.organization-manager');
+        $query = Organization::query()
+            ->when($this->search, function($q) {
+                $search = '%' . $this->search . '%';
+                $q->where(function($sub) use ($search) {
+                    $sub->where('org_name', 'like', $search)
+                        ->orWhere('org_type', 'like', $search);
+                });
+            })
+            ->when(!empty($this->filterType), function($q) {
+                $q->whereIn('org_type', $this->filterType);
+            })
+            ->orderBy('id', 'desc');
+
+        $this->organizations = $query->get();
+        
+        $typesList = Organization::select('org_type')->distinct()->pluck('org_type')->filter()->values();
+
+        return view('livewire.admin.organization-manager', [
+            'typesList' => $typesList
+        ]);
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterType = [];
     }
 
     public function create()

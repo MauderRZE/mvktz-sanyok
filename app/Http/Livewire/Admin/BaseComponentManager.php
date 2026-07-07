@@ -12,12 +12,36 @@ class BaseComponentManager extends Component
     public $components, $componentId, $component_name, $category_id;
     public $isOpen = 0;
 
+    public $search = '';
+    public $filterCategory = [];
+
     public function render()
     {
-        $this->components = BaseComponent::with('category')->get();
+        $query = BaseComponent::with('category')
+            ->when($this->search, function($q) {
+                $search = '%' . $this->search . '%';
+                $q->where(function($sub) use ($search) {
+                    $sub->where('component_name', 'like', $search)
+                        ->orWhereHas('category', function($cat) use ($search) {
+                            $cat->where('category_name', 'like', $search);
+                        });
+                });
+            })
+            ->when(!empty($this->filterCategory), function($q) {
+                $q->whereIn('category_id', $this->filterCategory);
+            })
+            ->orderBy('id', 'desc');
+
+        $this->components = $query->get();
         return view('livewire.admin.base-component-manager', [
             'categories' => \App\Models\EquipmentCategory::all(),
         ]);
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterCategory = [];
     }
 
     public function create()

@@ -12,10 +12,21 @@ class SupplierTypeManager extends Component
     public $types, $typeId, $type_name;
     public $isOpen = false;
 
+    public $search = '';
+
     public function render()
     {
-        $this->types = SupplierType::all();
+        $this->types = SupplierType::when($this->search, function($q) {
+            $q->where('type_name', 'like', '%' . $this->search . '%');
+        })
+        ->orderBy('id', 'desc')
+        ->get();
         return view('livewire.admin.supplier-type-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
     }
 
     public function create()

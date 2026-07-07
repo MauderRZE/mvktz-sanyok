@@ -13,10 +13,43 @@ class SystemErrorManager extends Component
     public $errorId, $page_type, $error_type, $error_text, $is_resolved = false;
     public $isOpen = 0;
 
+    public $search = '';
+    public $filterResolved = '';
+    public $filterPageType = [];
+    public $filterErrorType = [];
+
     public function render()
     {
-        $this->errorsList = SystemError::orderBy('created_at', 'desc')->get();
+        $query = SystemError::query()
+            ->when($this->search, function($q) {
+                $search = '%' . $this->search . '%';
+                $q->where(function($sub) use ($search) {
+                    $sub->where('page_type', 'like', $search)
+                        ->orWhere('error_type', 'like', $search)
+                        ->orWhere('error_text', 'like', $search);
+                });
+            })
+            ->when($this->filterResolved !== '', function($q) {
+                $q->where('is_resolved', $this->filterResolved);
+            })
+            ->when(!empty($this->filterPageType), function($q) {
+                $q->whereIn('page_type', $this->filterPageType);
+            })
+            ->when(!empty($this->filterErrorType), function($q) {
+                $q->whereIn('error_type', $this->filterErrorType);
+            })
+            ->orderBy('created_at', 'desc');
+
+        $this->errorsList = $query->get();
         return view('livewire.admin.system-error-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterResolved = '';
+        $this->filterPageType = [];
+        $this->filterErrorType = [];
     }
 
     public function create()

@@ -14,6 +14,10 @@ class EmployeePhoneManager extends Component
     public $employees;
     public $isOpen = false;
 
+    public $search = '';
+    public $filterPhoneType = [];
+    public $filterEmployee = [];
+
     public function mount()
     {
         $this->employees = Employee::orderBy('last_name')->get();
@@ -21,8 +25,34 @@ class EmployeePhoneManager extends Component
 
     public function render()
     {
-        $this->phones = EmployeePhone::with('employee')->get();
+        $query = EmployeePhone::with('employee')
+            ->when($this->search, function($q) {
+                $search = '%' . $this->search . '%';
+                $q->where(function($sub) use ($search) {
+                    $sub->where('phone_number', 'like', $search)
+                        ->orWhereHas('employee', function($emp) use ($search) {
+                            $emp->where('first_name', 'like', $search)
+                                ->orWhere('last_name', 'like', $search);
+                        });
+                });
+            })
+            ->when(!empty($this->filterPhoneType), function($q) {
+                $q->whereIn('phone_type', $this->filterPhoneType);
+            })
+            ->when(!empty($this->filterEmployee), function($q) {
+                $q->whereIn('employee_id', $this->filterEmployee);
+            })
+            ->orderBy('id', 'desc');
+
+        $this->phones = $query->get();
         return view('livewire.admin.employee-phone-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterPhoneType = [];
+        $this->filterEmployee = [];
     }
 
     public function create()

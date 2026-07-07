@@ -12,10 +12,25 @@ class RetirementActManager extends Component
     public $acts, $actId, $act_number, $act_date, $reason;
     public $isOpen = 0;
 
+    public $search = '';
+
     public function render()
     {
-        $this->acts = EquipmentRetirementAct::all();
+        $this->acts = EquipmentRetirementAct::when($this->search, function($q) {
+            $search = '%' . $this->search . '%';
+            $q->where(function($sub) use ($search) {
+                $sub->where('act_number', 'like', $search)
+                    ->orWhere('reason', 'like', $search);
+            });
+        })
+        ->orderBy('id', 'desc')
+        ->get();
         return view('livewire.admin.retirement-act-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
     }
 
     public function create()

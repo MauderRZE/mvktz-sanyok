@@ -13,11 +13,35 @@ class TypeManager extends Component
     public $types, $brands, $typeId, $model_name, $brand_id;
     public $isOpen = 0;
 
+    public $search = '';
+    public $filterBrand = [];
+
     public function render()
     {
-        $this->types = EquipmentType::with('brand')->get();
+        $query = EquipmentType::with('brand')
+            ->when($this->search, function($q) {
+                $search = '%' . $this->search . '%';
+                $q->where(function($sub) use ($search) {
+                    $sub->where('model_name', 'like', $search)
+                        ->orWhereHas('brand', function($b) use ($search) {
+                            $b->where('brandtz_name', 'like', $search);
+                        });
+                });
+            })
+            ->when(!empty($this->filterBrand), function($q) {
+                $q->whereIn('brand_id', $this->filterBrand);
+            })
+            ->orderBy('id', 'desc');
+
+        $this->types = $query->get();
         $this->brands = BrandTz::all();
         return view('livewire.admin.type-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterBrand = [];
     }
 
     public function create()

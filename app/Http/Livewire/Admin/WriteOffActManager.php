@@ -12,10 +12,21 @@ class WriteOffActManager extends Component
     public $acts, $actId, $act_number, $act_date;
     public $isOpen = 0;
 
+    public $search = '';
+
     public function render()
     {
-        $this->acts = LowValueWriteOffAct::all();
+        $this->acts = LowValueWriteOffAct::when($this->search, function($q) {
+            $q->where('act_number', 'like', '%' . $this->search . '%');
+        })
+        ->orderBy('id', 'desc')
+        ->get();
         return view('livewire.admin.write-off-act-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
     }
 
     public function create()

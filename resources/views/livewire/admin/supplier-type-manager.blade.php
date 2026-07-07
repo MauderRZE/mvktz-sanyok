@@ -3,6 +3,21 @@
     <x-ui.flash />
     <x-ui.toolbar :count="count($types)" label="Всього типів" buttonLabel="Додати тип" />
 
+    {{-- Filters Bar --}}
+    <x-ui.card class="p-4 mb-4">
+        <div class="flex gap-2">
+            <div class="flex-1">
+                <x-form.search wire:model.live.debounce.300ms="search" placeholder="Пошук за типом постачальника..." />
+            </div>
+            @if($search !== '')
+                <button wire:click="resetFilters" class="px-4 py-2 bg-white/5 hover:bg-white/10 text-xs text-gray-400 hover:text-white rounded-xl border border-white/10 transition-colors shrink-0 flex items-center gap-1.5" title="Скинути пошук">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    <span>Скинути</span>
+                </button>
+            @endif
+        </div>
+    </x-ui.card>
+
     @if($isOpen)
     <x-ui.modal title="{{ $typeId ? 'Редагувати' : 'Додати' }} тип" maxWidth="md">
         <x-form.input label="Тип постачальника (ФОП, ТОВ)" model="type_name" type="text" />

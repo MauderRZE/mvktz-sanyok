@@ -12,10 +12,21 @@ class CategoryManager extends Component
     public $categories, $categoryId, $category_name;
     public $isOpen = 0;
 
+    public $search = '';
+
     public function render()
     {
-        $this->categories = EquipmentCategory::all();
+        $this->categories = EquipmentCategory::when($this->search, function($q) {
+            $q->where('category_name', 'like', '%' . $this->search . '%');
+        })
+        ->orderBy('id', 'desc')
+        ->get();
         return view('livewire.admin.category-manager');
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
     }
 
     public function create()
