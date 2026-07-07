@@ -5,7 +5,7 @@
 
     @if($isOpen)
     <x-ui.modal title="{{ $propertyId ? 'Редагувати' : 'Додати' }} властивість" maxWidth="md">
-        <x-form.select label="Атрибут (Характеристика)" model="attribute_id" :options="$dictAttributes->pluck('name', 'id')->toArray()" />
+        <x-form.select label="Атрибут (Характеристика)" model="attribute_id" :options="['' => 'Не вибрано'] + $dictAttributes->pluck('name', 'id')->toArray()" />
         
         <x-form.input label="Значення (наприклад: 16GB, Intel Core i5)" model="attr_value" type="text" />
         

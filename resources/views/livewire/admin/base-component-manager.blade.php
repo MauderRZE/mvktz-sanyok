@@ -5,7 +5,15 @@
 
     @if($isOpen)
     <x-ui.modal title="{{ $componentId ? 'Редагувати' : 'Додати' }} компонент" maxWidth="md">
-            <x-form.input label="Назва компонента" model="component_name" type="text" />
+            <div class="space-y-4">
+                <x-form.input label="Назва компонента" model="component_name" type="text" />
+                <x-form.select label="Категорія" model="category_id">
+                    <option value="">Оберіть категорію</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                    @endforeach
+                </x-form.select>
+            </div>
         </x-ui.modal>
     @endif
 
@@ -14,6 +22,7 @@
             <x-slot name="headers">
                     <x-table.th align="left" width="20">ID</x-table.th>
                     <x-table.th align="left">Назва</x-table.th>
+                    <x-table.th align="left">Категорія</x-table.th>
                     <x-table.th align="right" width="32">Дії</x-table.th>
                 </x-slot>
             
@@ -21,12 +30,13 @@
                 <x-table.tr>
                     <x-table.td align="left" muted>#{{ $comp->id }}</x-table.td>
                     <x-table.td align="left" primary>{{ $comp->component_name }}</x-table.td>
+                    <x-table.td align="left">{{ $comp->category?->category_name ?? '-' }}</x-table.td>
                     <x-table.td align="right">
                         <x-ui.action-buttons id="{{ $comp->id }}" />
                     </x-table.td>
                 </x-table.tr>
                 @empty
-                <x-table.empty colspan="3" />
+                <x-table.empty colspan="4" />
                 @endforelse
             
         </x-table.wrapper>
@@ -35,7 +45,7 @@
     <x-table.mobile-list>
         @forelse($components as $comp)
         <x-table.mobile-card>
-            <x-ui.text-block title="{{ $comp->component_name }}" subtitle="ID: {{ $comp->id }}" />
+            <x-ui.text-block title="{{ $comp->component_name }}" subtitle="ID: {{ $comp->id }} | Категорія: {{ $comp->category?->category_name ?? '-' }}" />
             <x-ui.action-buttons id="{{ $comp->id }}" />
         </x-table.mobile-card>
         @empty

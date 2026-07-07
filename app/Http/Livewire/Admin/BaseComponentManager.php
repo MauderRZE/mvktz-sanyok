@@ -9,13 +9,15 @@ use App\Models\BaseComponent;
 #[Layout('layouts.admin')]
 class BaseComponentManager extends Component
 {
-    public $components, $componentId, $component_name;
+    public $components, $componentId, $component_name, $category_id;
     public $isOpen = 0;
 
     public function render()
     {
-        $this->components = BaseComponent::all();
-        return view('livewire.admin.base-component-manager');
+        $this->components = BaseComponent::with('category')->get();
+        return view('livewire.admin.base-component-manager', [
+            'categories' => \App\Models\EquipmentCategory::all(),
+        ]);
     }
 
     public function create()
@@ -37,16 +39,19 @@ class BaseComponentManager extends Component
     private function resetInputFields(){
         $this->componentId = null;
         $this->component_name = '';
+        $this->category_id = '';
     }
 
     public function store()
     {
         $this->validate([
             'component_name' => 'required|unique:base_components,component_name,' . $this->componentId,
+            'category_id' => 'nullable|exists:categories_tz,id',
         ]);
 
         BaseComponent::updateOrCreate(['id' => $this->componentId], [
-            'component_name' => $this->component_name
+            'component_name' => $this->component_name,
+            'category_id' => $this->category_id ?: null,
         ]);
 
         session()->flash('message', 
@@ -61,6 +66,7 @@ class BaseComponentManager extends Component
         $comp = BaseComponent::findOrFail($id);
         $this->componentId = $id;
         $this->component_name = $comp->component_name;
+        $this->category_id = $comp->category_id;
         $this->openModal();
     }
 
