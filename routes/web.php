@@ -40,6 +40,11 @@ Route::group(['prefix' => 'admin', 'layout' => 'layouts.admin', 'middleware' => 
     Route::get('/contracts', \App\Http\Livewire\Admin\ContractManager::class)->name('admin.contracts');
     Route::get('/assets/report', [\App\Http\Controllers\Admin\AssetReportController::class, 'index'])->name('admin.assets.report');
     Route::get('/assets', \App\Http\Livewire\Admin\AssetManager::class)->name('admin.assets');
+    
+    // Restricted to admin
+    Route::group(['middleware' => \App\Http\Middleware\IsAdmin::class], function () {
+        Route::get('/history', \App\Http\Livewire\Admin\UserHistoryManager::class)->name('admin.history');
+    });
     Route::get('/movements', \App\Http\Livewire\Admin\EquipmentMovementManager::class)->name('admin.movements');
     Route::get('/low-value-materials', \App\Http\Livewire\Admin\LowValueMaterialManager::class)->name('admin.low-value-materials');
     Route::get('/maintenance-logs', \App\Http\Livewire\Admin\MaintenanceLogManager::class)->name('admin.maintenance-logs');

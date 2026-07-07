@@ -23,6 +23,7 @@
                 @elseif(request()->routeIs('admin.maintenance-logs')) Журнал ТО
                 @elseif(request()->routeIs('admin.software-licenses')) Ліцензії ПЗ
                 @elseif(request()->routeIs('admin.type-requirements')) Шаблони типів
+                @elseif(request()->routeIs('admin.history')) Історія та Аудит
                 @else Панель керування
                 @endif
             </h2>

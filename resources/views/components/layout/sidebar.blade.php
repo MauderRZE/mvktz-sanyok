@@ -157,6 +157,15 @@
             Помилки сайту
         </a>
 
+        @if(auth()->check() && auth()->user()->is_admin)
+            <p class="px-3 mt-4 mb-2 text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Адмiнiстратор</p>
+            
+            <a href="{{ route('admin.history') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.history') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Історія та Аудит
+            </a>
+        @endif
+
     </nav>
 
     <!-- User Info & Logout -->
