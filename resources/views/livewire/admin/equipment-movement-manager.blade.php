@@ -18,11 +18,11 @@
                 @endif
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:w-auto">
-                <x-form.multi-select label="Обладнання" :selectedCount="count($filterEquipment)">
-                    @foreach($equipmentList as $eq)
+                <x-form.multi-select label="Актив" :selectedCount="count($filterAsset)">
+                    @foreach($assetsList as $asset)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
-                            <input type="checkbox" value="{{ $eq->id }}" wire:model.live="filterEquipment" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
-                            <span>{{ $eq->inv_number }} - {{ $eq->account_name }}</span>
+                            <input type="checkbox" value="{{ $asset->id }}" wire:model.live="filterAsset" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                            <span>{{ $asset->baseComponent->component_name ?? 'Актив' }} {{ $asset->model->model_name ?? '' }} (SN: {{ $asset->serial_number ?? '—' }})</span>
                         </label>
                     @endforeach
                 </x-form.multi-select>
@@ -51,10 +51,14 @@
     @if($isOpen)
     <x-ui.modal title="{{ $movementId ? 'Редагувати' : 'Зареєструвати' }} переміщення" maxWidth="md">
             <div>
-                    <x-form.select label="Обладнання (Інв. №)" model="equip_id">
-                            <option value="">Оберіть обладнання...</option>
-                        @foreach($equipmentList as $eq)
-                            <option value="{{ $eq->id }}">{{ $eq->inv_number }} - {{ $eq->account_name }}</option>
+                    <x-form.select label="Актив" model="asset_id">
+                            <option value="">Оберіть актив...</option>
+                        @foreach($assetsList as $asset)
+                            <option value="{{ $asset->id }}">
+                                {{ $asset->baseComponent->component_name ?? 'Актив' }} {{ $asset->model->model_name ?? '' }} 
+                                (SN: {{ $asset->serial_number ?? '—' }}) 
+                                {{ $asset->equipment ? '- Інв.№: ' . $asset->equipment->inv_number : '' }}
+                            </option>
                         @endforeach
                         </x-form.select>
                 </div>
@@ -84,7 +88,7 @@
     <x-table.wrapper>
             <x-slot name="headers">
                     <x-table.th align="left" width="28">Дата</x-table.th>
-                    <x-table.th align="left">Обладнання (Інв. №)</x-table.th>
+                    <x-table.th align="left">Актив (СН / Інв. №)</x-table.th>
                     <x-table.th align="left">Нове розташування</x-table.th>
                     <x-table.th align="left">Матеріально відповідальний</x-table.th>
                     <x-table.th align="right" width="32">Дії</x-table.th>
@@ -94,8 +98,11 @@
                 <x-table.tr>
                     <x-table.td align="left" class="text-gray-400 whitespace-nowrap">{{ $m->action_date }}</x-table.td>
                     <x-table.td align="left" primary>
-                        {{ $m->equipment->inv_number ?? '-' }}
-                        <x-table.cell-subtext>{{ $m->equipment->account_name ?? '' }}</x-table.cell-subtext>
+                        {{ $m->asset->baseComponent->component_name ?? 'Актив' }} {{ $m->asset->model->model_name ?? '' }}
+                        <x-table.cell-subtext>
+                            SN: {{ $m->asset->serial_number ?? '—' }}
+                            {{ $m->asset && $m->asset->equipment ? ' | Інв.№: ' . $m->asset->equipment->inv_number : '' }}
+                        </x-table.cell-subtext>
                     </x-table.td>
                     <x-table.td align="left">
                         @if($m->asset && $m->asset->location)
@@ -128,7 +135,7 @@
                 <div>
                     <x-table.cell-subtext>Дата: {{ $m->action_date }}</x-table.cell-subtext>
                     <x-ui.text-block 
-                        title="Обладнання: {{ $m->equipment->inv_number ?? '-' }}" 
+                        title="Актив: {{ $m->asset->baseComponent->component_name ?? 'Актив' }} {{ $m->asset->model->model_name ?? '' }}" 
                         subtitle="Куди: {{ $m->asset && $m->asset->location ? 'Каб. ' . $m->asset->location->room_number : ($m->toHolder->organization->org_name ?? '—') }}" 
                         subtitleClass="text-xs text-brand-400 font-medium"
                     />
