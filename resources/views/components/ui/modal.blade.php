@@ -14,7 +14,7 @@ $maxWidthClass = [
 <template x-teleport="body">
 <div role="dialog" aria-modal="true" {{ $attributes->merge(["class" => "fixed inset-0 z-50 flex items-center justify-center p-4"]) }}>
     <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" wire:click="closeModal()"></div>
-    <div class="relative w-full {{ $maxWidthClass }} bg-surface-800 border border-white/5 rounded-2xl shadow-2xl fade-in overflow-hidden">
+    <div class="relative w-full {{ $maxWidthClass }} bg-surface-800 border border-white/5 rounded-2xl shadow-2xl fade-in">
         <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between">
             <h3 class="text-lg font-semibold text-white">{{ $title }}</h3>
             <button wire:click="closeModal()" class="text-gray-500 hover:text-white transition-colors">
