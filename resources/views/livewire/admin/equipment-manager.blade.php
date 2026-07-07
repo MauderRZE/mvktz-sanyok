@@ -12,10 +12,80 @@
         <div>
             <p class="text-sm text-gray-500">Всього записів: <span class="text-gray-300 font-medium">{{ $equipments->total() }}</span></p>
         </div>
-        <x-ui.button wire:click="create()">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            Додати
-        </x-ui.button>
+        <div class="flex gap-2" x-data="{
+            showPrintModal: false,
+            orientation: 'landscape',
+            columns: ['id', 'inv', 'name', 'components', 'location', 'status', 'price'],
+            getReportUrl() {
+                const params = new URLSearchParams();
+                if ($wire.search) params.append('search', $wire.search);
+                const arrays = {
+                    filterType: $wire.filterType,
+                    filterStatus: $wire.filterStatus,
+                    filterCategory: $wire.filterCategory,
+                    filterLocation: $wire.filterLocation,
+                    filterEmployee: $wire.filterEmployee,
+                    filterDepartment: $wire.filterDepartment,
+                    filterOrganization: $wire.filterOrganization,
+                    filterBrand: $wire.filterBrand,
+                };
+                for (const [key, values] of Object.entries(arrays)) {
+                    if (Array.isArray(values)) {
+                        values.forEach(v => params.append(key + '[]', v));
+                    }
+                }
+                params.append('orientation', this.orientation);
+                this.columns.forEach(c => params.append('columns[]', c));
+                
+                return '/admin/equipment/report?' + params.toString();
+            }
+        }">
+            <button @click="showPrintModal = true" class="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium transition-colors rounded-xl bg-surface-800 text-white hover:bg-surface-700 border border-white/10">
+                🖨 Друк звіту
+            </button>
+            <x-ui.button wire:click="create()">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Додати
+            </x-ui.button>
+
+            <!-- Modal -->
+            <template x-teleport="body">
+                <div x-show="showPrintModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
+                    <div @click.away="showPrintModal = false" class="relative w-full max-w-sm bg-surface-800 border border-white/5 rounded-2xl shadow-2xl p-6 space-y-4">
+                        <h3 class="text-lg font-semibold text-white">Налаштування звіту</h3>
+                        
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 mb-2">Орієнтація сторінки</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2 text-sm text-gray-300">
+                                    <input type="radio" x-model="orientation" value="landscape" class="text-brand-500 bg-surface-900 border-white/10"> Альбомна
+                                </label>
+                                <label class="flex items-center gap-2 text-sm text-gray-300">
+                                    <input type="radio" x-model="orientation" value="portrait" class="text-brand-500 bg-surface-900 border-white/10"> Книжкова
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 mb-2">Стовпчики звіту</label>
+                            <div class="space-y-2">
+                                <template x-for="(label, key) in {'id':'ID', 'inv':'Інв. №', 'name':'Назва', 'components':'Комплектуючі', 'location':'Локація / Відпов.', 'status':'Статус', 'price':'Ціна'}">
+                                    <label class="flex items-center gap-2 text-sm text-gray-300">
+                                        <input type="checkbox" x-model="columns" :value="key" class="rounded text-brand-500 bg-surface-900 border-white/10">
+                                        <span x-text="label"></span>
+                                    </label>
+                                </template>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 flex justify-end gap-2">
+                            <button @click="showPrintModal = false" class="px-4 py-2 text-sm text-gray-400 hover:text-white">Скасувати</button>
+                            <a :href="getReportUrl()" target="_blank" @click="showPrintModal = false" class="px-4 py-2 text-sm font-medium text-white bg-brand-600 rounded-xl hover:bg-brand-500">Сформувати</a>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
     </div>
 
     {{-- Filters Bar --}}

@@ -26,6 +26,7 @@ Route::post('/logout', function () {
 })->name('logout');
 
 Route::group(['prefix' => 'admin', 'layout' => 'layouts.admin', 'middleware' => 'auth'], function () {
+    Route::get('/equipment/report', [\App\Http\Controllers\Admin\EquipmentReportController::class, 'index'])->name('admin.equipment.report');
     Route::get('/equipment', \App\Http\Livewire\Admin\EquipmentManager::class)->name('admin.equipment');
     Route::get('/employees', \App\Http\Livewire\Admin\EmployeeManager::class)->name('admin.employees');
     Route::get('/categories', \App\Http\Livewire\Admin\CategoryManager::class)->name('admin.categories');
