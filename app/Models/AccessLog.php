@@ -17,6 +17,7 @@ class AccessLog extends Model
         'url',
         'ip_address',
         'user_agent',
+        'error_text',
         'created_at',
     ];
 

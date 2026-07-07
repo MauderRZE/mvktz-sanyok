@@ -260,6 +260,11 @@
                             </x-table.td>
                             <x-table.td>
                                 <span class="text-xs break-all max-w-md {{ $log->status_code >= 400 ? 'text-red-400' : '' }}">{{ $log->url }}</span>
+                                @if($log->error_text)
+                                    <x-table.cell-subtext class="text-red-400 mt-1 line-clamp-2" title="{{ $log->error_text }}">
+                                        Помилка: {{ $log->error_text }}
+                                    </x-table.cell-subtext>
+                                @endif
                             </x-table.td>
                             <x-table.td>
                                 {{ $log->ip_address }}

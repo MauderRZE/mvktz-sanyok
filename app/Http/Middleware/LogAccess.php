@@ -34,6 +34,7 @@ class LogAccess
                 'url' => $request->fullUrl(),
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
+                'error_text' => isset($response->exception) ? mb_substr($response->exception->getMessage(), 0, 1000) : null,
             ]);
         }
 
