@@ -12,7 +12,7 @@
             <x-form.input label="Ціна (грн)" model="buy_price" type="number" step="0.01" />
         </div>
         <div>
-            <x-form.searchable-select 
+            <x-form.select 
                 label="Договір (Закупівля)" 
                 model="purchase_id"
                 placeholder="— Оберіть договір —"
@@ -27,7 +27,7 @@
             </x-form.select>
         </div>
         <div>
-            <x-form.searchable-select 
+            <x-form.select 
                 label="Акт списання" 
                 model="retirement_act_id"
                 placeholder="— Оберіть акт —"

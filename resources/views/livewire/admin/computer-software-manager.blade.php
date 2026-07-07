@@ -52,7 +52,7 @@
     @if($isOpen)
     <x-ui.modal title="{{ $softwareId ? 'Редагувати' : 'Додати' }} запис про ПЗ" maxWidth="md">
         <div class="space-y-4">
-            <x-form.searchable-select label="Комп'ютер (Обладнання)" model="computer_id" placeholder="Оберіть комп'ютер..." :options="$computersOptions" />
+            <x-form.select label="Комп'ютер (Обладнання)" model="computer_id" placeholder="Оберіть комп'ютер..." :options="$computersOptions" />
             
             <x-form.select label="Назва ПЗ" model="software_name">
                 <option value="">Оберіть ПЗ</option>
@@ -64,7 +64,7 @@
             <x-form.input label="Версія (22H2, 2019...)" model="version" type="text" />
             <x-form.checkbox label="Ліцензійне ПЗ?" model="is_licensed" />
             
-            <x-form.searchable-select label="Прив'язка до ліцензії" model="license_id" placeholder="Не вибрано / Без ліцензії" :options="$licensesOptions" />
+            <x-form.select label="Прив'язка до ліцензії" model="license_id" placeholder="Не вибрано / Без ліцензії" :options="$licensesOptions" />
         </div>
     </x-ui.modal>
     @endif

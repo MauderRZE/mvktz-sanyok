@@ -125,24 +125,24 @@
         <div class="space-y-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                 <div>
-                    <x-form.searchable-select label="Обладнання (ПК / Пристрій)" model="equipment_id" placeholder="Оберіть обладнання..." :options="$eqOptions" />
+                    <x-form.select label="Обладнання (ПК / Пристрій)" model="equipment_id" placeholder="Оберіть обладнання..." :options="$eqOptions" />
                 </div>
                 <div>
-                    <x-form.searchable-select label="Базовий компонент" model="base_component_id" placeholder="Оберіть компонент..." :live="true" :options="$bcOptions" />
+                    <x-form.select label="Базовий компонент" model="base_component_id" placeholder="Оберіть компонент..." :live="true" :options="$bcOptions" />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                 <div>
-                    <x-form.searchable-select label="Модель" model="model_id" placeholder="Оберіть модель..." :options="$modOptions" />
+                    <x-form.select label="Модель" model="model_id" placeholder="Оберіть модель..." :options="$modOptions" />
                 </div>
                 <div>
                     @if($isSystemUnit)
                         <div class="opacity-50 pointer-events-none" title="Системний блок не може мати батьківського активу">
-                            <x-form.searchable-select label="Батьківський актив" model="parent_asset_id" placeholder="Не застосовується" :options="[]" />
+                            <x-form.select label="Батьківський актив" model="parent_asset_id" placeholder="Не застосовується" :options="[]" />
                         </div>
                     @else
-                        <x-form.searchable-select label="Батьківський актив" model="parent_asset_id" placeholder="Немає (Основний актив)" :options="$paOptions" />
+                        <x-form.select label="Батьківський актив" model="parent_asset_id" placeholder="Немає (Основний актив)" :options="$paOptions" />
                     @endif
                 </div>
             </div>
@@ -158,19 +158,19 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                 <div>
-                    <x-form.searchable-select label="Локація (Кабінет)" model="current_loc_id" placeholder="Не задано..." :options="$locOptions" />
+                    <x-form.select label="Локація (Кабінет)" model="current_loc_id" placeholder="Не задано..." :options="$locOptions" />
                 </div>
                 <div>
-                    <x-form.searchable-select label="Відповідальний" model="current_holder_id" placeholder="Не задано..." :options="$holdersOptions" />
+                    <x-form.select label="Відповідальний" model="current_holder_id" placeholder="Не задано..." :options="$holdersOptions" />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                 <div>
-                    <x-form.searchable-select label="МШП (Малоцінка)" model="nomenclature_id" placeholder="Не прив'язано..." :options="$nomOptions" />
+                    <x-form.select label="МШП (Малоцінка)" model="nomenclature_id" placeholder="Не прив'язано..." :options="$nomOptions" />
                 </div>
                 <div>
-                    <x-form.searchable-select label="Акт списання" model="write_off_act_id" placeholder="Не списано..." :options="$actOptions" />
+                    <x-form.select label="Акт списання" model="write_off_act_id" placeholder="Не списано..." :options="$actOptions" />
                 </div>
             </div>
 
