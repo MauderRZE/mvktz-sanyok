@@ -3,6 +3,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Інвентар МВКТЗ — Панель керування</title>
     <meta name="description" content="Адмін-панель обліку техніки МВКТЗ">
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <script>
         // Init theme before render to prevent flash
