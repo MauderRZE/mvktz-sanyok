@@ -24,10 +24,78 @@ class UserHistoryManager extends Component
     public $filterDateFrom = '';
     public $filterDateTo = '';
 
+    public $isClearModalOpen = false;
+    public $clearLogType = 'all';
+    public $clearUserId = '';
+    public $clearTimeframe = '90_days';
+    public $clearBeforeDate = '';
+
     protected $queryString = [
         'tab', 'search',
         'filterUser', 'filterMethod', 'filterStatus', 'filterController', 'filterDateFrom', 'filterDateTo'
     ];
+
+    public function openClearModal()
+    {
+        $this->clearLogType = 'all';
+        $this->clearUserId = '';
+        $this->clearTimeframe = '90_days';
+        $this->clearBeforeDate = '';
+        $this->isClearModalOpen = true;
+    }
+
+    public function closeModal()
+    {
+        $this->isClearModalOpen = false;
+    }
+
+    public function clearLogs()
+    {
+        $thresholdDate = null;
+        if ($this->clearTimeframe === '30_days') {
+            $thresholdDate = now()->subDays(30);
+        } elseif ($this->clearTimeframe === '90_days') {
+            $thresholdDate = now()->subDays(90);
+        } elseif ($this->clearTimeframe === '180_days') {
+            $thresholdDate = now()->subDays(180);
+        } elseif ($this->clearTimeframe === '365_days') {
+            $thresholdDate = now()->subDays(365);
+        } elseif ($this->clearTimeframe === 'custom') {
+            $this->validate([
+                'clearBeforeDate' => 'required|date',
+            ]);
+            $thresholdDate = \Carbon\Carbon::parse($this->clearBeforeDate);
+        }
+
+        $models = [];
+        if ($this->clearLogType === 'all') {
+            $models = [AuditLog::class, AuthLog::class, AccessLog::class];
+        } elseif ($this->clearLogType === 'audit') {
+            $models = [AuditLog::class];
+        } elseif ($this->clearLogType === 'auth') {
+            $models = [AuthLog::class];
+        } elseif ($this->clearLogType === 'access') {
+            $models = [AccessLog::class];
+        }
+
+        $deletedCount = 0;
+        foreach ($models as $modelClass) {
+            $query = $modelClass::query();
+            
+            if ($this->clearUserId) {
+                $query->where('user_id', $this->clearUserId);
+            }
+            
+            if ($thresholdDate) {
+                $query->where('created_at', '<', $thresholdDate);
+            }
+            
+            $deletedCount += $query->delete();
+        }
+
+        session()->flash('message', "Успішно видалено {$deletedCount} записів.");
+        $this->closeModal();
+    }
 
     public function setTab($tab)
     {

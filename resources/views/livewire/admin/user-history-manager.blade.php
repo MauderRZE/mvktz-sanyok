@@ -1,19 +1,28 @@
 <div>
     <x-ui.page-wrapper>
-        <!-- Tabs -->
-        <div class="flex gap-2 bg-surface-900 p-1 rounded-xl mb-4 w-fit">
-            <button wire:click="setTab('auth')" class="px-4 py-2 text-sm rounded-lg transition-colors {{ $tab === 'auth' ? 'bg-surface-700 text-white font-medium' : 'text-gray-400 hover:text-white' }}">
-                Авторизації
-            </button>
-            <button wire:click="setTab('audit')" class="px-4 py-2 text-sm rounded-lg transition-colors {{ $tab === 'audit' ? 'bg-surface-700 text-white font-medium' : 'text-gray-400 hover:text-white' }}">
-                Аудит даних
-            </button>
-            <button wire:click="setTab('access')" class="px-4 py-2 text-sm rounded-lg transition-colors {{ $tab === 'access' ? 'bg-surface-700 text-white font-medium' : 'text-gray-400 hover:text-white' }}">
-                Доступ (Логи)
-            </button>
-            <button wire:click="setTab('stats')" class="px-4 py-2 text-sm rounded-lg transition-colors {{ $tab === 'stats' ? 'bg-surface-700 text-white font-medium' : 'text-gray-400 hover:text-white' }}">
-                Статистика
-            </button>
+        <x-ui.flash />
+        <!-- Tabs & Actions -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <div class="flex gap-2 bg-surface-900 p-1 rounded-xl w-fit">
+                <button wire:click="setTab('auth')" class="px-4 py-2 text-sm rounded-lg transition-colors {{ $tab === 'auth' ? 'bg-surface-700 text-white font-medium' : 'text-gray-400 hover:text-white' }}">
+                    Авторизації
+                </button>
+                <button wire:click="setTab('audit')" class="px-4 py-2 text-sm rounded-lg transition-colors {{ $tab === 'audit' ? 'bg-surface-700 text-white font-medium' : 'text-gray-400 hover:text-white' }}">
+                    Аудит даних
+                </button>
+                <button wire:click="setTab('access')" class="px-4 py-2 text-sm rounded-lg transition-colors {{ $tab === 'access' ? 'bg-surface-700 text-white font-medium' : 'text-gray-400 hover:text-white' }}">
+                    Доступ (Логи)
+                </button>
+                <button wire:click="setTab('stats')" class="px-4 py-2 text-sm rounded-lg transition-colors {{ $tab === 'stats' ? 'bg-surface-700 text-white font-medium' : 'text-gray-400 hover:text-white' }}">
+                    Статистика
+                </button>
+            </div>
+            <div>
+                <x-ui.button variant="danger" wire:click="openClearModal" class="flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    <span>Очистити базу</span>
+                </x-ui.button>
+            </div>
         </div>
 
     <div class="space-y-4">
@@ -282,6 +291,46 @@
             <div class="mt-4">
                 {{ $logs->links() }}
             </div>
+        @endif
+
+        @if($isClearModalOpen)
+            <x-ui.modal title="Очищення бази логів/аудиту" maxWidth="md">
+                <div class="space-y-4">
+                    <x-form.select label="Тип логів" model="clearLogType" :live="true">
+                        <option value="all">Всі логи (аудит, авторизації, доступ)</option>
+                        <option value="audit">Лише аудит даних</option>
+                        <option value="auth">Лише авторизації</option>
+                        <option value="access">Лише логи доступу</option>
+                    </x-form.select>
+
+                    <x-form.select label="Користувач" model="clearUserId" :live="true">
+                        <option value="">Всі користувачі</option>
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->login }})</option>
+                        @endforeach
+                    </x-form.select>
+
+                    <x-form.select label="Період видалення" model="clearTimeframe" :live="true">
+                        <option value="30_days">Старіше ніж 30 днів</option>
+                        <option value="90_days">Старіше ніж 90 днів</option>
+                        <option value="180_days">Старіше ніж 180 днів</option>
+                        <option value="365_days">Старіше ніж 1 рік</option>
+                        <option value="all_time">За весь час (видалити все)</option>
+                        <option value="custom">Власна дата (видалити до...)</option>
+                    </x-form.select>
+
+                    @if($clearTimeframe === 'custom')
+                        <x-form.input label="Видалити записи до дати" type="date" model="clearBeforeDate" class="[color-scheme:dark]" />
+                    @endif
+                </div>
+
+                <x-slot name="footer">
+                    <x-ui.button variant="secondary" wire:click="closeModal()">Скасувати</x-ui.button>
+                    <x-ui.button variant="danger" wire:click="clearLogs()" onclick="confirm('Ви впевнені, що хочете безповоротно видалити ці логи?') || event.stopImmediatePropagation()">
+                        Підтвердити очищення
+                    </x-ui.button>
+                </x-slot>
+            </x-ui.modal>
         @endif
     </div>
     </x-ui.page-wrapper>
