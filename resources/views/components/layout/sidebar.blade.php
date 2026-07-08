@@ -19,6 +19,11 @@
     <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         <p class="px-3 mb-2 text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Основне</p>
 
+        <a href="{{ route('admin.dashboard') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.dashboard') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            Дашборд
+        </a>
+
         <a href="{{ route('admin.equipment') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.equipment') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">
             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
             Обладнання

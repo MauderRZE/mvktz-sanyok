@@ -12,11 +12,11 @@
 */
 
 Route::get('/', function () {
-    return redirect()->route('admin.equipment');
+    return redirect()->route('admin.dashboard');
 });
 
 Route::get('/admin', function () {
-    return redirect()->route('admin.equipment');
+    return redirect()->route('admin.dashboard');
 });
 
 Route::get('/login', \App\Http\Livewire\Auth\Login::class)->name('login')->middleware('guest');
@@ -26,6 +26,7 @@ Route::post('/logout', function () {
 })->name('logout');
 
 Route::group(['prefix' => 'admin', 'layout' => 'layouts.admin', 'middleware' => 'auth'], function () {
+    Route::get('/dashboard', \App\Http\Livewire\Admin\DashboardManager::class)->name('admin.dashboard');
     Route::get('/equipment/report', [\App\Http\Controllers\Admin\EquipmentReportController::class, 'index'])->name('admin.equipment.report');
     Route::get('/equipment', \App\Http\Livewire\Admin\EquipmentManager::class)->name('admin.equipment');
     Route::get('/employees', \App\Http\Livewire\Admin\EmployeeManager::class)->name('admin.employees');

@@ -7,6 +7,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\DataProvider;
 use App\Models\User;
 use Livewire\Livewire;
+use App\Http\Livewire\Admin\DashboardManager;
 use App\Http\Livewire\Admin\EquipmentManager;
 use App\Http\Livewire\Admin\Equipment\EquipmentForm;
 use App\Http\Livewire\Admin\Equipment\EquipmentDetail;
@@ -76,6 +77,7 @@ class LivewireV3Test extends TestCase
     public static function allComponentsProvider(): array
     {
         return [
+            'DashboardManager'          => [DashboardManager::class],
             'EquipmentManager'          => [EquipmentManager::class],
             'EquipmentForm'             => [EquipmentForm::class],
             'EquipmentDetail'           => [EquipmentDetail::class],
@@ -130,6 +132,7 @@ class LivewireV3Test extends TestCase
     {
         $base = realpath(__DIR__ . '/../../resources/views/livewire');
         return [
+            'dashboard-manager'           => [$base . '/admin/dashboard-manager.blade.php'],
             'equipment-manager'           => [$base . '/admin/equipment-manager.blade.php'],
             'equipment-form'              => [$base . '/admin/equipment/equipment-form.blade.php'],
             'equipment-detail'            => [$base . '/admin/equipment/equipment-detail.blade.php'],

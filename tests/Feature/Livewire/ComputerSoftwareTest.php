@@ -24,9 +24,9 @@ class ComputerSoftwareTest extends TestCase
     public function test_can_create_computer_software()
     {
         $equipment = Equipment::create([
-            'inv_number' => 999001,
+            'inv_number' => random_int(1000000, 9999999),
             'account_name' => 'PC',
-            'status' => 'В експлуатації'
+            'status' => 'в експлуатації'
         ]);
 
         $baseComponent = BaseComponent::create([
