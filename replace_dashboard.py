@@ -1,15 +1,10 @@
-<div>
-<x-ui.page-wrapper>
-    <!-- Header -->
-    <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-bold text-white tracking-tight">Дашборд</h1>
-            <p class="text-sm text-gray-400 mt-1">Огляд стану системи інвентаризації</p>
-        </div>
-    </div>
+import re
 
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+with open('resources/views/livewire/admin/dashboard-manager.blade.php', 'r') as f:
+    content = f.read()
+
+new_grid = """    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
         <!-- Total Equipment -->
         <div class="bg-surface-800 rounded-2xl border border-white/5 p-4 flex flex-col aspect-square">
             <div class="flex items-center gap-3 mb-3">
@@ -38,54 +33,7 @@
             </div>
         </div>
 
-        <!-- Assets -->
-        <div class="bg-surface-800 rounded-2xl border border-white/5 p-4 flex flex-col aspect-square">
-            <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 rounded-xl bg-fuchsia-500/10 text-fuchsia-400 flex items-center justify-center shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                </div>
-                <div>
-                    <p class="text-xs text-gray-400 uppercase tracking-widest font-semibold">Активи</p>
-                    <h3 class="text-2xl font-bold text-white leading-none mt-1">{{ $stats['totalAssets'] }}</h3>
-                </div>
-            </div>
-            
-            <div class="mt-auto space-y-2 pt-3 border-t border-white/5">
-                <div class="flex justify-between items-center text-xs">
-                    <span class="text-gray-400">Із серійником</span>
-                    <span class="text-fuchsia-400 font-medium">{{ $stats['assetsWithSerial'] }}</span>
-                </div>
-                <div class="flex justify-between items-center text-xs">
-                    <span class="text-gray-400">Списано</span>
-                    <span class="text-rose-400 font-medium">{{ $stats['assetsWrittenOff'] }}</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Low Value Materials -->
-        <div class="bg-surface-800 rounded-2xl border border-white/5 p-4 flex flex-col aspect-square">
-            <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 rounded-xl bg-lime-500/10 text-lime-400 flex items-center justify-center shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                </div>
-                <div>
-                    <p class="text-xs text-gray-400 uppercase tracking-widest font-semibold">МШП</p>
-                    <h3 class="text-2xl font-bold text-white leading-none mt-1">{{ $stats['totalLVM'] }}</h3>
-                </div>
-            </div>
-            
-            <div class="mt-auto space-y-2 pt-3 border-t border-white/5">
-                <div class="flex justify-between items-center text-xs">
-                    <span class="text-gray-400">Загалом одиниць</span>
-                    <span class="text-lime-400 font-medium">{{ $stats['lvmCountSum'] }}</span>
-                </div>
-                <div class="flex justify-between items-center text-xs">
-                    <span class="text-gray-400">Видів матеріалів</span>
-                    <span class="text-white font-medium">{{ $stats['totalLVM'] }}</span>
-                </div>
-            </div>
-        </div>
-
+        <!-- Employees -->
         <div class="bg-surface-800 rounded-2xl border border-white/5 p-4 flex flex-col aspect-square">
             <div class="flex items-center gap-3 mb-3">
                 <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
@@ -286,39 +234,10 @@
             </div>
         </div>
     </div>
-    <!-- Lists Grid -->
-    <div class="grid grid-cols-1 gap-6">
+"""
 
-        <!-- Recent Maintenance -->
-        <div class="bg-surface-800 rounded-2xl border border-white/5 flex flex-col overflow-hidden">
-            <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-surface-800/50">
-                <h3 class="text-sm font-semibold text-white">Журнал ТО</h3>
-                <a href="{{ route('admin.maintenance-logs') }}" class="text-xs text-brand-400 hover:text-brand-300 transition-colors">Весь журнал</a>
-            </div>
-            <div class="divide-y divide-white/5">
-                @forelse($recentMaintenance as $log)
-                <div class="p-4 flex items-start gap-4 hover:bg-white/[0.02] transition-colors">
-                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 mt-1">
-                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm text-white font-medium truncate">
-                            {{ $log->asset->model->model_name ?? $log->asset->equipment->account_name ?? 'Обладнання' }} 
-                            <span class="text-xs text-gray-500 font-normal ml-1">({{ $log->asset->equipment->inv_number ?? '—' }})</span>
-                        </p>
-                        <p class="text-xs text-gray-400 mt-1 truncate">{{ $log->issue_description }}</p>
-                    </div>
-                    <div class="text-xs text-gray-500 whitespace-nowrap">
-                        {{ $log->sent_date ? \Carbon\Carbon::parse($log->sent_date)->format('d.m.Y') : '—' }}
-                    </div>
-                </div>
-                @empty
-                <div class="p-8 text-center text-gray-500 text-sm">Немає записів ТО</div>
-                @endforelse
-            </div>
-        </div>
+pattern = re.compile(r'    <!-- Stats Grid -->.*?    <!-- Lists Grid -->', re.DOTALL)
+new_content = pattern.sub(new_grid + "    <!-- Lists Grid -->", content)
 
-    </div>
-    
-</x-ui.page-wrapper>
-</div>
+with open('resources/views/livewire/admin/dashboard-manager.blade.php', 'w') as f:
+    f.write(new_content)
