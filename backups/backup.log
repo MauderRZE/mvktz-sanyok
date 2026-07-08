@@ -1,4 +1,0 @@
-mysqldump: [Warning] Using a password on the command line interface can be insecure.
-Щогодинний снепшот збережено: /var/www/laravel/inventar/backups/hourly/snapshot_mvktz_2026-07-08_15-22-13.sql.gz
-mysqldump: [Warning] Using a password on the command line interface can be insecure.
-Щогодинний снепшот збережено: /var/www/laravel/inventar/backups/hourly/snapshot_mvktz_2026-07-08_16-00-01.sql.gz
