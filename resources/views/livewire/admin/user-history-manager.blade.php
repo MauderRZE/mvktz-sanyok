@@ -305,6 +305,7 @@
 
                     <x-form.select label="Користувач" model="clearUserId" :live="true">
                         <option value="">Всі користувачі</option>
+                        <option value="guest">Невідомий користувач / Гість</option>
                         @foreach($users as $user)
                             <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->login }})</option>
                         @endforeach

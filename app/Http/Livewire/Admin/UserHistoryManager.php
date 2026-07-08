@@ -83,7 +83,11 @@ class UserHistoryManager extends Component
             $query = $modelClass::query();
             
             if ($this->clearUserId) {
-                $query->where('user_id', $this->clearUserId);
+                if ($this->clearUserId === 'guest') {
+                    $query->whereNull('user_id');
+                } else {
+                    $query->where('user_id', $this->clearUserId);
+                }
             }
             
             if ($thresholdDate) {
