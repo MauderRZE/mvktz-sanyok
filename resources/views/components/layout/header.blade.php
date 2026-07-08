@@ -9,7 +9,7 @@
                 @elseif(request()->routeIs('admin.employees')) Співробітники
                 @elseif(request()->routeIs('admin.categories')) Категорії
                 @elseif(request()->routeIs('admin.types')) Типи техніки
-                @elseif(request()->routeIs('admin.users')) Адміністратори
+                @elseif(request()->routeIs('admin.users')) Користувачі
                 @elseif(request()->routeIs('admin.base-components')) Базові компоненти
                 @elseif(request()->routeIs('admin.base-materials')) Базові матеріали
                 @elseif(request()->routeIs('admin.suppliers')) Постачальники

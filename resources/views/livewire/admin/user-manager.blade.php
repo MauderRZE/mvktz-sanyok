@@ -19,7 +19,7 @@
     </x-ui.card>
 
     @if($isOpen)
-    <x-ui.modal title="{{ $userId ? 'Редагувати' : 'Додати' }} адміністратора" maxWidth="lg">
+    <x-ui.modal title="{{ $userId ? 'Редагувати' : 'Додати' }} користувача" maxWidth="lg">
             <div>
                     <x-form.input label="Ім'я" model="name" type="text" />
                 </div>

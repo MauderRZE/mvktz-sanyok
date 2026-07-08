@@ -16,10 +16,10 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        if (auth()->check() && auth()->user()->is_admin) {
+        if (auth()->check() && strtolower(auth()->user()->login) === 'admin') {
             return $next($request);
         }
 
-        abort(403, 'Доступ дозволено лише адміністраторам.');
+        abort(403, 'Доступ дозволено лише користувачу Admin.');
     }
 }

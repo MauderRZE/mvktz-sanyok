@@ -23,7 +23,7 @@
                         'Авторизація (Login)', 'Обладнання (Equipment)', 'Комплектуючі (Components)',
                         'Ліцензії ПЗ (Software)', 'Малоцінка (Low Value)', 'Співробітники (Employees)',
                         'Журнал переміщень (Movements)', 'Журнал ТО (Maintenance)', 'Договори (Contracts)',
-                        'Постачальники (Suppliers)', 'Адміністратори (Users)', 'помилку сайту (System Errors)',
+                        'Постачальники (Suppliers)', 'Користувачі (Users)', 'помилку сайту (System Errors)',
                         'Довідники (Dictionaries)', 'Інше (Other)'
                     ] as $page)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
@@ -74,7 +74,7 @@
                     <option value="Журнал ТО (Maintenance)">Журнал ТО (Maintenance)</option>
                     <option value="Договори (Contracts)">Договори (Contracts)</option>
                     <option value="Постачальники (Suppliers)">Постачальники (Suppliers)</option>
-                    <option value="Адміністратори (Users)">Адміністратори (Users)</option>
+                    <option value="Користувачі (Users)">Користувачі (Users)</option>
                     <option value="помилку сайту (System Errors)">помилку сайту (System Errors)</option>
                     <option value="Довідники (Dictionaries)">Довідники (Dictionaries)</option>
                     <option value="Інше (Other)">Інше (Other)</option>

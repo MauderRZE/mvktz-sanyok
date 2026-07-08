@@ -149,7 +149,7 @@
 
         <a href="{{ route('admin.users') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.users') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">
             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-            Адміністратори
+            Користувачі
         </a>
 
         <a href="{{ route('admin.system-errors') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.system-errors') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">
@@ -157,7 +157,7 @@
             Помилки сайту
         </a>
 
-        @if(auth()->check() && auth()->user()->is_admin)
+        @if(auth()->check() && strtolower(auth()->user()->login) === 'admin')
             <p class="px-3 mt-4 mb-2 text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Адмiнiстратор</p>
             
             <a href="{{ route('admin.history') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.history') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">
