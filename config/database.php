@@ -46,7 +46,7 @@ return [
         'sqlite_history' => [
             'driver' => 'sqlite',
             'url' => env('DATABASE_URL'),
-            'database' => database_path('history.sqlite'),
+            'database' => env('DB_HISTORY_DATABASE', database_path('history.sqlite')),
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
@@ -54,7 +54,7 @@ return [
         'sqlite_errors' => [
             'driver' => 'sqlite',
             'url' => env('DATABASE_URL'),
-            'database' => database_path('errors.sqlite'),
+            'database' => env('DB_ERRORS_DATABASE', database_path('errors.sqlite')),
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],

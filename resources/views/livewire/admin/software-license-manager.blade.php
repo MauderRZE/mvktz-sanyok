@@ -40,14 +40,14 @@
     </x-ui.card>
 
     @if($isOpen)
-    <x-ui.modal title="{{ $licenseId ? 'Редагувати' : 'Додати' }} ліцензію ПЗ" maxWidth="md">
+    <x-ui.modal title="{{ $form->licenseId ? 'Редагувати' : 'Додати' }} ліцензію ПЗ" maxWidth="md">
         <div class="space-y-4">
             <div>
-                    <x-form.input label="Назва ліцензії" model="license_name" type="text" placeholder="напр. Windows 11 Pro" />
+                    <x-form.input label="Назва ліцензії" model="form.license_name" type="text" placeholder="напр. Windows 11 Pro" />
                 </div>
 
                 <div>
-                    <x-form.select label="Виробник/Постачальник" model="vendor_id">
+                    <x-form.select label="Виробник/Постачальник" model="form.vendor_id">
                         <option value="">Оберіть постачальника</option>
                         @foreach($vendorsList as $vendor)
                             <option value="{{ $vendor->id }}">{{ $vendor->supplier_name }}</option>
@@ -56,7 +56,7 @@
                 </div>
 
                 <div>
-                    <x-form.select label="Тип ліцензії" model="license_type" live="true">
+                    <x-form.select label="Тип ліцензії" model="form.license_type" live="true">
                         <option value="">Оберіть тип ліцензії</option>
                         <option value="OEM">OEM</option>
                         <option value="Retail">Retail</option>
@@ -67,14 +67,14 @@
                     </x-form.select>
                 </div>
 
-                @if($license_type === 'Інше')
+                @if($form->license_type === 'Інше')
                 <div>
-                    <x-form.input label="Свій тип ліцензії" model="custom_license_type" type="text" placeholder="напр. Донгл, Тріальна" />
+                    <x-form.input label="Свій тип ліцензії" model="form.custom_license_type" type="text" placeholder="напр. Донгл, Тріальна" />
                 </div>
                 @endif
 
                 <div>
-                    <x-form.input label="Дата придбання" model="purchase_date" type="date" />
+                    <x-form.input label="Дата придбання" model="form.purchase_date" type="date" />
                 </div>
         </div>
         </x-ui.modal>

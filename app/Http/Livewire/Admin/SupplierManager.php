@@ -5,11 +5,14 @@ namespace App\Http\Livewire\Admin;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\Supplier;
+use App\Livewire\Forms\SupplierForm;
 
 #[Layout('layouts.admin')]
 class SupplierManager extends Component
 {
-    public $suppliers, $supplierId, $supplier_name, $supplier_type_id, $tax_code;
+    public SupplierForm $form;
+    
+    public $suppliers;
     public $isOpen = 0;
 
     public $search = '';
@@ -44,7 +47,7 @@ class SupplierManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
+        $this->form->reset();
         $this->openModal();
     }
 
@@ -58,41 +61,20 @@ class SupplierManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields(){
-        $this->supplierId = null;
-        $this->supplier_name = '';
-        $this->supplier_type_id = '';
-        $this->tax_code = '';
-    }
-
     public function store()
     {
-        $this->validate([
-            'supplier_name' => 'required|unique:suppliers,supplier_name,' . $this->supplierId,
-            'supplier_type_id' => 'nullable|exists:supplier_types,id',
-            'tax_code' => 'nullable|string|max:20',
-        ]);
-
-        Supplier::updateOrCreate(['id' => $this->supplierId], [
-            'supplier_name' => $this->supplier_name,
-            'supplier_type_id' => $this->supplier_type_id ?: null,
-            'tax_code' => $this->tax_code ?: null,
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->supplierId ? 'Постачальника оновлено.' : 'Постачальника створено.');
+            $isUpdate ? 'Постачальника оновлено.' : 'Постачальника створено.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $sup = Supplier::findOrFail($id);
-        $this->supplierId = $id;
-        $this->supplier_name = $sup->supplier_name;
-        $this->supplier_type_id = $sup->supplier_type_id;
-        $this->tax_code = $sup->tax_code;
+        $this->form->setSupplier($sup);
         $this->openModal();
     }
 

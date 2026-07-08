@@ -6,11 +6,14 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\Contract;
 use App\Models\Supplier;
+use App\Livewire\Forms\ContractForm;
 
 #[Layout('layouts.admin')]
 class ContractManager extends Component
 {
-    public $contracts, $contractId, $contract_number, $contract_date, $supplier_id, $contract_link;
+    public ContractForm $form;
+    
+    public $contracts;
     public $suppliersList = [];
     public $isOpen = 0;
 
@@ -47,7 +50,7 @@ class ContractManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
+        $this->form->reset();
         $this->openModal();
     }
 
@@ -61,45 +64,20 @@ class ContractManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields(){
-        $this->contractId = null;
-        $this->contract_number = '';
-        $this->contract_date = '';
-        $this->supplier_id = null;
-        $this->contract_link = '';
-    }
-
     public function store()
     {
-        $this->validate([
-            'contract_number' => 'required',
-            'contract_date' => 'required|date',
-            'supplier_id' => 'required|exists:suppliers,id',
-            'contract_link' => 'nullable|url|max:2048',
-        ]);
-
-        Contract::updateOrCreate(['id' => $this->contractId], [
-            'contract_number' => $this->contract_number,
-            'contract_date' => $this->contract_date,
-            'supplier_id' => $this->supplier_id,
-            'contract_link' => $this->contract_link ?: null,
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->contractId ? 'Договір оновлено.' : 'Договір створено.');
+            $isUpdate ? 'Договір оновлено.' : 'Договір створено.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $contract = Contract::findOrFail($id);
-        $this->contractId = $id;
-        $this->contract_number = $contract->contract_number;
-        $this->contract_date = $contract->contract_date;
-        $this->supplier_id = $contract->supplier_id;
-        $this->contract_link = $contract->contract_link;
+        $this->form->setContract($contract);
         $this->openModal();
     }
 

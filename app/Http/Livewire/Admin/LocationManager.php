@@ -5,11 +5,14 @@ namespace App\Http\Livewire\Admin;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\Location;
+use App\Livewire\Forms\LocationForm;
 
 #[Layout('layouts.admin')]
 class LocationManager extends Component
 {
-    public $locations, $locationId, $room_number;
+    public LocationForm $form;
+    
+    public $locations;
     public $isOpen = 0;
 
     public $search = '';
@@ -31,7 +34,7 @@ class LocationManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
+        $this->form->reset();
         $this->openModal();
     }
 
@@ -45,33 +48,20 @@ class LocationManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields(){
-        $this->locationId = null;
-        $this->room_number = '';
-    }
-
     public function store()
     {
-        $this->validate([
-            'room_number' => 'required|unique:locations,room_number,' . $this->locationId,
-        ]);
-
-        Location::updateOrCreate(['id' => $this->locationId], [
-            'room_number' => $this->room_number
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->locationId ? 'Локацію оновлено.' : 'Локацію створено.');
+            $isUpdate ? 'Локацію оновлено.' : 'Локацію створено.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $loc = Location::findOrFail($id);
-        $this->locationId = $id;
-        $this->room_number = $loc->room_number;
+        $this->form->setLocation($loc);
         $this->openModal();
     }
 

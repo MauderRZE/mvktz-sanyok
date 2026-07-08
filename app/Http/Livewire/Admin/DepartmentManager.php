@@ -5,11 +5,14 @@ namespace App\Http\Livewire\Admin;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\Department;
+use App\Livewire\Forms\DepartmentForm;
 
 #[Layout('layouts.admin')]
 class DepartmentManager extends Component
 {
-    public $departments, $departmentId, $name;
+    public DepartmentForm $form;
+    
+    public $departments;
     public $isOpen = 0;
 
     public $search = '';
@@ -31,7 +34,7 @@ class DepartmentManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
+        $this->form->reset();
         $this->openModal();
     }
 
@@ -45,33 +48,20 @@ class DepartmentManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields(){
-        $this->departmentId = null;
-        $this->name = '';
-    }
-
     public function store()
     {
-        $this->validate([
-            'name' => 'required|unique:departments,name,' . $this->departmentId,
-        ]);
-
-        Department::updateOrCreate(['id' => $this->departmentId], [
-            'name' => $this->name
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->departmentId ? 'Відділ оновлено.' : 'Відділ створено.');
+            $isUpdate ? 'Відділ оновлено.' : 'Відділ створено.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $dept = Department::findOrFail($id);
-        $this->departmentId = $id;
-        $this->name = $dept->name;
+        $this->form->setDepartment($dept);
         $this->openModal();
     }
 

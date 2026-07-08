@@ -161,7 +161,7 @@
 
     @if($isOpen)
     <div wire:key="asset-modal-wrapper">
-    <x-ui.modal wire:key="asset-modal" title="{{ $assetId ? 'Редагувати' : 'Додати' }} актив" maxWidth="2xl">
+    <x-ui.modal wire:key="asset-modal" title="{{ $form->assetId ? 'Редагувати' : 'Додати' }} актив" maxWidth="2xl">
         @php
             $eqOptions = $equipmentList->mapWithKeys(fn($eq) => [$eq->id => $eq->inv_number . ' - ' . $eq->account_name])->toArray();
             $bcOptions = $baseComponentsList->mapWithKeys(fn($bc) => [$bc->id => $bc->component_name])->toArray();
@@ -184,8 +184,8 @@
             })->toArray();
 
             $isSystemUnit = false;
-            if ($base_component_id) {
-                $selectedComponent = $baseComponentsList->firstWhere('id', $base_component_id);
+            if ($form->base_component_id) {
+                $selectedComponent = $baseComponentsList->firstWhere('id', $form->base_component_id);
                 if ($selectedComponent && mb_strtolower($selectedComponent->component_name) === 'системний блок') {
                     $isSystemUnit = true;
                 }
@@ -194,58 +194,58 @@
         <div class="space-y-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                 <div>
-                    <x-form.select label="Обладнання (ПК / Пристрій)" model="equipment_id" placeholder="Оберіть обладнання..." :options="$eqOptions" />
+                    <x-form.select label="Обладнання (ПК / Пристрій)" model="form.equipment_id" placeholder="Оберіть обладнання..." :options="$eqOptions" />
                 </div>
                 <div>
-                    <x-form.select label="Базовий компонент" model="base_component_id" placeholder="Оберіть компонент..." :live="true" :options="$bcOptions" />
+                    <x-form.select label="Базовий компонент" model="form.base_component_id" placeholder="Оберіть компонент..." :live="true" :options="$bcOptions" />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                 <div>
-                    <x-form.select label="Модель" model="model_id" placeholder="Оберіть модель..." :options="$modOptions" />
+                    <x-form.select label="Модель" model="form.model_id" placeholder="Оберіть модель..." :options="$modOptions" />
                 </div>
                 <div>
                     @if($isSystemUnit)
                         <div class="opacity-50 pointer-events-none" title="Системний блок не може мати батьківського активу">
-                            <x-form.select label="Батьківський актив" model="parent_asset_id" placeholder="Не застосовується" :options="[]" />
+                            <x-form.select label="Батьківський актив" model="form.parent_asset_id" placeholder="Не застосовується" :options="[]" />
                         </div>
                     @else
-                        <x-form.select label="Батьківський актив" model="parent_asset_id" placeholder="Немає (Основний актив)" :options="$paOptions" />
+                        <x-form.select label="Батьківський актив" model="form.parent_asset_id" placeholder="Немає (Основний актив)" :options="$paOptions" />
                     @endif
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                 <div>
-                    <x-form.input label="Серійний номер" model="serial_number" type="text" />
+                    <x-form.input label="Серійний номер" model="form.serial_number" type="text" />
                 </div>
                 <div>
-                    <x-form.input label="Додаткові примітки" model="notes" type="text" placeholder="напр. розширено пам'ять" />
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                <div>
-                    <x-form.select label="Локація (Кабінет)" model="current_loc_id" placeholder="Не задано..." :options="$locOptions" />
-                </div>
-                <div>
-                    <x-form.select label="Відповідальний" model="current_holder_id" placeholder="Не задано..." :options="$holdersOptions" />
+                    <x-form.input label="Додаткові примітки" model="form.notes" type="text" placeholder="напр. розширено пам'ять" />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                 <div>
-                    <x-form.select label="МШП (Малоцінка)" model="nomenclature_id" placeholder="Не прив'язано..." :options="$nomOptions" />
+                    <x-form.select label="Локація (Кабінет)" model="form.current_loc_id" placeholder="Не задано..." :options="$locOptions" />
                 </div>
                 <div>
-                    <x-form.select label="Акт списання" model="write_off_act_id" placeholder="Не списано..." :options="$actOptions" />
+                    <x-form.select label="Відповідальний" model="form.current_holder_id" placeholder="Не задано..." :options="$holdersOptions" />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+                <div>
+                    <x-form.select label="МШП (Малоцінка)" model="form.nomenclature_id" placeholder="Не прив'язано..." :options="$nomOptions" />
+                </div>
+                <div>
+                    <x-form.select label="Акт списання" model="form.write_off_act_id" placeholder="Не списано..." :options="$actOptions" />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 gap-4 items-end">
                 <div>
-                    <x-form.select label="Стан роботи" model="status">
+                    <x-form.select label="Стан роботи" model="form.status">
                         <option value="Працює">Працює</option>
                         <option value="Потребує уваги">Потребує уваги</option>
                         <option value="В ремонті">В ремонті</option>
@@ -255,18 +255,18 @@
             </div>
 
                 <div class="border-t border-white/5 pt-4">
-                    <x-form.checkbox label="Мережевий пристрій / інтерфейс" model="has_network" :live="true" />
+                    <x-form.checkbox label="Мережевий пристрій / інтерфейс" model="form.has_network" :live="true" />
 
-                    @if($has_network)
+                    @if($form->has_network)
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end mt-4 fade-in">
                         <div>
-                            <x-form.input label="Hostname" model="hostname" type="text" placeholder="SRV-01" />
+                            <x-form.input label="Hostname" model="form.hostname" type="text" placeholder="SRV-01" />
                         </div>
                         <div>
-                            <x-form.input label="IP-Адреса" model="ip_address" type="text" placeholder="192.168.1.50" />
+                            <x-form.input label="IP-Адреса" model="form.ip_address" type="text" placeholder="192.168.1.50" />
                         </div>
                         <div>
-                            <x-form.input label="MAC-Адреса" model="mac_address" type="text" placeholder="AA:BB:CC:DD:EE:FF" />
+                            <x-form.input label="MAC-Адреса" model="form.mac_address" type="text" placeholder="AA:BB:CC:DD:EE:FF" />
                         </div>
                     </div>
                     @endif

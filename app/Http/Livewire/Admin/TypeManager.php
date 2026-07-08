@@ -6,11 +6,14 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\EquipmentType;
 use App\Models\BrandTz;
+use App\Livewire\Forms\EquipmentTypeForm;
 
 #[Layout('layouts.admin')]
 class TypeManager extends Component
 {
-    public $types, $brands, $typeId, $model_name, $brand_id;
+    public EquipmentTypeForm $form;
+    
+    public $types, $brands;
     public $isOpen = 0;
 
     public $search = '';
@@ -46,7 +49,7 @@ class TypeManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
+        $this->form->reset();
         $this->openModal();
     }
 
@@ -60,37 +63,20 @@ class TypeManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields(){
-        $this->typeId = null;
-        $this->model_name = '';
-        $this->brand_id = null;
-    }
-
     public function store()
     {
-        $this->validate([
-            'model_name' => 'required',
-            'brand_id' => 'required',
-        ]);
-
-        EquipmentType::updateOrCreate(['id' => $this->typeId], [
-            'model_name' => $this->model_name,
-            'brand_id' => $this->brand_id,
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->typeId ? 'Модель оновлено.' : 'Модель створено.');
+            $isUpdate ? 'Модель оновлено.' : 'Модель створено.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $type = EquipmentType::findOrFail($id);
-        $this->typeId = $id;
-        $this->model_name = $type->model_name;
-        $this->brand_id = $type->brand_id;
+        $this->form->setType($type);
         $this->openModal();
     }
 

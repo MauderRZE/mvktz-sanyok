@@ -19,8 +19,8 @@
     </x-ui.card>
 
     @if($isOpen)
-        <x-ui.modal title="{{ $brandId ? 'Редагувати' : 'Додати' }} бренд" maxWidth="md">
-            <x-form.input label="Назва бренду" model="brandtz_name" type="text" />
+        <x-ui.modal title="{{ $form->brandId ? 'Редагувати' : 'Додати' }} бренд" maxWidth="md">
+            <x-form.input label="Назва бренду" model="form.brandtz_name" type="text" />
         </x-ui.modal>
     @endif
 

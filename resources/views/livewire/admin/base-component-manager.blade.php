@@ -31,10 +31,10 @@
     </x-ui.card>
 
     @if($isOpen)
-    <x-ui.modal title="{{ $componentId ? 'Редагувати' : 'Додати' }} компонент" maxWidth="md">
+    <x-ui.modal title="{{ $form->componentId ? 'Редагувати' : 'Додати' }} компонент" maxWidth="md">
             <div class="space-y-4">
-                <x-form.input label="Назва компонента" model="component_name" type="text" />
-                <x-form.select label="Категорія" model="category_id">
+                <x-form.input label="Назва компонента" model="form.component_name" type="text" />
+                <x-form.select label="Категорія" model="form.category_id">
                     <option value="">Оберіть категорію</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}">{{ $category->category_name }}</option>

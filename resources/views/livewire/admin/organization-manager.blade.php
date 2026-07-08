@@ -31,10 +31,10 @@
     </x-ui.card>
 
     @if($isOpen)
-        <x-ui.modal title="{{ $orgId ? 'Редагувати' : 'Додати' }} організацію" maxWidth="md">
+        <x-ui.modal title="{{ $form->orgId ? 'Редагувати' : 'Додати' }} організацію" maxWidth="md">
             <div class="space-y-4">
-                <x-form.input label="Назва організації" model="org_name" type="text" />
-                <x-form.input label="Тип організації" model="org_type" type="text" />
+                <x-form.input label="Назва організації" model="form.org_name" type="text" />
+                <x-form.input label="Тип організації" model="form.org_type" type="text" />
             </div>
         </x-ui.modal>
     @endif

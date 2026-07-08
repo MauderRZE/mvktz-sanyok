@@ -19,8 +19,8 @@
     </x-ui.card>
 
     @if($isOpen)
-        <x-ui.modal title="{{ $departmentId ? 'Редагувати' : 'Додати' }} відділ" maxWidth="md">
-            <x-form.input label="Назва відділу" model="name" type="text" />
+        <x-ui.modal title="{{ $form->departmentId ? 'Редагувати' : 'Додати' }} відділ" maxWidth="md">
+            <x-form.input label="Назва відділу" model="form.name" type="text" />
         </x-ui.modal>
     @endif
 

@@ -19,10 +19,10 @@
     </x-ui.card>
 
     @if($isOpen)
-        <x-ui.modal title="{{ $actId ? 'Редагувати' : 'Додати' }} акт списання малоцінки" maxWidth="md">
+        <x-ui.modal title="{{ $form->actId ? 'Редагувати' : 'Додати' }} акт списання малоцінки" maxWidth="md">
             <div class="space-y-4">
-                <x-form.input label="Номер акту" model="act_number" type="text" />
-                <x-form.input label="Дата акту" model="act_date" type="date" />
+                <x-form.input label="Номер акту" model="form.act_number" type="text" />
+                <x-form.input label="Дата акту" model="form.act_date" type="date" />
             </div>
         </x-ui.modal>
     @endif

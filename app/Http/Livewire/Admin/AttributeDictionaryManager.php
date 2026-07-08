@@ -5,11 +5,14 @@ namespace App\Http\Livewire\Admin;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\AttributeDictionary;
+use App\Livewire\Forms\AttributeDictionaryForm;
 
 #[Layout('layouts.admin')]
 class AttributeDictionaryManager extends Component
 {
-    public $dictAttributes, $attributeId, $name;
+    public AttributeDictionaryForm $form;
+
+    public $dictAttributes;
     public $isOpen = false;
 
     public $search = '';
@@ -31,7 +34,7 @@ class AttributeDictionaryManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
+        $this->form->reset();
         $this->openModal();
     }
 
@@ -45,34 +48,20 @@ class AttributeDictionaryManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields()
-    {
-        $this->attributeId = null;
-        $this->name = '';
-    }
-
     public function store()
     {
-        $this->validate([
-            'name' => 'required|string|max:100',
-        ]);
-
-        AttributeDictionary::updateOrCreate(['id' => $this->attributeId], [
-            'name' => $this->name
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->attributeId ? 'Атрибут оновлено.' : 'Атрибут створено.');
+            $isUpdate ? 'Атрибут оновлено.' : 'Атрибут створено.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $attribute = AttributeDictionary::findOrFail($id);
-        $this->attributeId = $id;
-        $this->name = $attribute->name;
+        $this->form->setAttribute($attribute);
         $this->openModal();
     }
 

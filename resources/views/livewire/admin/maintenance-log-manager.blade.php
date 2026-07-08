@@ -42,9 +42,9 @@
     </x-ui.card>
 
     @if($isOpen)
-    <x-ui.modal title="{{ $logId ? 'Редагувати' : 'Додати' }} запис обслуговування" maxWidth="md">
+    <x-ui.modal title="{{ $form->logId ? 'Редагувати' : 'Додати' }} запис обслуговування" maxWidth="md">
             <div>
-                    <x-form.select label="Обладнання (Комплектуюча)" model="assets_id">
+                    <x-form.select label="Обладнання (Комплектуюча)" model="form.assets_id">
                             <option value="">Оберіть обладнання...</option>
                         @foreach($assetsList as $comp)
                             <option value="{{ $comp->id }}">
@@ -56,15 +56,15 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <x-form.input label="Дата відправки" model="sent_date" type="date" />
+                        <x-form.input label="Дата відправки" model="form.sent_date" type="date" />
                     </div>
                     <div>
-                        <x-form.input label="Дата повернення" model="return_date" type="date" />
+                        <x-form.input label="Дата повернення" model="form.return_date" type="date" />
                     </div>
                 </div>
 
                 <div>
-                    <x-form.select label="Статус" model="status">
+                    <x-form.select label="Статус" model="form.status">
                         <option value="В ремонті">В ремонті</option>
                         <option value="Відремонтовано">Відремонтовано</option>
                         <option value="Неможливо відремонтувати">Неможливо відремонтувати</option>
@@ -72,7 +72,7 @@
                 </div>
 
                 <div>
-                    <x-form.textarea label="Опис проблеми (скарга)" model="issue_description" placeholder="Опишіть проблему..." rows="3" />
+                    <x-form.textarea label="Опис проблеми (скарга)" model="form.issue_description" placeholder="Опишіть проблему..." rows="3" />
                 </div>
         </x-ui.modal>
     @endif

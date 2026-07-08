@@ -31,15 +31,15 @@
     </x-ui.card>
 
     @if($isOpen)
-    <x-ui.modal title="{{ $contractId ? 'Редагувати' : 'Додати' }} договір" maxWidth="md">
+    <x-ui.modal title="{{ $form->contractId ? 'Редагувати' : 'Додати' }} договір" maxWidth="md">
             <div>
-                    <x-form.input label="Номер договору" model="contract_number" type="text" />
+                    <x-form.input label="Номер договору" model="form.contract_number" type="text" />
                 </div>
                 <div>
-                    <x-form.input label="Дата договору" model="contract_date" type="date" />
+                    <x-form.input label="Дата договору" model="form.contract_date" type="date" />
                 </div>
                 <div>
-                    <x-form.select label="Постачальник" model="supplier_id">
+                    <x-form.select label="Постачальник" model="form.supplier_id">
                             <option value="">Оберіть постачальника...</option>
                         @foreach($suppliersList as $sup)
                             <option value="{{ $sup->id }}">{{ $sup->supplier_name }}</option>
@@ -47,7 +47,7 @@
                         </x-form.select>
                 </div>
                 <div>
-                    <x-form.input label="Посилання на договір" model="contract_link" type="url" />
+                    <x-form.input label="Посилання на договір" model="form.contract_link" type="url" />
                 </div>
         </x-ui.modal>
     @endif

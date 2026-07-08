@@ -7,11 +7,14 @@ use Livewire\Attributes\Layout;
 use App\Models\ComputerSoftware;
 use App\Models\Asset;
 use App\Models\SoftwareLicense;
+use App\Livewire\Forms\ComputerSoftwareForm;
 
 #[Layout('layouts.admin')]
 class ComputerSoftwareManager extends Component
 {
-    public $software, $softwareId, $computer_id, $software_name, $version, $is_licensed = 0, $license_id;
+    public ComputerSoftwareForm $form;
+
+    public $software;
     public $computers, $licenses;
     public $isOpen = false;
 
@@ -62,7 +65,7 @@ class ComputerSoftwareManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
+        $this->form->reset();
         $this->openModal();
     }
 
@@ -76,50 +79,20 @@ class ComputerSoftwareManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields()
-    {
-        $this->softwareId = null;
-        $this->computer_id = null;
-        $this->software_name = '';
-        $this->version = '';
-        $this->is_licensed = 0;
-        $this->license_id = null;
-    }
-
     public function store()
     {
-        $this->validate([
-            'computer_id' => 'required|exists:assets,id',
-            'software_name' => 'required|in:Windows,Office,ESET',
-            'version' => 'required|string|max:50',
-            'is_licensed' => 'boolean',
-            'license_id' => 'nullable|exists:licenses,id',
-        ]);
-
-        ComputerSoftware::updateOrCreate(['id' => $this->softwareId], [
-            'computer_id' => $this->computer_id,
-            'software_name' => $this->software_name,
-            'version' => $this->version,
-            'is_licensed' => $this->is_licensed ? 1 : 0,
-            'license_id' => $this->license_id ?: null,
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->softwareId ? 'Запис про ПЗ оновлено.' : 'Запис про ПЗ створено.');
+            $isUpdate ? 'Запис про ПЗ оновлено.' : 'Запис про ПЗ створено.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $sw = ComputerSoftware::findOrFail($id);
-        $this->softwareId = $id;
-        $this->computer_id = $sw->computer_id;
-        $this->software_name = $sw->software_name;
-        $this->version = $sw->version;
-        $this->is_licensed = $sw->is_licensed;
-        $this->license_id = $sw->license_id;
+        $this->form->setSoftware($sw);
         $this->openModal();
     }
 

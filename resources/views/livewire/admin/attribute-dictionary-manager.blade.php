@@ -19,8 +19,8 @@
     </x-ui.card>
 
     @if($isOpen)
-    <x-ui.modal title="{{ $attributeId ? 'Редагувати' : 'Додати' }} атрибут" maxWidth="md">
-        <x-form.input label="Назва характеристики" model="name" type="text" />
+    <x-ui.modal title="{{ $form->attributeId ? 'Редагувати' : 'Додати' }} атрибут" maxWidth="md">
+        <x-form.input label="Назва характеристики" model="form.name" type="text" />
     </x-ui.modal>
     @endif
 

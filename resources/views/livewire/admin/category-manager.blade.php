@@ -19,8 +19,8 @@
     </x-ui.card>
 
     @if($isOpen)
-    <x-ui.modal title="{{ $categoryId ? 'Редагувати' : 'Додати' }} категорію" maxWidth="md">
-            <x-form.input label="Назва категорії" model="category_name" type="text" />
+    <x-ui.modal title="{{ $form->categoryId ? 'Редагувати' : 'Додати' }} категорію" maxWidth="md">
+            <x-form.input label="Назва категорії" model="form.category_name" type="text" />
         </x-ui.modal>
     @endif
 

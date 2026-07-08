@@ -40,14 +40,14 @@
     </x-ui.card>
 
     @if($isOpen)
-    <x-ui.modal title="{{ $phoneId ? 'Редагувати' : 'Додати' }} телефон" maxWidth="md">
-        <x-form.select label="Співробітник" model="employee_id" :options="$employees->mapWithKeys(function($item) {
+    <x-ui.modal title="{{ $form->phoneId ? 'Редагувати' : 'Додати' }} телефон" maxWidth="md">
+        <x-form.select label="Співробітник" model="form.employee_id" :options="$employees->mapWithKeys(function($item) {
             return [$item->id => $item->last_name . ' ' . $item->first_name];
         })->toArray()" />
         
-        <x-form.input label="Номер телефону" model="phone_number" type="text" />
+        <x-form.input label="Номер телефону" model="form.phone_number" type="text" />
         
-        <x-form.select label="Тип телефону" model="phone_type" :options="['Робочий' => 'Робочий', 'Особистий' => 'Особистий', 'Додатковий' => 'Додатковий']" />
+        <x-form.select label="Тип телефону" model="form.phone_type" :options="['Робочий' => 'Робочий', 'Особистий' => 'Особистий', 'Додатковий' => 'Додатковий']" />
     </x-ui.modal>
     @endif
 

@@ -6,11 +6,14 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\MaintenanceLog;
 use App\Models\Equipment;
+use App\Livewire\Forms\MaintenanceLogForm;
 
 #[Layout('layouts.admin')]
 class MaintenanceLogManager extends Component
 {
-    public $logs, $logId, $assets_id, $sent_date, $return_date, $issue_description, $status = 'В ремонті';
+    public MaintenanceLogForm $form;
+    
+    public $logs;
     public $assetsList = [];
     public $isOpen = 0;
 
@@ -56,8 +59,9 @@ class MaintenanceLogManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
-        $this->sent_date = date('Y-m-d');
+        $this->form->reset();
+        $this->form->sent_date = date('Y-m-d');
+        $this->form->status = 'В ремонті';
         $this->openModal();
     }
 
@@ -71,49 +75,20 @@ class MaintenanceLogManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields(){
-        $this->logId = null;
-        $this->assets_id = null;
-        $this->sent_date = '';
-        $this->return_date = '';
-        $this->issue_description = '';
-        $this->status = 'В ремонті';
-    }
-
     public function store()
     {
-        $this->validate([
-            'assets_id' => 'required|exists:assets,id',
-            'sent_date' => 'required|date',
-            'return_date' => 'nullable|date',
-            'issue_description' => 'required|string',
-            'status' => 'required|string',
-        ]);
-
-        MaintenanceLog::updateOrCreate(['id' => $this->logId], [
-            'assets_id' => $this->assets_id,
-            'sent_date' => $this->sent_date,
-            'return_date' => $this->return_date ?: null,
-            'issue_description' => $this->issue_description,
-            'status' => $this->status,
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->logId ? 'Запис ТО оновлено.' : 'Роботу ТО зареєстровано.');
+            $isUpdate ? 'Запис ТО оновлено.' : 'Роботу ТО зареєстровано.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $log = MaintenanceLog::findOrFail($id);
-        $this->logId = $id;
-        $this->assets_id = $log->assets_id;
-        $this->sent_date = $log->sent_date;
-        $this->return_date = $log->return_date;
-        $this->issue_description = $log->issue_description;
-        $this->status = $log->status;
+        $this->form->setLog($log);
         $this->openModal();
     }
 

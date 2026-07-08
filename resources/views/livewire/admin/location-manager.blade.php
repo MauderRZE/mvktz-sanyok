@@ -19,8 +19,8 @@
     </x-ui.card>
 
     @if($isOpen)
-    <x-ui.modal title="{{ $locationId ? 'Редагувати' : 'Додати' }} кабінет/локацію" maxWidth="md">
-            <x-form.input label="Номер кабінету / Назва локації" model="room_number" type="text" />
+    <x-ui.modal title="{{ $form->locationId ? 'Редагувати' : 'Додати' }} кабінет/локацію" maxWidth="md">
+            <x-form.input label="Номер кабінету / Назва локації" model="form.room_number" type="text" />
         </x-ui.modal>
     @endif
 

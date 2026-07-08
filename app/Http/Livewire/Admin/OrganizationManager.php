@@ -5,11 +5,14 @@ namespace App\Http\Livewire\Admin;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\Organization;
+use App\Livewire\Forms\OrganizationForm;
 
 #[Layout('layouts.admin')]
 class OrganizationManager extends Component
 {
-    public $organizations, $orgId, $org_name, $org_type = 'Стороння';
+    public OrganizationForm $form;
+    
+    public $organizations;
     public $isOpen = 0;
 
     public $search = '';
@@ -47,7 +50,7 @@ class OrganizationManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
+        $this->form->reset();
         $this->openModal();
     }
 
@@ -61,37 +64,20 @@ class OrganizationManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields(){
-        $this->orgId = null;
-        $this->org_name = '';
-        $this->org_type = 'Стороння';
-    }
-
     public function store()
     {
-        $this->validate([
-            'org_name' => 'required|unique:organizations,org_name,' . $this->orgId,
-            'org_type' => 'required|string|max:100',
-        ]);
-
-        Organization::updateOrCreate(['id' => $this->orgId], [
-            'org_name' => $this->org_name,
-            'org_type' => $this->org_type
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->orgId ? 'Організацію оновлено.' : 'Організацію створено.');
+            $isUpdate ? 'Організацію оновлено.' : 'Організацію створено.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $org = Organization::findOrFail($id);
-        $this->orgId = $id;
-        $this->org_name = $org->org_name;
-        $this->org_type = $org->org_type;
+        $this->form->setOrganization($org);
         $this->openModal();
     }
 

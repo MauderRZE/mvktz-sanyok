@@ -5,11 +5,14 @@ namespace App\Http\Livewire\Admin;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\BrandTz;
+use App\Livewire\Forms\BrandForm;
 
 #[Layout('layouts.admin')]
 class BrandManager extends Component
 {
-    public $brands, $brandId, $brandtz_name;
+    public BrandForm $form;
+    
+    public $brands;
     public $isOpen = 0;
 
     public $search = '';
@@ -31,7 +34,7 @@ class BrandManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
+        $this->form->reset();
         $this->openModal();
     }
 
@@ -45,33 +48,20 @@ class BrandManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields(){
-        $this->brandId = null;
-        $this->brandtz_name = '';
-    }
-
     public function store()
     {
-        $this->validate([
-            'brandtz_name' => 'required|unique:brands_tz,brandtz_name,' . $this->brandId,
-        ]);
-
-        BrandTz::updateOrCreate(['id' => $this->brandId], [
-            'brandtz_name' => $this->brandtz_name
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->brandId ? 'Бренд оновлено.' : 'Бренд створено.');
+            $isUpdate ? 'Бренд оновлено.' : 'Бренд створено.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $brand = BrandTz::findOrFail($id);
-        $this->brandId = $id;
-        $this->brandtz_name = $brand->brandtz_name;
+        $this->form->setBrand($brand);
         $this->openModal();
     }
 

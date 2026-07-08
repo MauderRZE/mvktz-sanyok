@@ -33,22 +33,22 @@
 
     @if($isOpen)
     <div wire:key="employee-modal-wrapper">
-    <x-ui.modal wire:key="employee-modal" title="{{ $employeeId ? 'Редагувати' : 'Додати' }} співробітника" maxWidth="lg">
+    <x-ui.modal wire:key="employee-modal" title="{{ $form->employeeId ? 'Редагувати' : 'Додати' }} співробітника" maxWidth="lg">
             <div>
-                    <x-form.input label="Прізвище" model="last_name" type="text" />
+                    <x-form.input label="Прізвище" model="form.last_name" type="text" />
                 </div>
                 <div>
-                    <x-form.input label="Ім'я" model="first_name" type="text" />
+                    <x-form.input label="Ім'я" model="form.first_name" type="text" />
                 </div>
                 <div>
-                    <x-form.input label="По-батькові" model="middle_name" type="text" />
+                    <x-form.input label="По-батькові" model="form.middle_name" type="text" />
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <x-form.input label="Посада" model="position" type="text" />
+                        <x-form.input label="Посада" model="form.position" type="text" />
                     </div>
                     <div>
-                        <x-form.select label="Відділ" model="department_id">
+                        <x-form.select label="Відділ" model="form.department_id">
                             <option value="">Оберіть відділ...</option>
                             @foreach($departmentsList as $dep)
                                 <option value="{{ $dep->id }}">{{ $dep->name }}</option>

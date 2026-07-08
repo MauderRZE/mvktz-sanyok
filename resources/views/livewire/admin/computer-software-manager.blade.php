@@ -48,21 +48,21 @@
     </x-ui.card>
 
     @if($isOpen)
-    <x-ui.modal title="{{ $softwareId ? 'Редагувати' : 'Додати' }} запис про ПЗ" maxWidth="md">
+    <x-ui.modal title="{{ $form->softwareId ? 'Редагувати' : 'Додати' }} запис про ПЗ" maxWidth="md">
         <div class="space-y-4">
-            <x-form.select label="Комп'ютер (Обладнання)" model="computer_id" placeholder="Оберіть комп'ютер..." :options="$computersOptions" />
+            <x-form.select label="Комп'ютер (Обладнання)" model="form.computer_id" placeholder="Оберіть комп'ютер..." :options="$computersOptions" />
             
-            <x-form.select label="Назва ПЗ" model="software_name">
+            <x-form.select label="Назва ПЗ" model="form.software_name">
                 <option value="">Оберіть ПЗ</option>
                 <option value="Windows">Windows</option>
                 <option value="Office">Office</option>
                 <option value="ESET">ESET</option>
             </x-form.select>
 
-            <x-form.input label="Версія (22H2, 2019...)" model="version" type="text" />
-            <x-form.checkbox label="Ліцензійне ПЗ?" model="is_licensed" />
+            <x-form.input label="Версія (22H2, 2019...)" model="form.version" type="text" />
+            <x-form.checkbox label="Ліцензійне ПЗ?" model="form.is_licensed" />
             
-            <x-form.select label="Прив'язка до ліцензії" model="license_id" placeholder="Не вибрано / Без ліцензії" :options="$licensesOptions" />
+            <x-form.select label="Прив'язка до ліцензії" model="form.license_id" placeholder="Не вибрано / Без ліцензії" :options="$licensesOptions" />
         </div>
     </x-ui.modal>
     @endif

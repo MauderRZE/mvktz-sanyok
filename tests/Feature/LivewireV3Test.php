@@ -269,14 +269,14 @@ class LivewireV3Test extends TestCase
     public static function validationComponentsProvider(): array
     {
         return [
-            'BrandManager'           => [BrandManager::class, 'brandtz_name'],
-            'CategoryManager'        => [CategoryManager::class, 'category_name'],
-            'TypeManager'            => [TypeManager::class, 'model_name'],
-            'LocationManager'        => [LocationManager::class, 'room_number'],
-            'SupplierManager'        => [SupplierManager::class, 'supplier_name'],
-            'DepartmentManager'      => [DepartmentManager::class, 'name'],
-            'OrganizationManager'    => [OrganizationManager::class, 'org_name'],
-            'AssetManager'           => [\App\Http\Livewire\Admin\AssetManager::class, 'equipment_id'],
+            'BrandManager'           => [BrandManager::class, 'form.brandtz_name'],
+            'CategoryManager'        => [CategoryManager::class, 'form.category_name'],
+            'TypeManager'            => [TypeManager::class, 'form.model_name'],
+            'LocationManager'        => [LocationManager::class, 'form.room_number'],
+            'SupplierManager'        => [SupplierManager::class, 'form.supplier_name'],
+            'DepartmentManager'      => [DepartmentManager::class, 'form.name'],
+            'OrganizationManager'    => [OrganizationManager::class, 'form.org_name'],
+            'AssetManager'           => [\App\Http\Livewire\Admin\AssetManager::class, 'form.equipment_id'],
         ];
     }
 
@@ -301,7 +301,7 @@ class LivewireV3Test extends TestCase
         Livewire::test(EquipmentForm::class)
             ->set('isOpen', true)
             ->call('store')
-            ->assertHasErrors(['inv_number']);
+            ->assertHasErrors(['form.inv_number']);
     }
 
     public function test_equipment_detail_closes_on_close_call(): void

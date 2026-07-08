@@ -10,11 +10,11 @@ use App\Models\Asset;
 use App\Models\Location;
 use App\Models\Employee;
 use App\Models\LocationHolder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class EquipmentMovementTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function test_renders_successfully()
     {
@@ -68,6 +68,7 @@ class EquipmentMovementTest extends TestCase
     {
         Livewire::test(EquipmentMovementManager::class)
             ->call('create')
+            ->set('form.action_date', '')
             ->call('store')
             ->assertHasErrors(['form.asset_id', 'form.location_id', 'form.action_date']);
     }

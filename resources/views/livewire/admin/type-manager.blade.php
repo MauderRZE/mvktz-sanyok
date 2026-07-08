@@ -31,15 +31,15 @@
     </x-ui.card>
 
     @if($isOpen)
-    <x-ui.modal title="{{ $typeId ? 'Редагувати' : 'Додати' }} модель" maxWidth="md">
+    <x-ui.modal title="{{ $form->typeId ? 'Редагувати' : 'Додати' }} модель" maxWidth="md">
             <div class="space-y-4">
-                <x-form.select label="Бренд" model="brand_id">
+                <x-form.select label="Бренд" model="form.brand_id">
                     <option value="">Оберіть бренд</option>
                     @foreach($brands as $brand)
                         <option value="{{ $brand->id }}">{{ $brand->brandtz_name }}</option>
                     @endforeach
                 </x-form.select>
-                <x-form.input label="Назва моделі" model="model_name" type="text" />
+                <x-form.input label="Назва моделі" model="form.model_name" type="text" />
             </div>
         </x-ui.modal>
     @endif

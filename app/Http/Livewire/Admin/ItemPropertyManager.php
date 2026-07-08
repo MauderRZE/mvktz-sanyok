@@ -8,11 +8,14 @@ use App\Models\ItemProperty;
 use App\Models\Asset;
 use App\Models\LowValueMaterial;
 use App\Models\AttributeDictionary;
+use App\Livewire\Forms\ItemPropertyForm;
 
 #[Layout('layouts.admin')]
 class ItemPropertyManager extends Component
 {
-    public $properties, $propertyId, $asset_id, $nomenclature_id, $attribute_id, $attr_value;
+    public ItemPropertyForm $form;
+    
+    public $properties;
     public $assets, $materials, $dictAttributes;
     public $isOpen = false;
 
@@ -61,7 +64,7 @@ class ItemPropertyManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
+        $this->form->reset();
         $this->openModal();
     }
 
@@ -75,46 +78,20 @@ class ItemPropertyManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields()
-    {
-        $this->propertyId = null;
-        $this->asset_id = null;
-        $this->nomenclature_id = null;
-        $this->attribute_id = null;
-        $this->attr_value = '';
-    }
-
     public function store()
     {
-        $this->validate([
-            'attribute_id' => 'required|exists:attributes_dictionary,id',
-            'attr_value' => 'required|string|max:255',
-            'asset_id' => 'nullable|exists:assets,id',
-            'nomenclature_id' => 'nullable|exists:low_value_materials,id',
-        ]);
-
-        ItemProperty::updateOrCreate(['id' => $this->propertyId], [
-            'asset_id' => $this->asset_id ?: null,
-            'nomenclature_id' => $this->nomenclature_id ?: null,
-            'attribute_id' => $this->attribute_id,
-            'attr_value' => $this->attr_value,
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->propertyId ? 'Властивість оновлено.' : 'Властивість додано.');
+            $isUpdate ? 'Властивість оновлено.' : 'Властивість додано.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $prop = ItemProperty::findOrFail($id);
-        $this->propertyId = $id;
-        $this->asset_id = $prop->asset_id;
-        $this->nomenclature_id = $prop->nomenclature_id;
-        $this->attribute_id = $prop->attribute_id;
-        $this->attr_value = $prop->attr_value;
+        $this->form->setProperty($prop);
         $this->openModal();
     }
 

@@ -5,11 +5,14 @@ namespace App\Http\Livewire\Admin;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\LowValueWriteOffAct;
+use App\Livewire\Forms\WriteOffActForm;
 
 #[Layout('layouts.admin')]
 class WriteOffActManager extends Component
 {
-    public $acts, $actId, $act_number, $act_date;
+    public WriteOffActForm $form;
+    
+    public $acts;
     public $isOpen = 0;
 
     public $search = '';
@@ -31,8 +34,8 @@ class WriteOffActManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
-        $this->act_date = date('Y-m-d');
+        $this->form->reset();
+        $this->form->act_date = date('Y-m-d');
         $this->openModal();
     }
 
@@ -46,37 +49,20 @@ class WriteOffActManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields(){
-        $this->actId = null;
-        $this->act_number = '';
-        $this->act_date = '';
-    }
-
     public function store()
     {
-        $this->validate([
-            'act_number' => 'required|string|max:45',
-            'act_date' => 'required|date',
-        ]);
-
-        LowValueWriteOffAct::updateOrCreate(['id' => $this->actId], [
-            'act_number' => $this->act_number,
-            'act_date' => $this->act_date,
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->actId ? 'Акт списання малоцінки оновлено.' : 'Акт списання малоцінки створено.');
+            $isUpdate ? 'Акт списання малоцінки оновлено.' : 'Акт списання малоцінки створено.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $act = LowValueWriteOffAct::findOrFail($id);
-        $this->actId = $id;
-        $this->act_number = $act->act_number;
-        $this->act_date = $act->act_date;
+        $this->form->setAct($act);
         $this->openModal();
     }
 

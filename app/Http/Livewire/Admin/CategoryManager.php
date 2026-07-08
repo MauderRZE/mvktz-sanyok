@@ -5,11 +5,14 @@ namespace App\Http\Livewire\Admin;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\EquipmentCategory;
+use App\Livewire\Forms\EquipmentCategoryForm;
 
 #[Layout('layouts.admin')]
 class CategoryManager extends Component
 {
-    public $categories, $categoryId, $category_name;
+    public EquipmentCategoryForm $form;
+    
+    public $categories;
     public $isOpen = 0;
 
     public $search = '';
@@ -31,7 +34,7 @@ class CategoryManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
+        $this->form->reset();
         $this->openModal();
     }
 
@@ -45,33 +48,20 @@ class CategoryManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields(){
-        $this->categoryId = null;
-        $this->category_name = '';
-    }
-
     public function store()
     {
-        $this->validate([
-            'category_name' => 'required',
-        ]);
-
-        EquipmentCategory::updateOrCreate(['id' => $this->categoryId], [
-            'category_name' => $this->category_name
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->categoryId ? 'Категорію оновлено.' : 'Категорію створено.');
+            $isUpdate ? 'Категорію оновлено.' : 'Категорію створено.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $category = EquipmentCategory::findOrFail($id);
-        $this->categoryId = $id;
-        $this->category_name = $category->category_name;
+        $this->form->setCategory($category);
         $this->openModal();
     }
 

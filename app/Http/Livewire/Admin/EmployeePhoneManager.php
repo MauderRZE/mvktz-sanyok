@@ -6,11 +6,14 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\EmployeePhone;
 use App\Models\Employee;
+use App\Livewire\Forms\EmployeePhoneForm;
 
 #[Layout('layouts.admin')]
 class EmployeePhoneManager extends Component
 {
-    public $phones, $phoneId, $employee_id, $phone_number, $phone_type;
+    public EmployeePhoneForm $form;
+    
+    public $phones;
     public $employees;
     public $isOpen = false;
 
@@ -57,7 +60,7 @@ class EmployeePhoneManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
+        $this->form->reset();
         $this->openModal();
     }
 
@@ -71,42 +74,20 @@ class EmployeePhoneManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields()
-    {
-        $this->phoneId = null;
-        $this->employee_id = null;
-        $this->phone_number = '';
-        $this->phone_type = 'Робочий';
-    }
-
     public function store()
     {
-        $this->validate([
-            'employee_id' => 'required|exists:employee,id',
-            'phone_number' => 'required|string|max:20',
-            'phone_type' => 'required|string',
-        ]);
-
-        EmployeePhone::updateOrCreate(['id' => $this->phoneId], [
-            'employee_id' => $this->employee_id,
-            'phone_number' => $this->phone_number,
-            'phone_type' => $this->phone_type,
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->phoneId ? 'Телефон оновлено.' : 'Телефон додано.');
+            $isUpdate ? 'Телефон оновлено.' : 'Телефон додано.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $phone = EmployeePhone::findOrFail($id);
-        $this->phoneId = $id;
-        $this->employee_id = $phone->employee_id;
-        $this->phone_number = $phone->phone_number;
-        $this->phone_type = $phone->phone_type;
+        $this->form->setPhone($phone);
         $this->openModal();
     }
 

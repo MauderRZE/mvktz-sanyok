@@ -13,18 +13,14 @@ use App\Models\Location;
 use App\Models\LocationHolder;
 use App\Models\LowValueMaterial;
 use App\Models\LowValueWriteOffAct;
+use App\Livewire\Forms\AssetForm;
 
 #[Layout('layouts.admin')]
 class AssetManager extends Component
 {
     use WithPagination;
 
-    public $assetId, $equipment_id, $base_component_id, $model_id;
-    public $current_loc_id, $current_holder_id, $parent_asset_id;
-    public $notes, $serial_number;
-    public $has_network = 0, $ip_address, $mac_address, $hostname;
-    public $status = 'Працює';
-    public $nomenclature_id, $write_off_act_id;
+    public AssetForm $form;
 
     public $isOpen = false;
     public $isViewOpen = false;
@@ -65,14 +61,9 @@ class AssetManager extends Component
     public function updatingFilterModel() { $this->resetPage(); }
     public function updatingFilterNetwork() { $this->resetPage(); }
 
-    public function updatedBaseComponentId($value)
+    public function updatedFormBaseComponentId($value)
     {
-        if ($value) {
-            $component = BaseComponent::find($value);
-            if ($component && mb_strtolower($component->component_name) === 'системний блок') {
-                $this->parent_asset_id = null;
-            }
-        }
+        $this->form->handleBaseComponentChange($value);
     }
 
     public function resetFilters()
@@ -247,7 +238,7 @@ class AssetManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
+        $this->form->reset();
         $this->openModal();
     }
 
@@ -291,91 +282,20 @@ class AssetManager extends Component
         }
     }
 
-    private function resetInputFields(){
-        $this->assetId = null;
-        $this->equipment_id = null;
-        $this->base_component_id = null;
-        $this->model_id = null;
-        $this->current_loc_id = null;
-        $this->current_holder_id = null;
-        $this->parent_asset_id = null;
-        $this->notes = '';
-        $this->serial_number = '';
-        $this->has_network = 0;
-        $this->ip_address = '';
-        $this->mac_address = '';
-        $this->hostname = '';
-        $this->nomenclature_id = null;
-        $this->write_off_act_id = null;
-        $this->status = 'Працює';
-    }
-
     public function store()
     {
-        $this->validate([
-            'equipment_id' => 'required|exists:equipment,id',
-            'base_component_id' => 'required|exists:base_components,id',
-            'model_id' => 'nullable|exists:models_tz,id',
-            'current_loc_id' => 'nullable|exists:locations,id',
-            'current_holder_id' => 'nullable|exists:location_holders,id',
-            'parent_asset_id' => 'nullable|exists:assets,id',
-            'notes' => 'nullable|string|max:255',
-            'serial_number' => 'nullable|string|max:100',
-            'has_network' => 'boolean',
-            'ip_address' => 'nullable|ip',
-            'mac_address' => 'nullable|regex:/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/',
-            'hostname' => 'nullable|string|max:100',
-            'nomenclature_id' => 'nullable|exists:low_value_materials,id',
-            'write_off_act_id' => 'nullable|exists:low_value_write_off_acts,id',
-            'status' => 'required|string|max:50',
-        ]);
-
-        Asset::updateOrCreate(['id' => $this->assetId], [
-            'equipment_id' => $this->equipment_id,
-            'base_component_id' => $this->base_component_id,
-            'model_id' => $this->model_id ?: null,
-            'current_loc_id' => $this->current_loc_id ?: null,
-            'current_holder_id' => $this->current_holder_id ?: null,
-            'parent_asset_id' => $this->parent_asset_id ?: null,
-            'notes' => $this->notes ?: null,
-            'serial_number' => $this->serial_number ?: null,
-            'ip_address' => $this->ip_address ?: null,
-            'mac_address' => $this->mac_address ?: null,
-            'hostname' => $this->hostname ?: null,
-            'nomenclature_id' => $this->nomenclature_id ?: null,
-            'write_off_act_id' => $this->write_off_act_id ?: null,
-            'status' => $this->status,
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->assetId ? 'Актив оновлено.' : 'Актив додано.');
+            $isUpdate ? 'Актив оновлено.' : 'Актив додано.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $comp = Asset::findOrFail($id);
-        $this->assetId = $id;
-        $this->equipment_id = $comp->equipment_id;
-        $this->base_component_id = $comp->base_component_id;
-        $this->model_id = $comp->model_id;
-        $this->current_loc_id = $comp->current_loc_id;
-        $this->current_holder_id = $comp->current_holder_id;
-        $this->parent_asset_id = $comp->parent_asset_id;
-        $this->notes = $comp->notes;
-        $this->serial_number = $comp->serial_number;
-        
-        $this->has_network = !empty($comp->ip_address) || !empty($comp->mac_address) || !empty($comp->hostname);
-        $this->ip_address = $comp->ip_address;
-        $this->mac_address = $comp->mac_address;
-        $this->hostname = $comp->hostname;
-
-        $this->nomenclature_id = $comp->nomenclature_id;
-        $this->write_off_act_id = $comp->write_off_act_id;
-        $this->status = $comp->status;
-        
+        $this->form->setAsset($comp);
         $this->openModal();
     }
 

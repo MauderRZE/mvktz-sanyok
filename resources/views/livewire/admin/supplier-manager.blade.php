@@ -31,15 +31,15 @@
     </x-ui.card>
 
     @if($isOpen)
-    <x-ui.modal title="{{ $supplierId ? 'Редагувати' : 'Додати' }} постачальника" maxWidth="md">
-            <x-form.input label="Назва постачальника" model="supplier_name" type="text" />
-            <x-form.select label="Тип постачальника" model="supplier_type_id">
+    <x-ui.modal title="{{ $form->supplierId ? 'Редагувати' : 'Додати' }} постачальника" maxWidth="md">
+            <x-form.input label="Назва постачальника" model="form.supplier_name" type="text" />
+            <x-form.select label="Тип постачальника" model="form.supplier_type_id">
                 <option value="">Оберіть тип</option>
                 @foreach($supplierTypes as $type)
                     <option value="{{ $type->id }}">{{ $type->type_name }}</option>
                 @endforeach
             </x-form.select>
-            <x-form.input label="Код ЄДРПОУ / ІПН" model="tax_code" type="text" />
+            <x-form.input label="Код ЄДРПОУ / ІПН" model="form.tax_code" type="text" />
         </x-ui.modal>
     @endif
 
