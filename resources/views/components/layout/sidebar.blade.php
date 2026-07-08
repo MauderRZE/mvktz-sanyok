@@ -46,7 +46,7 @@
 
         <p class="px-3 mt-4 mb-2 text-[10px] font-semibold text-gray-500 uppercase tracking-widest">Журнали</p>
 
-        <a href="{{ route('admin.movements') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('admin.movements') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">
+        <a href="{{ route('admin.movements') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs {{ request()->is('admin/movements*') ? 'active text-white' : 'text-gray-400 hover:text-white' }}">
             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
             Переміщення
         </a>

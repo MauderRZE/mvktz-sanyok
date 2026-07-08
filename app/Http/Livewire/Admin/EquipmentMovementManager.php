@@ -9,11 +9,14 @@ use App\Models\Equipment;
 use App\Models\Location;
 use App\Models\Employee;
 use App\Models\Asset;
+use App\Livewire\Forms\MovementForm;
 
 #[Layout('layouts.admin')]
 class EquipmentMovementManager extends Component
 {
-    public $movements, $movementId, $asset_id, $location_id, $employee_id, $action_date;
+    public MovementForm $form;
+    
+    public $movements;
     public $assetsList = [], $locationsList = [], $employeesList = [];
     public $isOpen = false;
 
@@ -88,8 +91,8 @@ class EquipmentMovementManager extends Component
 
     public function create()
     {
-        $this->resetInputFields();
-        $this->action_date = date('Y-m-d');
+        $this->form->reset();
+        $this->form->action_date = date('Y-m-d');
         $this->openModal();
     }
 
@@ -103,66 +106,20 @@ class EquipmentMovementManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields(){
-        $this->movementId = null;
-        $this->asset_id = null;
-        $this->location_id = null;
-        $this->employee_id = null;
-        $this->action_date = '';
-    }
-
     public function store()
     {
-        $this->validate([
-            'asset_id' => 'required|exists:assets,id',
-            'location_id' => 'required|exists:locations,id',
-            'employee_id' => 'nullable|exists:employee,id',
-            'action_date' => 'required|date',
-        ]);
-
-        // Знаходимо або створюємо LocationHolder для цільового співробітника
-        $toHolder = \App\Models\LocationHolder::firstOrCreate([
-            'employee_id' => $this->employee_id ?: null,
-            'organization_id' => null,
-        ]);
-
-        // Отримуємо актив
-        $asset = Asset::findOrFail($this->asset_id);
-        
-        // Попередній утримувач (from_holder_id)
-        $from_holder_id = $asset->current_holder_id;
-
-        // Оновлюємо поточне розташування та утримувача для активу
-        $asset->update([
-            'current_loc_id' => $this->location_id,
-            'current_holder_id' => $toHolder->id,
-        ]);
-
-        // Створюємо або оновлюємо запис переміщення
-        EquipmentMovement::updateOrCreate(['id' => $this->movementId], [
-            'equip_id' => $asset->equipment_id,
-            'asset_id' => $asset->id,
-            'from_holder_id' => $from_holder_id,
-            'to_holder_id' => $toHolder->id,
-            'employee_id' => $this->employee_id ?: null,
-            'action_date' => $this->action_date,
-        ]);
+        $isUpdate = $this->form->store();
 
         session()->flash('message', 
-            $this->movementId ? 'Запис про рух оновлено.' : 'Переміщення зареєстровано.');
+            $isUpdate ? 'Запис про рух оновлено.' : 'Переміщення зареєстровано.');
 
         $this->closeModal();
-        $this->resetInputFields();
     }
 
     public function edit($id)
     {
         $move = EquipmentMovement::findOrFail($id);
-        $this->movementId = $id;
-        $this->asset_id = $move->asset_id;
-        $this->employee_id = $move->employee_id;
-        $this->action_date = $move->action_date;
-        $this->location_id = $move->asset ? $move->asset->current_loc_id : null;
+        $this->form->setMovement($move);
         $this->openModal();
     }
 

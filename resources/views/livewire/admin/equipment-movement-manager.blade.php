@@ -49,9 +49,9 @@
     </x-ui.card>
 
     @if($isOpen)
-    <x-ui.modal title="{{ $movementId ? 'Редагувати' : 'Зареєструвати' }} переміщення" maxWidth="md">
+    <x-ui.modal title="{{ $form->movementId ? 'Редагувати' : 'Зареєструвати' }} переміщення" maxWidth="md">
             <div>
-                    <x-form.select label="Актив" model="asset_id">
+                    <x-form.select label="Актив" model="form.asset_id">
                             <option value="">Оберіть актив...</option>
                         @foreach($assetsList as $asset)
                             <option value="{{ $asset->id }}">
@@ -63,7 +63,7 @@
                         </x-form.select>
                 </div>
                 <div>
-                    <x-form.select label="Куди переміщено (Кабінет / Локація)" model="location_id">
+                    <x-form.select label="Куди переміщено (Кабінет / Локація)" model="form.location_id">
                             <option value="">Оберіть локацію...</option>
                         @foreach($locationsList as $loc)
                             <option value="{{ $loc->id }}">Кабінет {{ $loc->room_number }}</option>
@@ -71,7 +71,7 @@
                         </x-form.select>
                 </div>
                 <div>
-                    <x-form.select label="Відповідальний співробітник" model="employee_id">
+                    <x-form.select label="Відповідальний співробітник" model="form.employee_id">
                             <option value="">Без відповідального (на склад)...</option>
                         @foreach($employeesList as $emp)
                             <option value="{{ $emp->id }}">{{ $emp->fullName }} ({{ $emp->position }})</option>
@@ -79,7 +79,7 @@
                         </x-form.select>
                 </div>
                 <div>
-                    <x-form.input label="Дата переміщення" model="action_date" type="date" />
+                    <x-form.input label="Дата переміщення" model="form.action_date" type="date" />
                 </div>
         </x-ui.modal>
     @endif
