@@ -21,13 +21,8 @@ class EquipmentMoveModal extends Component
     public $employee_id;
     public $action_date;
 
-    public $locationsList = [];
-    public $employeesList = [];
-
     public function mount()
     {
-        $this->locationsList = Location::all();
-        $this->employeesList = Employee::all();
         $this->action_date = date('Y-m-d');
     }
 
@@ -116,6 +111,11 @@ class EquipmentMoveModal extends Component
 
     public function render()
     {
-        return view('livewire.admin.equipment.equipment-move-modal');
+        $locationsList = $this->isOpen ? Location::all() : collect();
+        $employeesList = $this->isOpen ? Employee::all() : collect();
+
+        return view('livewire.admin.equipment.equipment-move-modal', compact(
+            'locationsList', 'employeesList'
+        ));
     }
 }

@@ -218,21 +218,31 @@ class AssetManager extends Component
             $query->orderBy('assets.id', 'desc');
         }
 
-        return view('livewire.admin.asset-manager', [
+        $data = [
             'assets' => $query->paginate(15),
-            'equipmentList' => Equipment::select('id', 'inv_number', 'account_name')->get(),
             'baseComponentsList' => BaseComponent::select('id', 'component_name')->get(),
             'modelsList' => EquipmentType::with('brand:id,brandtz_name')->select('id', 'model_name', 'brand_id')->get(),
             'locationsList' => Location::select('id', 'room_number')->get(),
             'holdersList' => LocationHolder::with(['employee:id,first_name,last_name', 'organization:id,org_name'])->select('id', 'employee_id', 'organization_id')->get(),
-            'parentAssetsList' => Asset::with(['componentType:id,component_name', 'equipment:id,inv_number'])
+        ];
+
+        if ($this->isOpen) {
+            $data['equipmentList'] = Equipment::select('id', 'inv_number', 'account_name')->get();
+            $data['parentAssetsList'] = Asset::with(['componentType:id,component_name', 'equipment:id,inv_number'])
                 ->select('id', 'base_component_id', 'equipment_id', 'serial_number')
                 ->whereHas('componentType', function($q) {
                     $q->where('component_name', 'Системний блок');
-                })->get(),
-            'nomenclaturesList' => LowValueMaterial::select('id', 'material_account_name', 'nomenklature_number')->get(),
-            'writeOffActsList' => LowValueWriteOffAct::select('id', 'act_number')->get(),
-        ]);
+                })->get();
+            $data['nomenclaturesList'] = LowValueMaterial::select('id', 'material_account_name', 'nomenklature_number')->get();
+            $data['writeOffActsList'] = LowValueWriteOffAct::select('id', 'act_number')->get();
+        } else {
+            $data['equipmentList'] = collect();
+            $data['parentAssetsList'] = collect();
+            $data['nomenclaturesList'] = collect();
+            $data['writeOffActsList'] = collect();
+        }
+
+        return view('livewire.admin.asset-manager', $data);
     }
 
     public function create()

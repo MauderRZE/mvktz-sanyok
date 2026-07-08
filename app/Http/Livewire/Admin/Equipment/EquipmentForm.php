@@ -97,8 +97,8 @@ class EquipmentForm extends Component
 
     public function render()
     {
-        $purchasesList      = Contract::all();
-        $retirementActsList = EquipmentRetirementAct::all();
+        $purchasesList      = $this->isOpen ? Contract::all() : collect();
+        $retirementActsList = $this->isOpen ? EquipmentRetirementAct::all() : collect();
 
         return view('livewire.admin.equipment.equipment-form', compact(
             'purchasesList', 'retirementActsList'

@@ -307,7 +307,7 @@
                         <button wire:click="toggleRow({{ $c->id }})" class="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10 transition-colors text-gray-400 hover:text-white relative">
                             <svg class="w-4 h-4 transition-transform duration-200 {{ in_array($c->id, $expandedRows) ? 'rotate-90' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                             @if($c->childAssets && $c->childAssets->count() > 0)
-                                <span class="absolute -top-1 -right-1 bg-brand-500/20 text-brand-300 px-1 py-0.5 rounded text-[8px] font-bold">{{ $c->childAssets->count() }}</span>
+                                <span class="absolute -top-1 -right-2 bg-brand-500/20 text-brand-300 px-1 py-0.5 rounded text-[8px] font-bold">{{ $c->childAssets->count() }}</span>
                             @endif
                         </button>
                     </x-table.td>
