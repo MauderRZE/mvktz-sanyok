@@ -15,3 +15,5 @@ yarn-error.log
 /.vscode
 .phpunit.cache/test-results
 *.sql
+*.sql.gz
+backups/scripts/backup.sh
