@@ -120,33 +120,57 @@ class UserHistoryManager extends Component
         $users = \App\Models\User::orderBy('name')->get();
 
         if ($this->tab === 'auth') {
+            $userIds = [];
+            if ($this->search) {
+                $userIds = \App\Models\User::where('name', 'like', '%'.$this->search.'%')
+                    ->orWhere('login', 'like', '%'.$this->search.'%')
+                    ->pluck('id')
+                    ->toArray();
+            }
             $data = AuthLog::with('user')
-                ->when($this->search, function ($q) {
-                    $q->where('ip_address', 'like', '%'.$this->search.'%')
-                      ->orWhereHas('user', function ($u) {
-                          $u->where('name', 'like', '%'.$this->search.'%')
-                            ->orWhere('login', 'like', '%'.$this->search.'%');
-                      });
+                ->when($this->search, function ($q) use ($userIds) {
+                    $q->where(function ($sub) use ($userIds) {
+                        $sub->where('ip_address', 'like', '%'.$this->search.'%');
+                        if (!empty($userIds)) {
+                            $sub->orWhereIn('user_id', $userIds);
+                        }
+                    });
                 })
                 ->orderBy('id', 'desc')
                 ->paginate(20);
         } elseif ($this->tab === 'audit') {
+            $userIds = [];
+            if ($this->search) {
+                $userIds = \App\Models\User::where('name', 'like', '%'.$this->search.'%')
+                    ->pluck('id')
+                    ->toArray();
+            }
             $data = AuditLog::with('user')
-                ->when($this->search, function ($q) {
-                    $q->where('auditable_type', 'like', '%'.$this->search.'%')
-                      ->orWhereHas('user', function ($u) {
-                          $u->where('name', 'like', '%'.$this->search.'%');
-                      });
+                ->when($this->search, function ($q) use ($userIds) {
+                    $q->where(function ($sub) use ($userIds) {
+                        $sub->where('auditable_type', 'like', '%'.$this->search.'%');
+                        if (!empty($userIds)) {
+                            $sub->orWhereIn('user_id', $userIds);
+                        }
+                    });
                 })
                 ->orderBy('id', 'desc')
                 ->paginate(20);
         } elseif ($this->tab === 'access') {
+            $userIds = [];
+            if ($this->search) {
+                $userIds = \App\Models\User::where('name', 'like', '%'.$this->search.'%')
+                    ->pluck('id')
+                    ->toArray();
+            }
             $data = AccessLog::with('user')
-                ->when($this->search, function ($q) {
-                    $q->where('url', 'like', '%'.$this->search.'%')
-                      ->orWhereHas('user', function ($u) {
-                          $u->where('name', 'like', '%'.$this->search.'%');
-                      });
+                ->when($this->search, function ($q) use ($userIds) {
+                    $q->where(function ($sub) use ($userIds) {
+                        $sub->where('url', 'like', '%'.$this->search.'%');
+                        if (!empty($userIds)) {
+                            $sub->orWhereIn('user_id', $userIds);
+                        }
+                    });
                 })
                 ->when($this->filterUser, function ($q) {
                     $q->where('user_id', $this->filterUser);
