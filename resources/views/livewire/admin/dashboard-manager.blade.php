@@ -287,7 +287,27 @@
         </div>
     </div>
     <!-- Lists Grid -->
-    <div class="grid grid-cols-1 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Chart Assets -->
+        <div class="bg-surface-800 rounded-2xl border border-white/5 flex flex-col overflow-hidden">
+            <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-surface-800/50">
+                <h3 class="text-sm font-semibold text-white">Нові активи (за останні 6 місяців)</h3>
+            </div>
+            <div class="p-4 flex-1">
+                <canvas id="assetsLineChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart Equipment -->
+        <div class="bg-surface-800 rounded-2xl border border-white/5 flex flex-col overflow-hidden">
+            <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-surface-800/50">
+                <h3 class="text-sm font-semibold text-white">Нове обладнання (за останні 6 місяців)</h3>
+            </div>
+            <div class="p-4 flex-1">
+                <canvas id="equipmentLineChart"></canvas>
+            </div>
+        </div>
 
         <!-- Recent Maintenance -->
         <div class="bg-surface-800 rounded-2xl border border-white/5 flex flex-col overflow-hidden">
@@ -321,4 +341,69 @@
     </div>
     
 </x-ui.page-wrapper>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('livewire:initialized', () => {
+        // assets line chart
+        const ctxAssets = document.getElementById('assetsLineChart');
+        if (ctxAssets) {
+            new Chart(ctxAssets, {
+                type: 'line',
+                data: {
+                    labels: @json($chartLabels),
+                    datasets: [{
+                        label: 'Нові активи',
+                        data: @json($assetsChartData),
+                        backgroundColor: 'rgba(192, 132, 252, 0.1)', // fuchsia-400 with opacity
+                        borderColor: 'rgba(192, 132, 252, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: 'rgba(192, 132, 252, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0, color: '#9ca3af' }, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+                        x: { ticks: { color: '#9ca3af' }, grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // equipment line chart
+        const ctxEquipment = document.getElementById('equipmentLineChart');
+        if (ctxEquipment) {
+            new Chart(ctxEquipment, {
+                type: 'line',
+                data: {
+                    labels: @json($chartLabels),
+                    datasets: [{
+                        label: 'Нове обладнання',
+                        data: @json($equipmentChartData),
+                        backgroundColor: 'rgba(56, 189, 248, 0.1)', // sky-400 with opacity
+                        borderColor: 'rgba(56, 189, 248, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: 'rgba(56, 189, 248, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0, color: '#9ca3af' }, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+                        x: { ticks: { color: '#9ca3af' }, grid: { display: false } }
+                    }
+                }
+            });
+        }
+    });
+</script>
 </div>

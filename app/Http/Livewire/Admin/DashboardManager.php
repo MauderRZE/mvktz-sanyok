@@ -83,6 +83,28 @@ class DashboardManager extends Component
         $totalLVM = LowValueMaterial::count();
         $lvmCountSum = LowValueMaterial::sum('count');
 
+        // Дані для графіків (нове обладнання та нові активи за останні 6 місяців)
+        $chartLabels = [];
+        $chartData = []; // залишено для сумісності, якщо потрібно
+        $assetsChartData = [];
+        $equipmentChartData = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $chartLabels[] = $date->format('m.Y');
+            
+            $chartData[] = EquipmentMovement::whereMonth('action_date', $date->month)
+                ->whereYear('action_date', $date->year)
+                ->count();
+                
+            $assetsChartData[] = Asset::whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->count();
+                
+            $equipmentChartData[] = Equipment::whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->count();
+        }
+
         return view('livewire.admin.dashboard-manager', [
             'stats' => [
                 'totalEquipment' => $totalEquipment,
@@ -116,6 +138,10 @@ class DashboardManager extends Component
                 'maintenanceActive' => $maintenanceActive,
                 'maintenanceCompleted' => $maintenanceCompleted,
             ],
+            'chartLabels' => $chartLabels,
+            'chartData' => $chartData,
+            'assetsChartData' => $assetsChartData,
+            'equipmentChartData' => $equipmentChartData,
             'recentMaintenance' => $recentMaintenance
         ]);
     }
