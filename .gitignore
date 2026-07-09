@@ -18,3 +18,11 @@ yarn-error.log
 *.sql.gz
 backups/scripts/backup.sh
 *.log
+
+# AI Assistants
+/.agents
+.cursorrules
+.cursor/
+/.gemini
+.claude.md
+.claude/
