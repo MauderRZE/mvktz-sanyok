@@ -13,6 +13,7 @@ use App\Models\Location;
 use App\Models\LocationHolder;
 use App\Models\LowValueMaterial;
 use App\Models\LowValueWriteOffAct;
+use App\Models\EquipmentCategory;
 use App\Livewire\Forms\AssetForm;
 
 #[Layout('layouts.admin')]
@@ -40,6 +41,7 @@ class AssetManager extends Component
     public $filterHolder = [];
     public $filterModel = [];
     public $filterNetwork = [];
+    public $filterCategory = [];
 
     public function updatingSearch()
     {
@@ -60,6 +62,7 @@ class AssetManager extends Component
     public function updatingFilterHolder() { $this->resetPage(); }
     public function updatingFilterModel() { $this->resetPage(); }
     public function updatingFilterNetwork() { $this->resetPage(); }
+    public function updatingFilterCategory() { $this->resetPage(); }
 
     public function updatedFormBaseComponentId($value)
     {
@@ -75,6 +78,7 @@ class AssetManager extends Component
         $this->filterHolder = [];
         $this->filterModel = [];
         $this->filterNetwork = [];
+        $this->filterCategory = [];
         $this->resetPage();
     }
 
@@ -185,9 +189,33 @@ class AssetManager extends Component
                 $q->whereIn('model_id', $this->filterModel);
             })
             ->when(!empty($this->filterNetwork), function($q) {
-                $q->whereIn('has_network', $this->filterNetwork);
+                $wantsYes = in_array(1, $this->filterNetwork) || in_array('1', $this->filterNetwork, true);
+                $wantsNo = in_array(0, $this->filterNetwork) || in_array('0', $this->filterNetwork, true);
+                
+                if ($wantsYes && !$wantsNo) {
+                    $q->where(function ($sub) {
+                        $sub->whereNotNull('ip_address')->where('ip_address', '!=', '')
+                            ->orWhereNotNull('mac_address')->where('mac_address', '!=', '')
+                            ->orWhereNotNull('hostname')->where('hostname', '!=', '');
+                    });
+                } elseif ($wantsNo && !$wantsYes) {
+                    $q->where(function ($sub) {
+                        $sub->where(function($s) {
+                            $s->whereNull('ip_address')->orWhere('ip_address', '');
+                        })->where(function($s) {
+                            $s->whereNull('mac_address')->orWhere('mac_address', '');
+                        })->where(function($s) {
+                            $s->whereNull('hostname')->orWhere('hostname', '');
+                        });
+                    });
+                }
             })
-            ->when(empty($this->search) && empty($this->filterStatus) && empty($this->filterBaseComponent) && empty($this->filterLocation) && empty($this->filterHolder) && empty($this->filterModel) && empty($this->filterNetwork), function($q) {
+            ->when(!empty($this->filterCategory), function($q) {
+                $q->whereHas('componentType', function($subQ) {
+                    $subQ->whereIn('category_id', $this->filterCategory);
+                });
+            })
+            ->when(empty($this->search) && empty($this->filterStatus) && empty($this->filterBaseComponent) && empty($this->filterLocation) && empty($this->filterHolder) && empty($this->filterModel) && empty($this->filterNetwork) && empty($this->filterCategory), function($q) {
                 $q->whereNull('parent_asset_id');
             });
 
@@ -211,6 +239,7 @@ class AssetManager extends Component
 
         $data = [
             'assets' => $query->paginate(15),
+            'categoriesList' => EquipmentCategory::select('id', 'category_name')->orderBy('category_name')->get(),
             'baseComponentsList' => BaseComponent::select('id', 'component_name')->get(),
             'modelsList' => EquipmentType::with('brand:id,brandtz_name')->select('id', 'model_name', 'brand_id')->get(),
             'locationsList' => Location::select('id', 'room_number')->get(),

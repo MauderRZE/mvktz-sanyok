@@ -17,6 +17,7 @@ class AssetReportController extends Controller
         $filterHolder = $request->get('filterHolder', []);
         $filterModel = $request->get('filterModel', []);
         $filterNetwork = $request->get('filterNetwork', []);
+        $filterCategory = $request->get('filterCategory', []);
 
         $query = Asset::with([
                 'equipment', 
@@ -92,9 +93,33 @@ class AssetReportController extends Controller
                 $q->whereIn('model_id', $filterModel);
             })
             ->when(!empty($filterNetwork), function($q) use ($filterNetwork) {
-                $q->whereIn('has_network', $filterNetwork);
+                $wantsYes = in_array(1, $filterNetwork) || in_array('1', $filterNetwork, true);
+                $wantsNo = in_array(0, $filterNetwork) || in_array('0', $filterNetwork, true);
+
+                if ($wantsYes && !$wantsNo) {
+                    $q->where(function ($sub) {
+                        $sub->whereNotNull('ip_address')->where('ip_address', '!=', '')
+                            ->orWhereNotNull('mac_address')->where('mac_address', '!=', '')
+                            ->orWhereNotNull('hostname')->where('hostname', '!=', '');
+                    });
+                } elseif ($wantsNo && !$wantsYes) {
+                    $q->where(function ($sub) {
+                        $sub->where(function($s) {
+                            $s->whereNull('ip_address')->orWhere('ip_address', '');
+                        })->where(function($s) {
+                            $s->whereNull('mac_address')->orWhere('mac_address', '');
+                        })->where(function($s) {
+                            $s->whereNull('hostname')->orWhere('hostname', '');
+                        });
+                    });
+                }
             })
-            ->when(empty($search) && empty($filterStatus) && empty($filterBaseComponent) && empty($filterLocation) && empty($filterHolder) && empty($filterModel) && empty($filterNetwork), function($q) {
+            ->when(!empty($filterCategory), function($q) use ($filterCategory) {
+                $q->whereHas('componentType', function($subQ) use ($filterCategory) {
+                    $subQ->whereIn('category_id', $filterCategory);
+                });
+            })
+            ->when(empty($search) && empty($filterStatus) && empty($filterBaseComponent) && empty($filterLocation) && empty($filterHolder) && empty($filterModel) && empty($filterNetwork) && empty($filterCategory), function($q) {
                 $q->whereNull('parent_asset_id');
             });
 

@@ -23,6 +23,7 @@
                     filterHolder: $wire.filterHolder,
                     filterModel: $wire.filterModel,
                     filterNetwork: $wire.filterNetwork,
+                    filterCategory: $wire.filterCategory,
                 };
                 for (const [key, values] of Object.entries(arrays)) {
                     if (Array.isArray(values)) {
@@ -85,19 +86,28 @@
 
     {{-- Filters Bar --}}
     <x-ui.card class="p-4 space-y-4">
-        <div class="flex flex-col lg:flex-row gap-4 items-center">
-            <div class="flex-1 w-full flex gap-2">
+        <div class="flex flex-col gap-4">
+            <div class="w-full flex gap-2">
                 <div class="flex-1">
                     <x-form.search wire:model.live.debounce.300ms="search" placeholder="Пошук по всіх полях (серійний номер, IP, модель, кабінет, ПІБ, обладнання...)" />
                 </div>
-                @if($search !== '' || !empty($filterStatus) || !empty($filterBaseComponent) || !empty($filterModel) || !empty($filterLocation) || !empty($filterHolder) || !empty($filterNetwork))
+                @if($search !== '' || !empty($filterStatus) || !empty($filterCategory) || !empty($filterBaseComponent) || !empty($filterModel) || !empty($filterLocation) || !empty($filterHolder) || !empty($filterNetwork))
                     <button wire:click="resetFilters" class="px-4 py-2 bg-white/5 hover:bg-white/10 text-xs text-gray-400 hover:text-white rounded-xl border border-white/10 transition-colors shrink-0 flex items-center gap-1.5" title="Скинути всі фільтри">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                         <span>Скинути</span>
                     </button>
                 @endif
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 w-full lg:w-auto">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 w-full">
+                <x-form.multi-select label="Категорія" :selectedCount="count($filterCategory)">
+                    @foreach($categoriesList as $cat)
+                        <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
+                            <input type="checkbox" value="{{ $cat->id }}" wire:model.live="filterCategory" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                            <span>{{ $cat->category_name }}</span>
+                        </label>
+                    @endforeach
+                </x-form.multi-select>
+
                 <x-form.multi-select label="Тип компонента" :selectedCount="count($filterBaseComponent)">
                     @foreach($baseComponentsList as $bc)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
