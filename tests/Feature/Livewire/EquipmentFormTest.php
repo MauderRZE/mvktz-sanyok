@@ -24,14 +24,14 @@ class EquipmentFormTest extends TestCase
         Livewire::test(EquipmentForm::class)
             ->call('create')
             ->set('form.inv_number', 999002)
-            ->set('form.account_name', 'Laptop HP')
+            ->set('form.account_name', 'Test Equipment')
             ->set('form.status', 'В експлуатації')
             ->call('store')
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('equipment', [
             'inv_number' => 999002,
-            'account_name' => 'Laptop HP',
+            'account_name' => 'Test Equipment',
             'status' => 'В експлуатації',
         ]);
     }
@@ -44,5 +44,27 @@ class EquipmentFormTest extends TestCase
             ->set('form.account_name', '') // required
             ->call('store')
             ->assertHasErrors(['form.inv_number', 'form.account_name']);
+    }
+
+    public function test_can_edit_equipment()
+    {
+        $equipment = Equipment::create([
+            'inv_number' => 999002,
+            'account_name' => 'Test Equipment',
+            'status' => 'В експлуатації',
+        ]);
+
+        Livewire::test(EquipmentForm::class)
+            ->call('edit', $equipment->id)
+            ->assertSet('form.inv_number', 999002)
+            ->assertSet('form.account_name', 'Test Equipment')
+            ->set('form.account_name', 'Test Equipment Updated')
+            ->call('store')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('equipment', [
+            'id' => $equipment->id,
+            'account_name' => 'Test Equipment Updated',
+        ]);
     }
 }
