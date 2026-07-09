@@ -24,14 +24,14 @@ class ItemPropertyManager extends Component
 
     public function mount()
     {
-        $this->assets = Asset::with('componentType')->get();
+        $this->assets = Asset::with(['componentType', 'equipment'])->get();
         $this->materials = LowValueMaterial::all();
         $this->dictAttributes = AttributeDictionary::orderBy('name')->get();
     }
 
     public function render()
     {
-        $query = ItemProperty::with(['asset.componentType', 'nomenclature', 'attribute'])
+        $query = ItemProperty::with(['asset.componentType', 'asset.equipment', 'nomenclature', 'attribute'])
             ->when($this->search, function($q) {
                 $search = '%' . $this->search . '%';
                 $q->where(function($sub) use ($search) {

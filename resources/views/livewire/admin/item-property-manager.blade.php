@@ -39,7 +39,7 @@
         <div class="mt-4 p-4 border border-white/10 rounded-lg bg-white/5 space-y-4">
             <div class="text-sm text-gray-400">Прив'яжіть до активу АБО до матеріалу:</div>
             <x-form.select label="Прив'язка до Обладнання (Assets)" model="form.asset_id" :options="['' => 'Не вибрано'] + $assets->mapWithKeys(function($item) {
-                return [$item->id => $item->componentType->component_name . ' (Inv: ' . ($item->inv_number ?? 'Немає') . ')'];
+                return [$item->id => $item->componentType->component_name . ' (' . ($item->equipment->inv_number ?? 'Немає') . ')'];
             })->toArray()" />
             
             <x-form.select label="Прив'язка до Матеріалу (МШП)" model="form.nomenclature_id" :options="['' => 'Не вибрано'] + $materials->mapWithKeys(function($item) {
@@ -64,7 +64,7 @@
             <x-table.td align="left" muted>#{{ $prop->id }}</x-table.td>
             <x-table.td align="left" primary>
                 @if($prop->asset_id)
-                    <span class="text-brand-400">Обладнання:</span> {{ $prop->asset->componentType->component_name ?? 'N/A' }}
+                    <span class="text-brand-400">Обладнання:</span> {{ $prop->asset->componentType->component_name ?? 'N/A' }} (Inv: {{ $prop->asset->equipment->inv_number ?? 'Немає' }})
                 @elseif($prop->nomenclature_id)
                     <span class="text-orange-400">Матеріал:</span> {{ $prop->nomenclature->material_account_name ?? 'N/A' }}
                 @else
