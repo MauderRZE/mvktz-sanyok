@@ -20,11 +20,13 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:w-auto">
                 <x-form.multi-select label="Сторінка" :selectedCount="count($filterPageType)">
                     @foreach([
-                        'Авторизація (Login)', 'Обладнання (Equipment)', 'Комплектуючі (Components)',
-                        'Ліцензії ПЗ (Software)', 'Малоцінка (Low Value)', 'Співробітники (Employees)',
-                        'Журнал переміщень (Movements)', 'Журнал ТО (Maintenance)', 'Договори (Contracts)',
-                        'Постачальники (Suppliers)', 'Користувачі (Users)', 'помилку сайту (System Errors)',
-                        'Довідники (Dictionaries)', 'Інше (Other)'
+                        'Авторизація (Login)', 'Дашборд', 'Обладнання', 'Активи', 'Ліцензії ПЗ',
+                        'Малоцінні матеріали', 'Співробітники', 'Переміщення', 'Журнал ТО',
+                        'Договори', 'Постачальники', 'Категорії', 'Типи техніки', 'Базові компоненти',
+                        'Кабінети та локації', 'Бренди', 'Відділи', 'Організації', 'Акти списання техніки',
+                        'Акти списання малоцінки', 'Словник атрибутів', 'Типи постачальників',
+                        'Програмне забезпечення', 'Телефони співробітників', 'Динамічні властивості',
+                        'Користувачі', 'Помилки сайту', 'Історія та Аудит', 'Інше'
                     ] as $page)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $page }}" wire:model.live="filterPageType" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
@@ -65,19 +67,34 @@
                 <x-form.select label="Сторінка / Місце" model="page_type">
                     <option value="">Оберіть сторінку...</option>
                     <option value="Авторизація (Login)">Авторизація (Login)</option>
-                    <option value="Обладнання (Equipment)">Обладнання (Equipment)</option>
-                    <option value="Комплектуючі (Components)">Комплектуючі (Components)</option>
-                    <option value="Ліцензії ПЗ (Software)">Ліцензії ПЗ (Software)</option>
-                    <option value="Малоцінка (Low Value)">Малоцінка (Low Value)</option>
-                    <option value="Співробітники (Employees)">Співробітники (Employees)</option>
-                    <option value="Журнал переміщень (Movements)">Журнал переміщень (Movements)</option>
-                    <option value="Журнал ТО (Maintenance)">Журнал ТО (Maintenance)</option>
-                    <option value="Договори (Contracts)">Договори (Contracts)</option>
-                    <option value="Постачальники (Suppliers)">Постачальники (Suppliers)</option>
-                    <option value="Користувачі (Users)">Користувачі (Users)</option>
-                    <option value="помилку сайту (System Errors)">помилку сайту (System Errors)</option>
-                    <option value="Довідники (Dictionaries)">Довідники (Dictionaries)</option>
-                    <option value="Інше (Other)">Інше (Other)</option>
+                    <option value="Дашборд">Дашборд</option>
+                    <option value="Обладнання">Обладнання</option>
+                    <option value="Активи">Активи</option>
+                    <option value="Ліцензії ПЗ">Ліцензії ПЗ</option>
+                    <option value="Малоцінні матеріали">Малоцінні матеріали</option>
+                    <option value="Співробітники">Співробітники</option>
+                    <option value="Переміщення">Переміщення</option>
+                    <option value="Журнал ТО">Журнал ТО</option>
+                    <option value="Договори">Договори</option>
+                    <option value="Постачальники">Постачальники</option>
+                    <option value="Категорії">Категорії</option>
+                    <option value="Типи техніки">Типи техніки</option>
+                    <option value="Базові компоненти">Базові компоненти</option>
+                    <option value="Кабінети та локації">Кабінети та локації</option>
+                    <option value="Бренди">Бренди</option>
+                    <option value="Відділи">Відділи</option>
+                    <option value="Організації">Організації</option>
+                    <option value="Акти списання техніки">Акти списання техніки</option>
+                    <option value="Акти списання малоцінки">Акти списання малоцінки</option>
+                    <option value="Словник атрибутів">Словник атрибутів</option>
+                    <option value="Типи постачальників">Типи постачальників</option>
+                    <option value="Програмне забезпечення">Програмне забезпечення</option>
+                    <option value="Телефони співробітників">Телефони співробітників</option>
+                    <option value="Динамічні властивості">Динамічні властивості</option>
+                    <option value="Користувачі">Користувачі</option>
+                    <option value="Помилки сайту">Помилки сайту</option>
+                    <option value="Історія та Аудит">Історія та Аудит</option>
+                    <option value="Інше">Інше</option>
                 </x-form.select>
             </div>
             <div>
