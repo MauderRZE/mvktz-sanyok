@@ -21,7 +21,7 @@ class TypeTest extends TestCase
 
     public function test_can_create_equipment_type()
     {
-        $brand = BrandTz::create([
+        $brand = BrandTz::firstOrCreate([
             'brandtz_name' => 'Dell'
         ]);
 
