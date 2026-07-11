@@ -39,11 +39,11 @@ class AssetReportController extends Controller
             ->when($search, function($q) use ($search) {
                 $q->where(function($q) use ($search) {
                     $searchLike = '%' . $search . '%';
-                    $q->where('serial_number', 'like', $searchLike)
-                      ->orWhere('notes', 'like', $searchLike)
-                      ->orWhere('ip_address', 'like', $searchLike)
-                      ->orWhere('mac_address', 'like', $searchLike)
-                      ->orWhere('hostname', 'like', $searchLike)
+                    $q->where('assets.serial_number', 'like', $searchLike)
+                      ->orWhere('assets.notes', 'like', $searchLike)
+                      ->orWhere('assets.ip_address', 'like', $searchLike)
+                      ->orWhere('assets.mac_address', 'like', $searchLike)
+                      ->orWhere('assets.hostname', 'like', $searchLike)
                       ->orWhereHas('equipment', function($eq) use ($searchLike) {
                           $eq->where('inv_number', 'like', $searchLike)
                              ->orWhere('account_name', 'like', $searchLike);
@@ -78,19 +78,19 @@ class AssetReportController extends Controller
                 });
             })
             ->when(!empty($filterStatus), function($q) use ($filterStatus) {
-                $q->whereIn('status', $filterStatus);
+                $q->whereIn('assets.status', $filterStatus);
             })
             ->when(!empty($filterBaseComponent), function($q) use ($filterBaseComponent) {
-                $q->whereIn('base_component_id', $filterBaseComponent);
+                $q->whereIn('assets.base_component_id', $filterBaseComponent);
             })
             ->when(!empty($filterLocation), function($q) use ($filterLocation) {
-                $q->whereIn('current_loc_id', $filterLocation);
+                $q->whereIn('assets.current_loc_id', $filterLocation);
             })
             ->when(!empty($filterHolder), function($q) use ($filterHolder) {
-                $q->whereIn('current_holder_id', $filterHolder);
+                $q->whereIn('assets.current_holder_id', $filterHolder);
             })
             ->when(!empty($filterModel), function($q) use ($filterModel) {
-                $q->whereIn('model_id', $filterModel);
+                $q->whereIn('assets.model_id', $filterModel);
             })
             ->when(!empty($filterNetwork), function($q) use ($filterNetwork) {
                 $wantsYes = in_array(1, $filterNetwork) || in_array('1', $filterNetwork, true);
@@ -98,18 +98,18 @@ class AssetReportController extends Controller
 
                 if ($wantsYes && !$wantsNo) {
                     $q->where(function ($sub) {
-                        $sub->whereNotNull('ip_address')->where('ip_address', '!=', '')
-                            ->orWhereNotNull('mac_address')->where('mac_address', '!=', '')
-                            ->orWhereNotNull('hostname')->where('hostname', '!=', '');
+                        $sub->whereNotNull('assets.ip_address')->where('assets.ip_address', '!=', '')
+                            ->orWhereNotNull('assets.mac_address')->where('assets.mac_address', '!=', '')
+                            ->orWhereNotNull('assets.hostname')->where('assets.hostname', '!=', '');
                     });
                 } elseif ($wantsNo && !$wantsYes) {
                     $q->where(function ($sub) {
                         $sub->where(function($s) {
-                            $s->whereNull('ip_address')->orWhere('ip_address', '');
+                            $s->whereNull('assets.ip_address')->orWhere('assets.ip_address', '');
                         })->where(function($s) {
-                            $s->whereNull('mac_address')->orWhere('mac_address', '');
+                            $s->whereNull('assets.mac_address')->orWhere('assets.mac_address', '');
                         })->where(function($s) {
-                            $s->whereNull('hostname')->orWhere('hostname', '');
+                            $s->whereNull('assets.hostname')->orWhere('assets.hostname', '');
                         });
                     });
                 }
@@ -120,7 +120,7 @@ class AssetReportController extends Controller
                 });
             })
             ->when(empty($search) && empty($filterStatus) && empty($filterBaseComponent) && empty($filterLocation) && empty($filterHolder) && empty($filterModel) && empty($filterNetwork) && empty($filterCategory), function($q) {
-                $q->whereNull('parent_asset_id');
+                $q->whereNull('assets.parent_asset_id');
             });
 
         $assets = $query->orderBy('id', 'desc')->get();

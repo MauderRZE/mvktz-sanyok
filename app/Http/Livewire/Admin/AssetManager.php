@@ -135,11 +135,11 @@ class AssetManager extends Component
         $query->when($this->search, function($q) {
                 $q->where(function($q) {
                     $search = '%' . $this->search . '%';
-                    $q->where('serial_number', 'like', $search)
-                      ->orWhere('notes', 'like', $search)
-                      ->orWhere('ip_address', 'like', $search)
-                      ->orWhere('mac_address', 'like', $search)
-                      ->orWhere('hostname', 'like', $search)
+                    $q->where('assets.serial_number', 'like', $search)
+                      ->orWhere('assets.notes', 'like', $search)
+                      ->orWhere('assets.ip_address', 'like', $search)
+                      ->orWhere('assets.mac_address', 'like', $search)
+                      ->orWhere('assets.hostname', 'like', $search)
                       ->orWhereHas('equipment', function($eq) use ($search) {
                           $eq->where('inv_number', 'like', $search)
                              ->orWhere('account_name', 'like', $search);
@@ -174,19 +174,19 @@ class AssetManager extends Component
                 });
             })
             ->when(!empty($this->filterStatus), function($q) {
-                $q->whereIn('status', $this->filterStatus);
+                $q->whereIn('assets.status', $this->filterStatus);
             })
             ->when(!empty($this->filterBaseComponent), function($q) {
-                $q->whereIn('base_component_id', $this->filterBaseComponent);
+                $q->whereIn('assets.base_component_id', $this->filterBaseComponent);
             })
             ->when(!empty($this->filterLocation), function($q) {
-                $q->whereIn('current_loc_id', $this->filterLocation);
+                $q->whereIn('assets.current_loc_id', $this->filterLocation);
             })
             ->when(!empty($this->filterHolder), function($q) {
-                $q->whereIn('current_holder_id', $this->filterHolder);
+                $q->whereIn('assets.current_holder_id', $this->filterHolder);
             })
             ->when(!empty($this->filterModel), function($q) {
-                $q->whereIn('model_id', $this->filterModel);
+                $q->whereIn('assets.model_id', $this->filterModel);
             })
             ->when(!empty($this->filterNetwork), function($q) {
                 $wantsYes = in_array(1, $this->filterNetwork) || in_array('1', $this->filterNetwork, true);
@@ -194,18 +194,18 @@ class AssetManager extends Component
                 
                 if ($wantsYes && !$wantsNo) {
                     $q->where(function ($sub) {
-                        $sub->whereNotNull('ip_address')->where('ip_address', '!=', '')
-                            ->orWhereNotNull('mac_address')->where('mac_address', '!=', '')
-                            ->orWhereNotNull('hostname')->where('hostname', '!=', '');
+                        $sub->whereNotNull('assets.ip_address')->where('assets.ip_address', '!=', '')
+                            ->orWhereNotNull('assets.mac_address')->where('assets.mac_address', '!=', '')
+                            ->orWhereNotNull('assets.hostname')->where('assets.hostname', '!=', '');
                     });
                 } elseif ($wantsNo && !$wantsYes) {
                     $q->where(function ($sub) {
                         $sub->where(function($s) {
-                            $s->whereNull('ip_address')->orWhere('ip_address', '');
+                            $s->whereNull('assets.ip_address')->orWhere('assets.ip_address', '');
                         })->where(function($s) {
-                            $s->whereNull('mac_address')->orWhere('mac_address', '');
+                            $s->whereNull('assets.mac_address')->orWhere('assets.mac_address', '');
                         })->where(function($s) {
-                            $s->whereNull('hostname')->orWhere('hostname', '');
+                            $s->whereNull('assets.hostname')->orWhere('assets.hostname', '');
                         });
                     });
                 }
@@ -216,7 +216,7 @@ class AssetManager extends Component
                 });
             })
             ->when(empty($this->search) && empty($this->filterStatus) && empty($this->filterBaseComponent) && empty($this->filterLocation) && empty($this->filterHolder) && empty($this->filterModel) && empty($this->filterNetwork) && empty($this->filterCategory), function($q) {
-                $q->whereNull('parent_asset_id');
+                $q->whereNull('assets.parent_asset_id');
             });
 
         if ($this->sortField === 'equipment') {
