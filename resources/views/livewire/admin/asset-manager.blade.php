@@ -213,7 +213,7 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                 <div>
-                    <x-form.select label="Модель" model="form.model_id" placeholder="Оберіть модель..." :options="$modOptions" />
+                    <x-form.select label="Модель" model="form.model_id" placeholder="Оберіть модель..." :options="$modOptions" :nullable="true" />
                 </div>
                 <div>
                     @if($isSystemUnit)
@@ -221,7 +221,7 @@
                             <x-form.select label="Батьківський актив" model="form.parent_asset_id" placeholder="Не застосовується" :options="[]" />
                         </div>
                     @else
-                        <x-form.select label="Батьківський актив" model="form.parent_asset_id" placeholder="Немає (Основний актив)" :options="$paOptions" />
+                        <x-form.select label="Батьківський актив" model="form.parent_asset_id" placeholder="Немає (Основний актив)" :options="$paOptions" :nullable="true" />
                     @endif
                 </div>
             </div>
@@ -237,19 +237,19 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                 <div>
-                    <x-form.select label="Локація (Кабінет)" model="form.current_loc_id" placeholder="Не задано..." :options="$locOptions" />
+                    <x-form.select label="Локація (Кабінет)" model="form.current_loc_id" placeholder="Не задано..." :options="$locOptions" :nullable="true" />
                 </div>
                 <div>
-                    <x-form.select label="Відповідальний" model="form.current_holder_id" placeholder="Не задано..." :options="$holdersOptions" />
+                    <x-form.select label="Відповідальний" model="form.current_holder_id" placeholder="Не задано..." :options="$holdersOptions" :nullable="true" />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                 <div>
-                    <x-form.select label="МШП (Малоцінка)" model="form.nomenclature_id" placeholder="Не прив'язано..." :options="$nomOptions" />
+                    <x-form.select label="МШП (Малоцінка)" model="form.nomenclature_id" placeholder="Не прив'язано..." :options="$nomOptions" :nullable="true" />
                 </div>
                 <div>
-                    <x-form.select label="Акт списання" model="form.write_off_act_id" placeholder="Не списано..." :options="$actOptions" />
+                    <x-form.select label="Акт списання" model="form.write_off_act_id" placeholder="Не списано..." :options="$actOptions" :nullable="true" />
                 </div>
             </div>
 

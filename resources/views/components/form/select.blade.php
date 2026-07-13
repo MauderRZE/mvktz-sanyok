@@ -1,4 +1,4 @@
-@props(['label', 'model', 'live' => false, 'options' => [], 'placeholder' => 'Оберіть...'])
+@props(['label', 'model', 'live' => false, 'options' => [], 'placeholder' => 'Оберіть...', 'nullable' => false])
 
 <div wire:key="select-wrapper-{{ $model }}" x-data="{
     open: false,
@@ -41,6 +41,9 @@
     
     <!-- Hidden select for Livewire data binding and backend integration -->
     <select x-ref="realSelect" wire:model{{ $live ? '.live' : '' }}="{{ $model }}" class="hidden">
+        @if($nullable)
+            <option value="">{{ $placeholder }}</option>
+        @endif
         @if(!empty($options))
             @foreach($options as $val => $lbl)
                 <option value="{{ $val }}">{{ $lbl }}</option>
