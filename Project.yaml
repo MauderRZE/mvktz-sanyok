@@ -231,7 +231,7 @@ database:
       sent_date: date
       return_date: date NULL
       issue_description: text NULL
-      status: enum('В ремонті','Повернено') DEFAULT 'В ремонті'
+      status: enum('В ремонті','Відремонтовано','Неможливо відремонтувати') DEFAULT 'В ремонті'
     relations:
       assets_id: belongsTo(Asset)
   access_logs:

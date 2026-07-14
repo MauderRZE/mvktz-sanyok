@@ -89,7 +89,7 @@
         <div class="flex flex-col gap-4">
             <div class="w-full flex gap-2">
                 <div class="flex-1">
-                    <x-form.search wire:model.live.debounce.300ms="search" placeholder="Пошук по всіх полях (серійний номер, IP, модель, кабінет, ПІБ, обладнання...)" />
+                    <x-form.search wire:model.blur="search" x-on:keydown.enter="$el.blur()" placeholder="Пошук по всіх полях (серійний номер, IP, модель, кабінет, ПІБ, обладнання...)" />
                 </div>
                 @if($search !== '' || !empty($filterStatus) || !empty($filterCategory) || !empty($filterBaseComponent) || !empty($filterModel) || !empty($filterLocation) || !empty($filterHolder) || !empty($filterNetwork))
                     <button wire:click="resetFilters" class="px-4 py-2 bg-white/5 hover:bg-white/10 text-xs text-gray-400 hover:text-white rounded-xl border border-white/10 transition-colors shrink-0 flex items-center gap-1.5" title="Скинути всі фільтри">

@@ -351,7 +351,7 @@
 | **`sent_date`** | `DATE` | NOT NULL | Дата відправки пристрою в ремонт. |
 | **`return_date`** | `DATE` | DEFAULT NULL | Дата повернення з ремонту. |
 | **`issue_description`**| `TEXT` | DEFAULT NULL | Опис несправності чи поломки. |
-| **`status`** | `ENUM` | DEFAULT 'В ремонті' | Статус ремонту: 'В ремонті' або 'Повернено'. |
+| **`status`** | `ENUM` | DEFAULT 'В ремонті' | Статус ремонту: 'В ремонті', 'Відремонтовано' або 'Неможливо відремонтувати'. |
 
 ### Зв'язки та обмеження (Foreign Keys)
 * `fk_repairs_assets_id` $\rightarrow$ `assets`(`id`) `ON DELETE RESTRICT ON UPDATE CASCADE`
