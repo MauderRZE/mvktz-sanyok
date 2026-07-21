@@ -2,12 +2,11 @@
 
 namespace Tests\Feature\Livewire;
 
-use Tests\TestCase;
-use Livewire\Livewire;
 use App\Http\Livewire\Admin\ContractManager;
-use App\Models\Contract;
 use App\Models\Supplier;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Livewire\Livewire;
+use Tests\TestCase;
 
 class ContractTest extends TestCase
 {
@@ -22,7 +21,7 @@ class ContractTest extends TestCase
     public function test_can_create_contract()
     {
         $supplier = Supplier::create([
-            'supplier_name' => 'Test Supplier'
+            'supplier_name' => 'Test Supplier',
         ]);
 
         Livewire::test(ContractManager::class)
@@ -45,5 +44,20 @@ class ContractTest extends TestCase
             ->call('create')
             ->call('store')
             ->assertHasErrors(['form.contract_number', 'form.contract_date', 'form.supplier_id']);
+    }
+
+    public function test_validation_fails_on_invalid_year()
+    {
+        $supplier = Supplier::create([
+            'supplier_name' => 'Test Supplier 2',
+        ]);
+
+        Livewire::test(ContractManager::class)
+            ->call('create')
+            ->set('form.contract_number', '65')
+            ->set('form.contract_date', '20218-02-07')
+            ->set('form.supplier_id', $supplier->id)
+            ->call('store')
+            ->assertHasErrors(['form.contract_date']);
     }
 }

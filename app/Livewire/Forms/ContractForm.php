@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Forms;
 
-use Livewire\Form;
-use Livewire\Attributes\Validate;
 use App\Models\Contract;
+use Livewire\Attributes\Validate;
+use Livewire\Form;
 
 class ContractForm extends Form
 {
@@ -13,7 +13,7 @@ class ContractForm extends Form
     #[Validate('required')]
     public string $contract_number = '';
 
-    #[Validate('required|date')]
+    #[Validate('required|date_format:Y-m-d|after_or_equal:1900-01-01|before_or_equal:2099-12-31')]
     public string $contract_date = '';
 
     #[Validate('required|exists:suppliers,id')]
@@ -44,7 +44,7 @@ class ContractForm extends Form
 
         $isUpdate = $this->contractId !== null;
         $this->reset();
-        
+
         return $isUpdate;
     }
 }

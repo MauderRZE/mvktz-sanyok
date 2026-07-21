@@ -31,9 +31,9 @@ class DashboardStatsService
         return Cache::remember('dashboard_stats', now()->addMinutes($this->cacheTtl), function () {
             return [
                 'totalEquipment' => Equipment::count(),
-                'equipmentInUse' => Equipment::where('status', 'в експлуатації')->count(),
-                'equipmentStored' => Equipment::where('status', 'в аренді')->count(),
-                'equipmentWrittenOff' => Equipment::where('status', 'списано')->count(),
+                'equipmentInUse' => Equipment::whereIn('status', ['в експлуатації', 'В експлуатації'])->count(),
+                'equipmentStored' => Equipment::whereIn('status', ['На складі', 'на складі', 'в аренді', 'В аренді'])->count(),
+                'equipmentWrittenOff' => Equipment::whereIn('status', ['списано', 'Списано'])->count(),
 
                 'totalAssets' => Asset::count(),
                 'assetsWithSerial' => Asset::whereNotNull('serial_number')->where('serial_number', '!=', '')->count(),

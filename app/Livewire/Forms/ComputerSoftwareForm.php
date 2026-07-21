@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Forms;
 
-use Livewire\Form;
-use Livewire\Attributes\Validate;
 use App\Models\ComputerSoftware;
+use Livewire\Attributes\Validate;
+use Livewire\Form;
 
 class ComputerSoftwareForm extends Form
 {
@@ -22,7 +22,7 @@ class ComputerSoftwareForm extends Form
     #[Validate('boolean')]
     public bool $is_licensed = false;
 
-    #[Validate('nullable|exists:software_licenses,id')]
+    #[Validate('nullable|exists:licenses,id')]
     public ?int $license_id = null;
 
     public function setSoftware(ComputerSoftware $sw)
@@ -31,7 +31,7 @@ class ComputerSoftwareForm extends Form
         $this->computer_id = $sw->computer_id;
         $this->software_name = $sw->software_name;
         $this->version = $sw->version;
-        $this->is_licensed = (bool)$sw->is_licensed;
+        $this->is_licensed = (bool) $sw->is_licensed;
         $this->license_id = $sw->license_id;
     }
 
@@ -49,7 +49,7 @@ class ComputerSoftwareForm extends Form
 
         $isUpdate = $this->softwareId !== null;
         $this->reset();
-        
+
         return $isUpdate;
     }
 }

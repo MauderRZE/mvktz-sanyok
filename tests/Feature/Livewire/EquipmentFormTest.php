@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\Livewire;
 
-use Tests\TestCase;
-use Livewire\Livewire;
 use App\Http\Livewire\Admin\Equipment\EquipmentForm;
 use App\Models\Equipment;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Livewire\Livewire;
+use Tests\TestCase;
 
 class EquipmentFormTest extends TestCase
 {
@@ -65,6 +65,43 @@ class EquipmentFormTest extends TestCase
         $this->assertDatabaseHas('equipment', [
             'id' => $equipment->id,
             'account_name' => 'Test Equipment Updated',
+        ]);
+    }
+
+    public function test_can_set_equipment_status_to_on_warehouse()
+    {
+        $equipment = Equipment::create([
+            'inv_number' => 999003,
+            'account_name' => 'Warehouse Equipment',
+            'status' => 'В експлуатації',
+        ]);
+
+        Livewire::test(EquipmentForm::class)
+            ->call('edit', $equipment->id)
+            ->set('form.status', 'На складі')
+            ->call('store')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('equipment', [
+            'id' => $equipment->id,
+            'status' => 'На складі',
+        ]);
+    }
+
+    public function test_can_create_equipment_with_string_inv_number()
+    {
+        Livewire::test(EquipmentForm::class)
+            ->call('create')
+            ->set('form.inv_number', 'БН')
+            ->set('form.account_name', 'Склад')
+            ->set('form.status', 'В експлуатації')
+            ->call('store')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('equipment', [
+            'inv_number' => 'БН',
+            'account_name' => 'Склад',
+            'status' => 'В експлуатації',
         ]);
     }
 }
