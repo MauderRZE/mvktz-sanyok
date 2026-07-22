@@ -14,12 +14,6 @@ class ComputerSoftwareManager extends Component
 {
     public ComputerSoftwareForm $form;
 
-    public $software;
-
-    public $computers;
-
-    public $licenses;
-
     public $isOpen = false;
 
     public $search = '';
@@ -27,12 +21,6 @@ class ComputerSoftwareManager extends Component
     public $filterSoftwareName = [];
 
     public $filterIsLicensed = '';
-
-    public function mount()
-    {
-        $this->computers = Asset::with(['componentType', 'equipment'])->get();
-        $this->licenses = SoftwareLicense::all();
-    }
 
     public function render()
     {
@@ -58,9 +46,12 @@ class ComputerSoftwareManager extends Component
             })
             ->orderBy('id', 'desc');
 
-        $this->software = $query->get();
+        $software = $query->get();
 
-        return view('livewire.admin.computer-software-manager');
+        $computers = $this->isOpen ? Asset::with(['componentType', 'equipment'])->get() : collect();
+        $licenses = $this->isOpen ? SoftwareLicense::all() : collect();
+
+        return view('livewire.admin.computer-software-manager', compact('software', 'computers', 'licenses'));
     }
 
     public function resetFilters()

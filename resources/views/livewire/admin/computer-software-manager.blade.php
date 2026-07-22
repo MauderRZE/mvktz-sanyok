@@ -1,12 +1,12 @@
 <div>
 @php
-    $computersOptions = $computers->mapWithKeys(fn($item) => [
+    $computersOptions = isset($computers) ? $computers->mapWithKeys(fn($item) => [
         $item->id => ($item->componentType->component_name ?? 'Асет') . ' (Inv: ' . ($item->equipment?->inv_number ?? 'Немає') . ')'
-    ])->toArray();
+    ])->toArray() : [];
 
-    $licensesOptions = $licenses->mapWithKeys(fn($lic) => [
+    $licensesOptions = isset($licenses) ? $licenses->mapWithKeys(fn($lic) => [
         $lic->id => $lic->license_name
-    ])->toArray();
+    ])->toArray() : [];
 @endphp
 <x-ui.page-wrapper>
     <x-ui.flash />
