@@ -5,6 +5,7 @@ namespace Tests\Feature\Livewire;
 use App\Http\Livewire\Admin\ComputerSoftwareManager;
 use App\Models\Asset;
 use App\Models\BaseComponent;
+use App\Models\ComputerSoftware;
 use App\Models\Equipment;
 use App\Models\SoftwareLicense;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -102,5 +103,36 @@ class ComputerSoftwareTest extends TestCase
             ->set('form.software_name', '') // required
             ->call('store')
             ->assertHasErrors(['form.computer_id', 'form.software_name', 'form.version']);
+    }
+
+    public function test_displays_inventory_number_column()
+    {
+        $invNum = 'INV-998877';
+        $equipment = Equipment::create([
+            'inv_number' => $invNum,
+            'account_name' => 'PC Inv Test',
+            'status' => 'в експлуатації',
+        ]);
+
+        $baseComponent = BaseComponent::create([
+            'component_name' => 'Системний блок',
+        ]);
+
+        $asset = Asset::create([
+            'equipment_id' => $equipment->id,
+            'base_component_id' => $baseComponent->id,
+            'status' => 'Працює',
+        ]);
+
+        ComputerSoftware::create([
+            'computer_id' => $asset->id,
+            'software_name' => 'Windows',
+            'version' => '1.0',
+            'is_licensed' => true,
+        ]);
+
+        Livewire::test(ComputerSoftwareManager::class)
+            ->assertSee('Інв. №')
+            ->assertSee($invNum);
     }
 }

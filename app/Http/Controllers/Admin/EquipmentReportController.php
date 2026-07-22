@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Http\Request;
 use App\Models\Equipment;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class EquipmentReportController extends Controller
 {
@@ -25,54 +25,54 @@ class EquipmentReportController extends Controller
             'movements.asset.location',
             'movements.employee',
         ])
-        ->when($search, function ($q) use ($search) {
-            $q->where('inv_number', 'like', '%' . $search . '%')
-              ->orWhere('account_name', 'like', '%' . $search . '%');
-        })
-        ->when(!empty($filterType), function ($q) use ($filterType) {
-            $q->whereHas('assets', function ($c) use ($filterType) {
-                $c->whereIn('model_id', $filterType);
-            });
-        })
-        ->when(!empty($filterStatus), function ($q) use ($filterStatus) {
-            $q->whereIn('status', $filterStatus);
-        })
-        ->when(!empty($filterCategory), function ($q) use ($filterCategory) {
-            $q->whereHas('assets.componentType', function ($c) use ($filterCategory) {
-                $c->whereIn('category_id', $filterCategory);
-            });
-        })
-        ->when(!empty($filterLocation), function ($q) use ($filterLocation) {
-            $q->whereHas('assets', function ($c) use ($filterLocation) {
-                $c->whereIn('current_loc_id', $filterLocation);
-            });
-        })
-        ->when(!empty($filterEmployee), function ($q) use ($filterEmployee) {
-            $q->whereHas('movements', function ($m) use ($filterEmployee) {
-                $m->whereIn('employee_id', $filterEmployee);
-            });
-        })
-        ->when(!empty($filterDepartment), function ($q) use ($filterDepartment) {
-            $q->whereHas('movements.employee', function ($e) use ($filterDepartment) {
-                $e->whereIn('department_id', $filterDepartment);
-            });
-        })
-        ->when(!empty($filterOrganization), function ($q) use ($filterOrganization) {
-            $q->whereHas('assets.holder', function ($h) use ($filterOrganization) {
-                $h->whereIn('organization_id', $filterOrganization);
-            });
-        })
-        ->when(!empty($filterBrand), function ($q) use ($filterBrand) {
-            $q->whereHas('assets.model', function ($c) use ($filterBrand) {
-                $c->whereIn('brand_id', $filterBrand);
-            });
-        })
-        ->orderBy('id', 'desc')
-        ->get();
+            ->when($search, function ($q) use ($search) {
+                $q->where('inv_number', 'like', '%'.$search.'%')
+                    ->orWhere('account_name', 'like', '%'.$search.'%');
+            })
+            ->when(! empty($filterType), function ($q) use ($filterType) {
+                $q->whereHas('assets', function ($c) use ($filterType) {
+                    $c->whereIn('model_id', $filterType);
+                });
+            })
+            ->when(! empty($filterStatus), function ($q) use ($filterStatus) {
+                $q->whereIn('status', $filterStatus);
+            })
+            ->when(! empty($filterCategory), function ($q) use ($filterCategory) {
+                $q->whereHas('assets.componentType', function ($c) use ($filterCategory) {
+                    $c->whereIn('category_id', $filterCategory);
+                });
+            })
+            ->when(! empty($filterLocation), function ($q) use ($filterLocation) {
+                $q->whereHas('assets', function ($c) use ($filterLocation) {
+                    $c->whereIn('current_loc_id', $filterLocation);
+                });
+            })
+            ->when(! empty($filterEmployee), function ($q) use ($filterEmployee) {
+                $q->whereHas('movements', function ($m) use ($filterEmployee) {
+                    $m->whereIn('employee_id', $filterEmployee);
+                });
+            })
+            ->when(! empty($filterDepartment), function ($q) use ($filterDepartment) {
+                $q->whereHas('movements.employee', function ($e) use ($filterDepartment) {
+                    $e->whereIn('department_id', $filterDepartment);
+                });
+            })
+            ->when(! empty($filterOrganization), function ($q) use ($filterOrganization) {
+                $q->whereHas('assets.holder', function ($h) use ($filterOrganization) {
+                    $h->whereIn('organization_id', $filterOrganization);
+                });
+            })
+            ->when(! empty($filterBrand), function ($q) use ($filterBrand) {
+                $q->whereHas('assets.model', function ($c) use ($filterBrand) {
+                    $c->whereIn('brand_id', $filterBrand);
+                });
+            })
+            ->orderBy('inv_number', 'asc')
+            ->get();
 
         return view('admin.equipment-report', [
             'equipments' => $equipments,
-            'filters'    => $request->all(),
+            'filters' => $request->all(),
             'generatedAt' => now()->format('d.m.Y H:i'),
         ]);
     }

@@ -2,12 +2,12 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use App\Models\ComputerSoftware;
-use App\Models\Asset;
-use App\Models\SoftwareLicense;
 use App\Livewire\Forms\ComputerSoftwareForm;
+use App\Models\Asset;
+use App\Models\ComputerSoftware;
+use App\Models\SoftwareLicense;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('layouts.admin')]
 class ComputerSoftwareManager extends Component
@@ -15,11 +15,17 @@ class ComputerSoftwareManager extends Component
     public ComputerSoftwareForm $form;
 
     public $software;
-    public $computers, $licenses;
+
+    public $computers;
+
+    public $licenses;
+
     public $isOpen = false;
 
     public $search = '';
+
     public $filterSoftwareName = [];
+
     public $filterIsLicensed = '';
 
     public function mount()
@@ -30,29 +36,30 @@ class ComputerSoftwareManager extends Component
 
     public function render()
     {
-        $query = ComputerSoftware::with(['computer.componentType', 'license'])
-            ->when($this->search, function($q) {
-                $search = '%' . $this->search . '%';
-                $q->where(function($sub) use ($search) {
+        $query = ComputerSoftware::with(['computer.componentType', 'computer.equipment', 'license'])
+            ->when($this->search, function ($q) {
+                $search = '%'.$this->search.'%';
+                $q->where(function ($sub) use ($search) {
                     $sub->where('software_name', 'like', $search)
                         ->orWhere('version', 'like', $search)
-                        ->orWhereHas('computer.componentType', function($ct) use ($search) {
+                        ->orWhereHas('computer.componentType', function ($ct) use ($search) {
                             $ct->where('component_name', 'like', $search);
                         })
-                        ->orWhereHas('computer.equipment', function($eq) use ($search) {
+                        ->orWhereHas('computer.equipment', function ($eq) use ($search) {
                             $eq->where('inv_number', 'like', $search);
                         });
                 });
             })
-            ->when(!empty($this->filterSoftwareName), function($q) {
+            ->when(! empty($this->filterSoftwareName), function ($q) {
                 $q->whereIn('software_name', $this->filterSoftwareName);
             })
-            ->when($this->filterIsLicensed !== '', function($q) {
+            ->when($this->filterIsLicensed !== '', function ($q) {
                 $q->where('is_licensed', $this->filterIsLicensed);
             })
             ->orderBy('id', 'desc');
 
         $this->software = $query->get();
+
         return view('livewire.admin.computer-software-manager');
     }
 
@@ -83,7 +90,7 @@ class ComputerSoftwareManager extends Component
     {
         $isUpdate = $this->form->store();
 
-        session()->flash('message', 
+        session()->flash('message',
             $isUpdate ? 'Запис про ПЗ оновлено.' : 'Запис про ПЗ створено.');
 
         $this->closeModal();

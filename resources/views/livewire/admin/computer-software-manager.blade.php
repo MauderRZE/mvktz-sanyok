@@ -72,6 +72,7 @@
         <x-slot name="headers">
             <x-table.th align="left" width="20">ID</x-table.th>
             <x-table.th align="left">Комп'ютер</x-table.th>
+            <x-table.th align="left">Інв. №</x-table.th>
             <x-table.th align="left">Назва ПЗ</x-table.th>
             <x-table.th align="left">Версія</x-table.th>
             <x-table.th align="center">Ліцензія</x-table.th>
@@ -82,6 +83,7 @@
         <x-table.tr>
             <x-table.td align="left" muted>#{{ $sw->id }}</x-table.td>
             <x-table.td align="left" primary>{{ $sw->computer->componentType->component_name ?? 'N/A' }}</x-table.td>
+            <x-table.td align="left">{{ $sw->computer->equipment->inv_number ?? '-' }}</x-table.td>
             <x-table.td align="left" primary>{{ $sw->software_name }}</x-table.td>
             <x-table.td align="left">{{ $sw->version }}</x-table.td>
             <x-table.td align="center">
@@ -99,7 +101,7 @@
             </x-table.td>
         </x-table.tr>
         @empty
-        <x-table.empty colspan="6" />
+        <x-table.empty colspan="7" />
         @endforelse
     </x-table.wrapper>
 
@@ -109,7 +111,7 @@
         <x-table.mobile-card>
             <x-ui.text-block 
                 title="{{ $sw->software_name }} v{{ $sw->version }}" 
-                subtitle="ПК: {{ $sw->computer->componentType->component_name ?? 'N/A' }}" 
+                subtitle="ПК: {{ $sw->computer->componentType->component_name ?? 'N/A' }}{{ !empty($sw->computer->equipment->inv_number) ? ' (Інв. №' . $sw->computer->equipment->inv_number . ')' : '' }}" 
             />
             <x-ui.action-buttons id="{{ $sw->id }}" />
         </x-table.mobile-card>
