@@ -48,10 +48,25 @@ class ComputerSoftwareManager extends Component
 
         $software = $query->get();
 
-        $computers = $this->isOpen ? Asset::with(['componentType', 'equipment'])->get() : collect();
-        $licenses = $this->isOpen ? SoftwareLicense::all() : collect();
+        $computersOptions = [];
+        $licensesOptions = [];
 
-        return view('livewire.admin.computer-software-manager', compact('software', 'computers', 'licenses'));
+        if ($this->isOpen) {
+            $computersOptions = Asset::with([
+                'componentType:id,component_name',
+                'equipment:id,inv_number',
+            ])
+                ->select('id', 'base_component_id', 'equipment_id')
+                ->get()
+                ->mapWithKeys(fn ($item) => [
+                    $item->id => ($item->componentType->component_name ?? 'Асет').' (Inv: '.($item->equipment?->inv_number ?? 'Немає').')',
+                ])
+                ->toArray();
+
+            $licensesOptions = SoftwareLicense::pluck('license_name', 'id')->toArray();
+        }
+
+        return view('livewire.admin.computer-software-manager', compact('software', 'computersOptions', 'licensesOptions'));
     }
 
     public function resetFilters()
