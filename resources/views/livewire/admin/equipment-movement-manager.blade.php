@@ -105,8 +105,8 @@
                         </x-table.cell-subtext>
                     </x-table.td>
                     <x-table.td align="left">
-                        @if($m->asset && $m->asset->location)
-                            Каб. {{ $m->asset->location->room_number }}
+                        @if($m->location || ($m->asset && $m->asset->location))
+                            Каб. {{ $m->location->room_number ?? $m->asset->location->room_number }}
                             @if($m->toHolder && $m->toHolder->organization)
                                 <span class="text-xs text-gray-500">({{ $m->toHolder->organization->org_name }})</span>
                             @endif
@@ -136,7 +136,7 @@
                     <x-table.cell-subtext>Дата: {{ $m->action_date }}</x-table.cell-subtext>
                     <x-ui.text-block 
                         title="Актив: {{ $m->asset->baseComponent->component_name ?? 'Актив' }} {{ $m->asset->model->model_name ?? '' }}" 
-                        subtitle="Куди: {{ $m->asset && $m->asset->location ? 'Каб. ' . $m->asset->location->room_number : ($m->toHolder->organization->org_name ?? '—') }}" 
+                        subtitle="Куди: {{ $m->location ? 'Каб. ' . $m->location->room_number : ($m->asset && $m->asset->location ? 'Каб. ' . $m->asset->location->room_number : ($m->toHolder->organization->org_name ?? '—')) }}" 
                         subtitleClass="text-xs text-brand-400 font-medium"
                     />
                 </div>

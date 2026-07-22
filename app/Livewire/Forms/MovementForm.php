@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Forms;
 
-use Livewire\Form;
-use Livewire\Attributes\Validate;
 use App\Models\Asset;
 use App\Models\EquipmentMovement;
 use App\Models\LocationHolder;
+use Livewire\Attributes\Validate;
+use Livewire\Form;
 
 class MovementForm extends Form
 {
@@ -30,11 +30,11 @@ class MovementForm extends Form
         $this->asset_id = $move->asset_id;
         $this->employee_id = $move->employee_id;
         if ($move->action_date) {
-            $this->action_date = (is_string($move->action_date)) 
-                ? substr($move->action_date, 0, 10) 
+            $this->action_date = (is_string($move->action_date))
+                ? substr($move->action_date, 0, 10)
                 : $move->action_date->format('Y-m-d');
         }
-        $this->location_id = $move->asset ? $move->asset->current_loc_id : null;
+        $this->location_id = $move->location_id ?: ($move->asset ? $move->asset->current_loc_id : null);
     }
 
     public function store()
@@ -49,7 +49,7 @@ class MovementForm extends Form
 
         // Отримуємо актив
         $asset = Asset::findOrFail($this->asset_id);
-        
+
         // Попередній утримувач (from_holder_id)
         $from_holder_id = $asset->current_holder_id;
 
@@ -63,15 +63,16 @@ class MovementForm extends Form
         EquipmentMovement::updateOrCreate(['id' => $this->movementId], [
             'equip_id' => $asset->equipment_id,
             'asset_id' => $asset->id,
+            'location_id' => $this->location_id,
             'from_holder_id' => $from_holder_id,
             'to_holder_id' => $toHolder->id,
             'employee_id' => $this->employee_id ?: null,
             'action_date' => $this->action_date,
         ]);
-        
+
         $isUpdate = $this->movementId !== null;
         $this->reset();
-        
+
         return $isUpdate;
     }
 }

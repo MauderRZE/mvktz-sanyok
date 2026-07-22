@@ -2,15 +2,14 @@
 
 namespace Tests\Feature\Livewire;
 
-use Tests\TestCase;
-use Livewire\Livewire;
 use App\Http\Livewire\Admin\EquipmentMovementManager;
-use App\Models\EquipmentMovement;
 use App\Models\Asset;
-use App\Models\Location;
 use App\Models\Employee;
+use App\Models\Location;
 use App\Models\LocationHolder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Livewire\Livewire;
+use Tests\TestCase;
 
 class EquipmentMovementTest extends TestCase
 {
@@ -28,9 +27,9 @@ class EquipmentMovementTest extends TestCase
         // Але оскільки фабрики не гарантовані, спробуємо створити базові моделі вручну
         $location = Location::create(['room_number' => '101A']);
         $employee = Employee::create([
-            'first_name' => 'Іван', 
-            'last_name' => 'Іванов', 
-            'position' => 'Тестер'
+            'first_name' => 'Іван',
+            'last_name' => 'Іванов',
+            'position' => 'Тестер',
         ]);
 
         $asset = Asset::create([
@@ -71,5 +70,52 @@ class EquipmentMovementTest extends TestCase
             ->set('form.action_date', '')
             ->call('store')
             ->assertHasErrors(['form.asset_id', 'form.location_id', 'form.action_date']);
+    }
+
+    public function test_multiple_movements_preserve_location_history()
+    {
+        $loc1 = Location::create(['room_number' => '101']);
+        $loc2 = Location::create(['room_number' => '202']);
+
+        $asset = Asset::create([
+            'status' => 'Працює',
+            'current_loc_id' => null,
+            'current_holder_id' => null,
+        ]);
+
+        // First move to 101
+        Livewire::test(EquipmentMovementManager::class)
+            ->call('create')
+            ->set('form.asset_id', $asset->id)
+            ->set('form.location_id', $loc1->id)
+            ->set('form.action_date', '2026-01-01')
+            ->call('store')
+            ->assertHasNoErrors();
+
+        // Second move to 202
+        Livewire::test(EquipmentMovementManager::class)
+            ->call('create')
+            ->set('form.asset_id', $asset->id)
+            ->set('form.location_id', $loc2->id)
+            ->set('form.action_date', '2026-02-01')
+            ->call('store')
+            ->assertHasNoErrors();
+
+        // Assert movement history records maintain distinct location_id values
+        $this->assertDatabaseHas('movements', [
+            'asset_id' => $asset->id,
+            'location_id' => $loc1->id,
+            'action_date' => '2026-01-01 00:00:00',
+        ]);
+
+        $this->assertDatabaseHas('movements', [
+            'asset_id' => $asset->id,
+            'location_id' => $loc2->id,
+            'action_date' => '2026-02-01 00:00:00',
+        ]);
+
+        // Asset current location is loc2
+        $asset->refresh();
+        $this->assertEquals($loc2->id, $asset->current_loc_id);
     }
 }

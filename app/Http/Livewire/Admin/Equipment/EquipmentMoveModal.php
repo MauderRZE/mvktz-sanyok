@@ -2,23 +2,26 @@
 
 namespace App\Http\Livewire\Admin\Equipment;
 
-use Livewire\Component;
-use Livewire\Attributes\On;
-use App\Models\Equipment;
 use App\Models\Asset;
-use App\Models\Location;
 use App\Models\Employee;
 use App\Models\EquipmentMovement;
+use App\Models\Location;
 use App\Models\LocationHolder;
+use Livewire\Attributes\On;
+use Livewire\Component;
 
 class EquipmentMoveModal extends Component
 {
     public $isOpen = false;
+
     public $targetId; // ID of Asset
+
     public $targetName = '';
 
     public $location_id;
+
     public $employee_id;
+
     public $action_date;
 
     public function mount()
@@ -32,16 +35,16 @@ class EquipmentMoveModal extends Component
         $this->resetInputFields();
         $this->targetId = $id;
         $asset = Asset::with(['componentType', 'equipment', 'lowValueMaterial'])->findOrFail($id);
-        
+
         $invPart = '';
         if ($asset->lowValueMaterial && $asset->lowValueMaterial->nomenklature_number) {
-            $invPart = ' | Інв/Ном: ' . $asset->lowValueMaterial->nomenklature_number;
+            $invPart = ' | Інв/Ном: '.$asset->lowValueMaterial->nomenklature_number;
         } elseif ($asset->equipment && $asset->equipment->inv_number) {
-            $invPart = ' | Інв. №: ' . $asset->equipment->inv_number;
+            $invPart = ' | Інв. №: '.$asset->equipment->inv_number;
         }
 
-        $this->targetName = ($asset->componentType->component_name ?? 'Комплектуюча') . ' (S/N: ' . ($asset->serial_number ?: 'немає') . $invPart . ')';
-        
+        $this->targetName = ($asset->componentType->component_name ?? 'Комплектуюча').' (S/N: '.($asset->serial_number ?: 'немає').$invPart.')';
+
         $this->location_id = $asset->current_loc_id;
         $this->employee_id = $asset->holder ? $asset->holder->employee_id : null;
 
@@ -102,6 +105,7 @@ class EquipmentMoveModal extends Component
         EquipmentMovement::create([
             'equip_id' => $asset->equipment_id,
             'asset_id' => $asset->id,
+            'location_id' => $this->location_id,
             'from_holder_id' => $from_holder_id,
             'to_holder_id' => $toHolder->id,
             'employee_id' => $this->employee_id ?: null,

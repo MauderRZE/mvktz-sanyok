@@ -16,11 +16,17 @@ class EquipmentMovement extends Model
     protected $fillable = [
         'equip_id',
         'asset_id',
+        'location_id',
         'from_holder_id',
         'to_holder_id',
         'employee_id',
         'action_date',
     ];
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class, 'location_id');
+    }
 
     public function equipment()
     {
