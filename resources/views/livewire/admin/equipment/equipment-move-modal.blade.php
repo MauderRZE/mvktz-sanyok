@@ -29,7 +29,7 @@
                 @endforeach
             </x-form.select>
 
-            <x-form.input type="date" model="action_date" label="Дата переміщення" required />
+            <x-form.input type="datetime-local" step="1" model="action_date" label="Дата переміщення" required />
 
         </form>
 

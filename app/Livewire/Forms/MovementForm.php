@@ -31,9 +31,9 @@ class MovementForm extends Form
         $this->asset_id = $move->asset_id;
         $this->employee_id = $move->employee_id;
         if ($move->action_date) {
-            $this->action_date = (is_string($move->action_date))
-                ? substr($move->action_date, 0, 10)
-                : $move->action_date->format('Y-m-d');
+            $this->action_date = date('Y-m-d\TH:i:s', strtotime($move->action_date));
+        } else {
+            $this->action_date = date('Y-m-d\TH:i:s');
         }
         $this->location_id = $move->location_id ?: ($move->asset ? $move->asset->current_loc_id : null);
     }
@@ -69,7 +69,7 @@ class MovementForm extends Form
                 'from_holder_id' => $from_holder_id,
                 'to_holder_id' => $toHolder->id,
                 'employee_id' => $this->employee_id ?: null,
-                'action_date' => $this->action_date,
+                'action_date' => $this->action_date ? str_replace('T', ' ', $this->action_date) : date('Y-m-d H:i:s'),
             ]);
 
             $isUpdate = $this->movementId !== null;

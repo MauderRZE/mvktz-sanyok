@@ -26,7 +26,7 @@ class EquipmentMoveModal extends Component
 
     public function mount()
     {
-        $this->action_date = date('Y-m-d');
+        $this->action_date = date('Y-m-d\TH:i:s');
     }
 
     #[On('openMoveAsset')]
@@ -60,7 +60,7 @@ class EquipmentMoveModal extends Component
     {
         $this->location_id = null;
         $this->employee_id = null;
-        $this->action_date = date('Y-m-d');
+        $this->action_date = date('Y-m-d\TH:i:s');
         $this->targetName = '';
         $this->targetId = null;
     }
@@ -109,7 +109,7 @@ class EquipmentMoveModal extends Component
             'from_holder_id' => $from_holder_id,
             'to_holder_id' => $toHolder->id,
             'employee_id' => $this->employee_id ?: null,
-            'action_date' => $this->action_date,
+            'action_date' => $this->action_date ? str_replace('T', ' ', $this->action_date) : date('Y-m-d H:i:s'),
         ]);
     }
 

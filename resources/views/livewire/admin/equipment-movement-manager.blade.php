@@ -79,7 +79,7 @@
                         </x-form.select>
                 </div>
                 <div>
-                    <x-form.input label="Дата переміщення" model="form.action_date" type="date" />
+                    <x-form.input label="Дата переміщення" model="form.action_date" type="datetime-local" step="1" />
                 </div>
         </x-ui.modal>
     @endif

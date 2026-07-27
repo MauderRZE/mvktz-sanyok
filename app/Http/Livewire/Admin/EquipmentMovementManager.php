@@ -141,7 +141,7 @@ class EquipmentMovementManager extends Component
     public function create()
     {
         $this->form->reset();
-        $this->form->action_date = date('Y-m-d');
+        $this->form->action_date = date('Y-m-d\TH:i:s');
         $this->openModal();
     }
 
