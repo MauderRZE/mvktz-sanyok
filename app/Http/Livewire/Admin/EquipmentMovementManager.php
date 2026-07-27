@@ -9,19 +9,14 @@ use App\Models\EquipmentMovement;
 use App\Models\Location;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class EquipmentMovementManager extends Component
 {
+    use WithPagination;
+
     public MovementForm $form;
-
-    public $movements;
-
-    public $assetsList = [];
-
-    public $locationsList = [];
-
-    public $employeesList = [];
 
     public $isOpen = false;
 
@@ -33,16 +28,39 @@ class EquipmentMovementManager extends Component
 
     public $filterEmployee = [];
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterAsset()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterLocation()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterEmployee()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
         $query = EquipmentMovement::with([
-            'asset.equipment',
-            'asset.model.brand',
-            'asset.baseComponent',
-            'employee',
-            'location',
-            'asset.location',
-            'toHolder.organization',
+            'asset:id,equipment_id,model_id,base_component_id,serial_number,current_loc_id',
+            'asset.equipment:id,inv_number,account_name',
+            'asset.model:id,model_name,brand_id',
+            'asset.model.brand:id,brandtz_name',
+            'asset.baseComponent:id,component_name',
+            'asset.location:id,room_number',
+            'employee:id,first_name,last_name,middle_name',
+            'location:id,room_number',
+            'toHolder:id,organization_id',
+            'toHolder.organization:id,org_name',
         ])
             ->when($this->search, function ($q) {
                 $search = '%'.$this->search.'%';
@@ -87,14 +105,28 @@ class EquipmentMovementManager extends Component
             ->when(! empty($this->filterEmployee), function ($q) {
                 $q->whereIn('employee_id', $this->filterEmployee);
             })
-            ->orderBy('action_date', 'desc');
+            ->orderBy('action_date', 'desc')
+            ->orderBy('id', 'desc');
 
-        $this->movements = $query->get();
-        $this->assetsList = Asset::with(['model.brand', 'equipment', 'baseComponent'])->get();
-        $this->locationsList = Location::all();
-        $this->employeesList = Employee::all();
+        $movements = $query->paginate(25);
 
-        return view('livewire.admin.equipment-movement-manager');
+        $assetsList = Asset::select('id', 'model_id', 'equipment_id', 'base_component_id', 'serial_number')
+            ->with([
+                'baseComponent:id,component_name',
+                'model:id,model_name',
+                'equipment:id,inv_number',
+            ])
+            ->get();
+
+        $locationsList = Location::select('id', 'room_number')->orderBy('room_number')->get();
+        $employeesList = Employee::select('id', 'first_name', 'last_name', 'middle_name', 'position')->orderBy('last_name')->get();
+
+        return view('livewire.admin.equipment-movement-manager', compact(
+            'movements',
+            'assetsList',
+            'locationsList',
+            'employeesList'
+        ));
     }
 
     public function resetFilters()
@@ -103,6 +135,7 @@ class EquipmentMovementManager extends Component
         $this->filterAsset = [];
         $this->filterLocation = [];
         $this->filterEmployee = [];
+        $this->resetPage();
     }
 
     public function create()
@@ -141,7 +174,7 @@ class EquipmentMovementManager extends Component
 
     public function delete($id)
     {
-        EquipmentMovement::find($id)->delete();
+        EquipmentMovement::where('id', $id)->delete();
         session()->flash('message', 'Запис про переміщення видалено.');
     }
 }
