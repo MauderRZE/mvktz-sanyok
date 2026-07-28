@@ -2,25 +2,46 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use App\Models\ItemProperty;
-use App\Models\Asset;
-use App\Models\LowValueMaterial;
-use App\Models\AttributeDictionary;
 use App\Livewire\Forms\ItemPropertyForm;
+use App\Models\Asset;
+use App\Models\AttributeDictionary;
+use App\Models\ItemProperty;
+use App\Models\LowValueMaterial;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('layouts.admin')]
 class ItemPropertyManager extends Component
 {
     public ItemPropertyForm $form;
-    
+
     public $properties;
-    public $assets, $materials, $dictAttributes;
+
+    public $assets;
+
+    public $materials;
+
+    public $dictAttributes;
+
     public $isOpen = false;
 
     public $search = '';
+
     public $filterAttribute = [];
+
+    public $sortField = 'id';
+
+    public $sortDirection = 'desc';
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
 
     public function mount()
     {
@@ -32,27 +53,40 @@ class ItemPropertyManager extends Component
     public function render()
     {
         $query = ItemProperty::with(['asset.componentType', 'asset.equipment', 'nomenclature', 'attribute'])
-            ->when($this->search, function($q) {
-                $search = '%' . $this->search . '%';
-                $q->where(function($sub) use ($search) {
+            ->when($this->search, function ($q) {
+                $search = '%'.$this->search.'%';
+                $q->where(function ($sub) use ($search) {
                     $sub->where('attr_value', 'like', $search)
-                        ->orWhereHas('attribute', function($attr) use ($search) {
+                        ->orWhereHas('attribute', function ($attr) use ($search) {
                             $attr->where('name', 'like', $search);
                         })
-                        ->orWhereHas('asset.componentType', function($ct) use ($search) {
+                        ->orWhereHas('asset.componentType', function ($ct) use ($search) {
                             $ct->where('component_name', 'like', $search);
                         })
-                        ->orWhereHas('nomenclature', function($nom) use ($search) {
+                        ->orWhereHas('asset.equipment', function ($eq) use ($search) {
+                            $eq->where('inv_number', 'like', $search);
+                        })
+                        ->orWhereHas('nomenclature', function ($nom) use ($search) {
                             $nom->where('material_account_name', 'like', $search);
                         });
                 });
             })
-            ->when(!empty($this->filterAttribute), function($q) {
+            ->when(! empty($this->filterAttribute), function ($q) {
                 $q->whereIn('attribute_id', $this->filterAttribute);
-            })
-            ->orderBy('id', 'desc');
+            });
+
+        if ($this->sortField === 'inv_number') {
+            $query->leftJoin('assets', 'item_properties.asset_id', '=', 'assets.id')
+                ->leftJoin('equipment', 'assets.equipment_id', '=', 'equipment.id')
+                ->select('item_properties.*')
+                ->orderByRaw('CASE WHEN equipment.inv_number IS NULL OR equipment.inv_number = "" THEN 1 ELSE 0 END')
+                ->orderBy('equipment.inv_number', $this->sortDirection);
+        } else {
+            $query->orderBy('item_properties.id', $this->sortDirection);
+        }
 
         $this->properties = $query->get();
+
         return view('livewire.admin.item-property-manager');
     }
 
@@ -82,7 +116,7 @@ class ItemPropertyManager extends Component
     {
         $isUpdate = $this->form->store();
 
-        session()->flash('message', 
+        session()->flash('message',
             $isUpdate ? 'Властивість оновлено.' : 'Властивість додано.');
 
         $this->closeModal();
