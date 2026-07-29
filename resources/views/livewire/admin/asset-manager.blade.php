@@ -303,7 +303,10 @@
                         <div class="flex items-center gap-1">Мережа @if($sortField === 'ip_address') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
                     </x-table.th>
                     <x-table.th align="left" wire:click="sortBy('location')" class="cursor-pointer hover:bg-white/5">
-                        <div class="flex items-center gap-1">Місце / Власник @if($sortField === 'location') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
+                        <div class="flex items-center gap-1">Локація @if($sortField === 'location') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
+                    </x-table.th>
+                    <x-table.th align="left" wire:click="sortBy('holder')" class="cursor-pointer hover:bg-white/5">
+                        <div class="flex items-center gap-1">Відповідальний @if($sortField === 'holder') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
                     </x-table.th>
                     <x-table.th align="left" wire:click="sortBy('status')" class="cursor-pointer hover:bg-white/5">
                         <div class="flex items-center gap-1">Статус @if($sortField === 'status') <span class="text-brand-400">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span> @endif</div>
@@ -352,18 +355,22 @@
                     <x-table.td align="left">
                         @if($c->location)
                             <div class="text-sm text-white">Каб. {{ $c->location->room_number }}</div>
+                        @else
+                            <span class="text-gray-600">—</span>
                         @endif
+                    </x-table.td>
+                    <x-table.td align="left">
                         @if($c->holder)
-                            <x-table.cell-subtext>
                             @php
                                 $empName = $c->holder->employee ? $c->holder->employee->last_name . ' ' . mb_substr($c->holder->employee->first_name, 0, 1) . '.' : null;
                                 $orgName = $c->holder->organization->org_name ?? null;
-                                echo $empName ? $empName . ($orgName ? " ($orgName)" : '') : ($orgName ?? 'Невідомий');
                             @endphp
-                            </x-table.cell-subtext>
-                        @endif
-                        @if(!$c->location && !$c->holder)
-                            <span class="text-gray-600">-</span>
+                            <div class="text-sm text-white">{{ $empName ?: ($orgName ?? 'Невідомий') }}</div>
+                            @if($empName && $orgName)
+                                <x-table.cell-subtext>{{ $orgName }}</x-table.cell-subtext>
+                            @endif
+                        @else
+                            <span class="text-gray-600">—</span>
                         @endif
                     </x-table.td>
                     <x-table.td align="left">
@@ -376,7 +383,7 @@
 
                 @if(in_array($c->id, $expandedRows))
                 <tr class="bg-surface-900/30 border-b border-white/5">
-                    <td colspan="8" class="px-4 py-3">
+                    <td colspan="9" class="px-4 py-3">
                         @if($c->childAssets && $c->childAssets->count() > 0)
                             <div class="mb-4">
                                 <span class="text-gray-500 block mb-2 text-xs uppercase tracking-wider">📦 Вкладені компоненти ({{ $c->childAssets->count() }})</span>
@@ -426,7 +433,7 @@
                 </tr>
                 @endif
                 @empty
-                <x-table.empty colspan="8" />
+                <x-table.empty colspan="9" />
                 @endforelse
             
         </x-table.wrapper>
@@ -462,17 +469,30 @@
 
             <x-table.mobile-card-footer class="grid grid-cols-2 gap-2">
                 <div>
-                    <x-table.cell-subtext>Місце / Власник:</x-table.cell-subtext>
+                    <x-table.cell-subtext>Локація:</x-table.cell-subtext>
                     <div class="text-xs">
-                        @if($c->location) Каб. {{ $c->location->room_number }}<br> @endif
+                        @if($c->location)
+                            Каб. {{ $c->location->room_number }}
+                        @else
+                            <span class="text-gray-600">—</span>
+                        @endif
+                    </div>
+                </div>
+                <div>
+                    <x-table.cell-subtext>Відповідальний:</x-table.cell-subtext>
+                    <div class="text-xs">
                         @if($c->holder)
                             @php
                                 $empName = $c->holder->employee ? mb_substr($c->holder->employee->first_name, 0, 1) . '. ' . $c->holder->employee->last_name : null;
                                 $orgName = $c->holder->organization->org_name ?? null;
-                                echo $empName ? $empName . ($orgName ? " ($orgName)" : '') : ($orgName ?? 'Невідомий');
                             @endphp
+                            {{ $empName ?: ($orgName ?? 'Невідомий') }}
+                            @if($empName && $orgName)
+                                <span class="text-gray-500">({{ $orgName }})</span>
+                            @endif
+                        @else
+                            <span class="text-gray-600">—</span>
                         @endif
-                        @if(!$c->location && !$c->holder) - @endif
                     </div>
                 </div>
                 <div>
