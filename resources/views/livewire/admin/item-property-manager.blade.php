@@ -961,7 +961,7 @@
         <div class="flex flex-col lg:flex-row gap-4 items-center">
             <div class="flex-1 w-full flex gap-2">
                 <div class="flex-1">
-                    <x-form.search wire:model.live.debounce.300ms="search" placeholder="🔍 Шукати в безодні... інв. номер, характеристика, значення..." />
+                    <x-form.search wire:model.blur="search" x-on:keydown.enter="$el.blur()" placeholder="🔍 Шукати в безодні... інв. номер, характеристика, значення..." />
                 </div>
                 @if($search !== '' || !empty($filterAttribute))
                     <button wire:click="resetFilters" class="demon-reset-btn" title="Скинути всі фільтри">

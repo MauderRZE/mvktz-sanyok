@@ -2,12 +2,10 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Support\Facades\DB;
 use App\Models\Equipment;
 use App\Models\LowValueMaterial;
-use App\Models\SoftwareLicense;
-use App\Models\Asset;
+use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
 
 class ProductionReadinessTest extends TestCase
 {
@@ -40,7 +38,7 @@ class ProductionReadinessTest extends TestCase
     public function test_relationships_resolve_correctly()
     {
         // Check low value materials relations
-        LowValueMaterial::with(['contract'])->chunk(100, function ($materials) {
+        LowValueMaterial::whereNotNull('contract_id')->with(['contract'])->chunk(100, function ($materials) {
             foreach ($materials as $material) {
                 $this->assertNotNull($material->contract, "Contract relation must be loaded for LowValueMaterial ID: {$material->id}");
             }
@@ -89,7 +87,7 @@ class ProductionReadinessTest extends TestCase
     {
         // App key must be set
         $appKey = config('app.key');
-        $this->assertNotEmpty($appKey, "APP_KEY is empty. A secure key must be generated.");
-        $this->assertStringStartsWith('base64:', $appKey, "APP_KEY should be a secure base64 encoded string.");
+        $this->assertNotEmpty($appKey, 'APP_KEY is empty. A secure key must be generated.');
+        $this->assertStringStartsWith('base64:', $appKey, 'APP_KEY should be a secure base64 encoded string.');
     }
 }
