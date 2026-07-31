@@ -167,7 +167,7 @@
                 </x-form.multi-select>
 
                 <x-form.multi-select label="Статуси" :selectedCount="count($filterStatus)">
-                    @foreach(['Працює', 'Знято', 'Зламано', 'В ремонті', 'Потребує уваги', 'Списано'] as $st)
+                    @foreach(['працює', 'потребує уваги', 'в ремонті', 'на списання', 'списано'] as $st)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $st }}" wire:model.live="filterStatus" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
                             <span>{{ $st }}</span>
@@ -265,10 +265,11 @@
             <div class="grid grid-cols-1 gap-4 items-end">
                 <div>
                     <x-form.select label="Стан роботи" model="form.status">
-                        <option value="Працює">Працює</option>
-                        <option value="Потребує уваги">Потребує уваги</option>
-                        <option value="В ремонті">В ремонті</option>
-                        <option value="Списано">Списано</option>
+                        <option value="працює">працює</option>
+                        <option value="потребує уваги">потребує уваги</option>
+                        <option value="в ремонті">в ремонті</option>
+                        <option value="на списання">на списання</option>
+                        <option value="списано">списано</option>
                     </x-form.select>
                 </div>
             </div>
@@ -422,7 +423,7 @@
                                                         @endif
                                                     </td>
                                                     <td class="py-2 px-3">
-                                                        @if($child->status !== 'Працює')
+                                                        @if($child->status !== 'працює')
                                                             <x-ui.badge status="{{ $child->status }}" :dot="false" />
                                                         @endif
                                                     </td>

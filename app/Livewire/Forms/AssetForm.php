@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Forms;
 
-use Livewire\Form;
-use Livewire\Attributes\Validate;
 use App\Models\Asset;
 use App\Models\BaseComponent;
+use Livewire\Attributes\Validate;
+use Livewire\Form;
 
 class AssetForm extends Form
 {
@@ -54,7 +54,7 @@ class AssetForm extends Form
     public ?int $write_off_act_id = null;
 
     #[Validate('required|string|max:50')]
-    public string $status = 'Працює';
+    public string $status = 'працює';
 
     public function setAsset(Asset $asset)
     {
@@ -67,15 +67,15 @@ class AssetForm extends Form
         $this->parent_asset_id = $asset->parent_asset_id;
         $this->notes = $asset->notes ?? '';
         $this->serial_number = $asset->serial_number ?? '';
-        
-        $this->has_network = !empty($asset->ip_address) || !empty($asset->mac_address) || !empty($asset->hostname);
+
+        $this->has_network = ! empty($asset->ip_address) || ! empty($asset->mac_address) || ! empty($asset->hostname);
         $this->ip_address = $asset->ip_address ?? '';
         $this->mac_address = $asset->mac_address ?? '';
         $this->hostname = $asset->hostname ?? '';
 
         $this->nomenclature_id = $asset->nomenclature_id;
         $this->write_off_act_id = $asset->write_off_act_id;
-        $this->status = $asset->status ?? 'Працює';
+        $this->status = $asset->status ?? 'працює';
     }
 
     public function handleBaseComponentChange($value)
@@ -111,6 +111,7 @@ class AssetForm extends Form
 
         $isUpdate = $this->assetId !== null;
         $this->reset();
+
         return $isUpdate;
     }
 }

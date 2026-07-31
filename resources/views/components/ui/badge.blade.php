@@ -3,24 +3,46 @@
 @php
 $variants = [
     'В експлуатації' => 'bg-emerald-500/10 text-emerald-400',
+    'в експлуатації' => 'bg-emerald-500/10 text-emerald-400',
     'Працює' => 'bg-emerald-500/10 text-emerald-400',
+    'працює' => 'bg-emerald-500/10 text-emerald-400',
     'Виконано' => 'bg-emerald-500/10 text-emerald-400',
     'Активна' => 'bg-emerald-500/10 text-emerald-400',
     'На складі' => 'bg-amber-500/10 text-amber-400',
+    'на складі' => 'bg-amber-500/10 text-amber-400',
     'В роботі' => 'bg-amber-500/10 text-amber-400',
     'Призупинена' => 'bg-amber-500/10 text-amber-400',
     'В ремонті' => 'bg-amber-500/10 text-amber-400',
+    'в ремонті' => 'bg-amber-500/10 text-amber-400',
     'Потребує уваги' => 'bg-amber-500/10 text-amber-400',
+    'потребує уваги' => 'bg-amber-500/10 text-amber-400',
+    'На списання' => 'bg-rose-500/10 text-rose-400',
+    'на списання' => 'bg-rose-500/10 text-rose-400',
     'Списано' => 'bg-red-500/10 text-red-400',
+    'списано' => 'bg-red-500/10 text-red-400',
+    'Утилізовано' => 'bg-purple-500/10 text-purple-400',
+    'утилізовано' => 'bg-purple-500/10 text-purple-400',
     'Відкрито' => 'bg-red-500/10 text-red-400',
     'Знято' => 'bg-gray-500/10 text-gray-400',
     'default' => 'bg-brand-500/10 text-brand-300'
 ];
 $dotColors = [
     'В експлуатації' => 'bg-emerald-400',
+    'в експлуатації' => 'bg-emerald-400',
+    'Працює' => 'bg-emerald-400',
+    'працює' => 'bg-emerald-400',
     'На складі' => 'bg-amber-400',
+    'на складі' => 'bg-amber-400',
     'Потребує уваги' => 'bg-amber-400',
+    'потребує уваги' => 'bg-amber-400',
+    'В ремонті' => 'bg-amber-400',
+    'в ремонті' => 'bg-amber-400',
+    'На списання' => 'bg-rose-400',
+    'на списання' => 'bg-rose-400',
     'Списано' => 'bg-red-400',
+    'списано' => 'bg-red-400',
+    'Утилізовано' => 'bg-purple-400',
+    'утилізовано' => 'bg-purple-400',
 ];
 
 $badgeClass = $variants[$status] ?? $variants['default'];

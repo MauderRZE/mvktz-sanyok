@@ -2,12 +2,14 @@
 
 namespace Tests\Feature\Livewire;
 
-use Tests\TestCase;
-use Livewire\Livewire;
+use App\Http\Livewire\Admin\Equipment\EquipmentDetail;
+use App\Http\Livewire\Admin\Equipment\EquipmentForm;
 use App\Http\Livewire\Admin\EquipmentManager;
 use App\Models\Equipment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Livewire\Livewire;
+use Tests\TestCase;
 
 class EquipmentManagerTest extends TestCase
 {
@@ -34,11 +36,11 @@ class EquipmentManagerTest extends TestCase
     public function test_can_delete_equipment()
     {
         $this->actingAs($this->user);
-        
+
         $equipment = Equipment::create([
             'inv_number' => 999999,
             'account_name' => 'PC to Delete',
-            'status' => 'В експлуатації'
+            'status' => 'в експлуатації',
         ]);
 
         Livewire::test(EquipmentManager::class)
@@ -56,13 +58,13 @@ class EquipmentManagerTest extends TestCase
         $eq1 = Equipment::create([
             'inv_number' => 999991,
             'account_name' => 'UniqueSearchItemName',
-            'status' => 'В експлуатації'
+            'status' => 'в експлуатації',
         ]);
 
         $eq2 = Equipment::create([
             'inv_number' => 999992,
             'account_name' => 'OtherItemName',
-            'status' => 'В експлуатації'
+            'status' => 'в експлуатації',
         ]);
 
         Livewire::test(EquipmentManager::class)
@@ -78,17 +80,17 @@ class EquipmentManagerTest extends TestCase
         $eq1 = Equipment::create([
             'inv_number' => 999993,
             'account_name' => 'FilterItem1',
-            'status' => 'В експлуатації'
+            'status' => 'в експлуатації',
         ]);
 
         $eq2 = Equipment::create([
             'inv_number' => 999994,
             'account_name' => 'FilterItem2',
-            'status' => 'Списано'
+            'status' => 'списано',
         ]);
 
         Livewire::test(EquipmentManager::class)
-            ->set('filterStatus', ['Списано'])
+            ->set('filterStatus', ['списано'])
             ->assertSee('FilterItem2')
             ->assertDontSee('FilterItem1');
     }
@@ -98,11 +100,11 @@ class EquipmentManagerTest extends TestCase
         $this->actingAs($this->user);
 
         // 1. Створення (Create)
-        Livewire::test(\App\Http\Livewire\Admin\Equipment\EquipmentForm::class)
+        Livewire::test(EquipmentForm::class)
             ->call('create')
             ->set('form.inv_number', 999002)
             ->set('form.account_name', 'Test Equipment')
-            ->set('form.status', 'В експлуатації')
+            ->set('form.status', 'в експлуатації')
             ->call('store')
             ->assertHasNoErrors();
 
@@ -111,7 +113,7 @@ class EquipmentManagerTest extends TestCase
         $this->assertEquals('Test Equipment', $equipment->account_name);
 
         // 2. Редагування (Update)
-        Livewire::test(\App\Http\Livewire\Admin\Equipment\EquipmentForm::class)
+        Livewire::test(EquipmentForm::class)
             ->call('edit', $equipment->id)
             ->assertSet('form.account_name', 'Test Equipment')
             ->set('form.account_name', 'Test Equipment Updated')
@@ -136,10 +138,10 @@ class EquipmentManagerTest extends TestCase
         $equipment = Equipment::create([
             'inv_number' => 999002,
             'account_name' => 'Test Equipment',
-            'status' => 'В експлуатації'
+            'status' => 'в експлуатації',
         ]);
 
-        Livewire::test(\App\Http\Livewire\Admin\Equipment\EquipmentDetail::class)
+        Livewire::test(EquipmentDetail::class)
             ->call('open', $equipment->id)
             ->assertSet('isOpen', true)
             ->assertSet('equipmentId', $equipment->id)

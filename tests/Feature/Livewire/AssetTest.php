@@ -47,7 +47,7 @@ class AssetTest extends TestCase
             ->call('create')
             ->set('form.equipment_id', $this->equipment->id)
             ->set('form.base_component_id', $this->baseComponent->id)
-            ->set('form.status', 'Працює')
+            ->set('form.status', 'працює')
             ->set('form.serial_number', 'SN999001')
             ->call('store')
             ->assertHasNoErrors();
@@ -55,7 +55,7 @@ class AssetTest extends TestCase
         $this->assertDatabaseHas('assets', [
             'equipment_id' => $this->equipment->id,
             'base_component_id' => $this->baseComponent->id,
-            'status' => 'Працює',
+            'status' => 'працює',
             'serial_number' => 'SN999001',
         ]);
     }
@@ -73,7 +73,7 @@ class AssetTest extends TestCase
         $asset = Asset::create([
             'equipment_id' => $this->equipment->id,
             'base_component_id' => $this->baseComponent->id,
-            'status' => 'Працює',
+            'status' => 'працює',
             'serial_number' => 'SN999001',
         ]);
 
@@ -95,7 +95,7 @@ class AssetTest extends TestCase
         $asset = Asset::create([
             'equipment_id' => $this->equipment->id,
             'base_component_id' => $this->baseComponent->id,
-            'status' => 'Працює',
+            'status' => 'працює',
             'serial_number' => 'SN999002',
         ]);
 
@@ -112,14 +112,14 @@ class AssetTest extends TestCase
         $asset1 = Asset::create([
             'equipment_id' => $this->equipment->id,
             'base_component_id' => $this->baseComponent->id,
-            'status' => 'Працює',
+            'status' => 'працює',
             'serial_number' => 'SEARCH_ASSET_1',
         ]);
 
         $asset2 = Asset::create([
             'equipment_id' => $this->equipment->id,
             'base_component_id' => $this->baseComponent->id,
-            'status' => 'Працює',
+            'status' => 'працює',
             'serial_number' => 'SEARCH_ASSET_2',
         ]);
 
@@ -134,19 +134,19 @@ class AssetTest extends TestCase
         $asset1 = Asset::create([
             'equipment_id' => $this->equipment->id,
             'base_component_id' => $this->baseComponent->id,
-            'status' => 'Працює',
+            'status' => 'працює',
             'serial_number' => 'FILTER_ASSET_1',
         ]);
 
         $asset2 = Asset::create([
             'equipment_id' => $this->equipment->id,
             'base_component_id' => $this->baseComponent->id,
-            'status' => 'В ремонті',
+            'status' => 'в ремонті',
             'serial_number' => 'FILTER_ASSET_2',
         ]);
 
         Livewire::test(AssetManager::class)
-            ->set('filterStatus', ['В ремонті'])
+            ->set('filterStatus', ['в ремонті'])
             ->assertSee('FILTER_ASSET_2')
             ->assertDontSee('FILTER_ASSET_1');
     }
@@ -158,7 +158,7 @@ class AssetTest extends TestCase
             ->call('create')
             ->set('form.equipment_id', $this->equipment->id)
             ->set('form.base_component_id', $this->baseComponent->id)
-            ->set('form.status', 'Працює')
+            ->set('form.status', 'працює')
             ->set('form.serial_number', 'SN999003')
             ->call('store')
             ->assertHasNoErrors();

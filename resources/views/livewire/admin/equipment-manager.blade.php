@@ -132,7 +132,7 @@
                 </x-form.multi-select>
 
                 <x-form.multi-select label="Статуси" :selectedCount="count($filterStatus)">
-                    @foreach(['В експлуатації', 'На складі', 'Списано'] as $status)
+                    @foreach(['в експлуатації', 'на списання', 'списано', 'утилізовано'] as $status)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $status }}" wire:model.live="filterStatus" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
                             <span>{{ $status }}</span>

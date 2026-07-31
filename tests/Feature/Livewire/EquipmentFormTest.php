@@ -25,14 +25,14 @@ class EquipmentFormTest extends TestCase
             ->call('create')
             ->set('form.inv_number', 999002)
             ->set('form.account_name', 'Test Equipment')
-            ->set('form.status', 'В експлуатації')
+            ->set('form.status', 'в експлуатації')
             ->call('store')
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('equipment', [
             'inv_number' => 999002,
             'account_name' => 'Test Equipment',
-            'status' => 'В експлуатації',
+            'status' => 'в експлуатації',
         ]);
     }
 
@@ -51,7 +51,7 @@ class EquipmentFormTest extends TestCase
         $equipment = Equipment::create([
             'inv_number' => 999002,
             'account_name' => 'Test Equipment',
-            'status' => 'В експлуатації',
+            'status' => 'в експлуатації',
         ]);
 
         Livewire::test(EquipmentForm::class)
@@ -73,18 +73,18 @@ class EquipmentFormTest extends TestCase
         $equipment = Equipment::create([
             'inv_number' => 999003,
             'account_name' => 'Warehouse Equipment',
-            'status' => 'В експлуатації',
+            'status' => 'в експлуатації',
         ]);
 
         Livewire::test(EquipmentForm::class)
             ->call('edit', $equipment->id)
-            ->set('form.status', 'На складі')
+            ->set('form.status', 'на списання')
             ->call('store')
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('equipment', [
             'id' => $equipment->id,
-            'status' => 'На складі',
+            'status' => 'на списання',
         ]);
     }
 
@@ -94,14 +94,14 @@ class EquipmentFormTest extends TestCase
             ->call('create')
             ->set('form.inv_number', 'БН')
             ->set('form.account_name', 'Склад')
-            ->set('form.status', 'В експлуатації')
+            ->set('form.status', 'в експлуатації')
             ->call('store')
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('equipment', [
             'inv_number' => 'БН',
             'account_name' => 'Склад',
-            'status' => 'В експлуатації',
+            'status' => 'в експлуатації',
         ]);
     }
 }

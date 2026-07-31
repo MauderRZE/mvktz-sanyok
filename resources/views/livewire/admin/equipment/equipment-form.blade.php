@@ -21,9 +21,10 @@
         </div>
         <div>
             <x-form.select label="Статус" model="form.status">
-                <option value="В експлуатації" class="bg-surface-800">В експлуатації</option>
-                <option value="На складі" class="bg-surface-800">На складі</option>
-                <option value="Списано" class="bg-surface-800">Списано</option>
+                <option value="в експлуатації" class="bg-surface-800">в експлуатації</option>
+                <option value="на списання" class="bg-surface-800">на списання</option>
+                <option value="списано" class="bg-surface-800">списано</option>
+                <option value="утилізовано" class="bg-surface-800">утилізовано</option>
             </x-form.select>
         </div>
         <div>
