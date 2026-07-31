@@ -972,6 +972,10 @@
             </div>
             <div class="w-full lg:w-auto">
                 <x-form.multi-select label="Характеристика" :selectedCount="count($filterAttribute)">
+                    <label class="flex items-center gap-2 text-xs cursor-pointer py-1 font-semibold text-amber-400">
+                        <input type="checkbox" value="null" wire:model.live="filterAttribute" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>[Без характеристики / Null]</span>
+                    </label>
                     @foreach($dictAttributes as $attr)
                         <label class="flex items-center gap-2 text-xs cursor-pointer py-1">
                             <input type="checkbox" value="{{ $attr->id }}" wire:model.live="filterAttribute" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">

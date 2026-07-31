@@ -2,23 +2,27 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use App\Models\EmployeePhone;
-use App\Models\Employee;
 use App\Livewire\Forms\EmployeePhoneForm;
+use App\Models\Employee;
+use App\Models\EmployeePhone;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('layouts.admin')]
 class EmployeePhoneManager extends Component
 {
     public EmployeePhoneForm $form;
-    
+
     public $phones;
+
     public $employees;
+
     public $isOpen = false;
 
     public $search = '';
+
     public $filterPhoneType = [];
+
     public $filterEmployee = [];
 
     public function mount()
@@ -29,25 +33,44 @@ class EmployeePhoneManager extends Component
     public function render()
     {
         $query = EmployeePhone::with('employee')
-            ->when($this->search, function($q) {
-                $search = '%' . $this->search . '%';
-                $q->where(function($sub) use ($search) {
+            ->when($this->search, function ($q) {
+                $search = '%'.$this->search.'%';
+                $q->where(function ($sub) use ($search) {
                     $sub->where('phone_number', 'like', $search)
-                        ->orWhereHas('employee', function($emp) use ($search) {
+                        ->orWhereHas('employee', function ($emp) use ($search) {
                             $emp->where('first_name', 'like', $search)
                                 ->orWhere('last_name', 'like', $search);
                         });
                 });
             })
-            ->when(!empty($this->filterPhoneType), function($q) {
-                $q->whereIn('phone_type', $this->filterPhoneType);
+            ->when(! empty($this->filterPhoneType), function ($q) {
+                $hasNull = in_array('null', $this->filterPhoneType, true) || in_array(null, $this->filterPhoneType, true);
+                $types = array_filter($this->filterPhoneType, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($types, $hasNull) {
+                    if (! empty($types)) {
+                        $sub->whereIn('phone_type', $types);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('phone_type');
+                    }
+                });
             })
-            ->when(!empty($this->filterEmployee), function($q) {
-                $q->whereIn('employee_id', $this->filterEmployee);
+            ->when(! empty($this->filterEmployee), function ($q) {
+                $hasNull = in_array('null', $this->filterEmployee, true) || in_array(null, $this->filterEmployee, true);
+                $emps = array_filter($this->filterEmployee, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($emps, $hasNull) {
+                    if (! empty($emps)) {
+                        $sub->whereIn('employee_id', $emps);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('employee_id');
+                    }
+                });
             })
             ->orderBy('id', 'desc');
 
         $this->phones = $query->get();
+
         return view('livewire.admin.employee-phone-manager');
     }
 
@@ -78,7 +101,7 @@ class EmployeePhoneManager extends Component
     {
         $isUpdate = $this->form->store();
 
-        session()->flash('message', 
+        session()->flash('message',
             $isUpdate ? 'Телефон оновлено.' : 'Телефон додано.');
 
         $this->closeModal();

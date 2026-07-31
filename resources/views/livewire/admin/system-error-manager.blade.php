@@ -19,6 +19,10 @@
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:w-auto">
                 <x-form.multi-select label="Сторінка" :selectedCount="count($filterPageType)">
+                    <label class="flex items-center gap-2 text-xs font-semibold text-amber-400 cursor-pointer py-1">
+                        <input type="checkbox" value="null" wire:model.live="filterPageType" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>[Не вказано / Null]</span>
+                    </label>
                     @foreach([
                         'Авторизація (Login)', 'Дашборд', 'Обладнання', 'Активи', 'Ліцензії ПЗ',
                         'Малоцінні матеріали', 'Співробітники', 'Переміщення', 'Журнал ТО',
@@ -36,6 +40,10 @@
                 </x-form.multi-select>
 
                 <x-form.multi-select label="Тип помилки" :selectedCount="count($filterErrorType)">
+                    <label class="flex items-center gap-2 text-xs font-semibold text-amber-400 cursor-pointer py-1">
+                        <input type="checkbox" value="null" wire:model.live="filterErrorType" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>[Не вказано / Null]</span>
+                    </label>
                     @foreach([
                         '400 Bad Request', '401 Unauthorized', '403 Forbidden', '404 Not Found',
                         '405 Method Not Allowed', '419 Page Expired', '422 Unprocessable Entity',

@@ -72,7 +72,16 @@ class ItemPropertyManager extends Component
                 });
             })
             ->when(! empty($this->filterAttribute), function ($q) {
-                $q->whereIn('attribute_id', $this->filterAttribute);
+                $hasNull = in_array('null', $this->filterAttribute, true) || in_array(null, $this->filterAttribute, true);
+                $ids = array_filter($this->filterAttribute, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($ids, $hasNull) {
+                    if (! empty($ids)) {
+                        $sub->whereIn('attribute_id', $ids);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('attribute_id');
+                    }
+                });
             });
 
         if ($this->sortField === 'inv_number') {

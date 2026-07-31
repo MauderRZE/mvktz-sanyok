@@ -39,7 +39,16 @@ class ComputerSoftwareManager extends Component
                 });
             })
             ->when(! empty($this->filterSoftwareName), function ($q) {
-                $q->whereIn('software_name', $this->filterSoftwareName);
+                $hasNull = in_array('null', $this->filterSoftwareName, true) || in_array(null, $this->filterSoftwareName, true);
+                $names = array_filter($this->filterSoftwareName, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($names, $hasNull) {
+                    if (! empty($names)) {
+                        $sub->whereIn('software_name', $names);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('software_name');
+                    }
+                });
             })
             ->when($this->filterIsLicensed !== '', function ($q) {
                 $q->where('is_licensed', $this->filterIsLicensed);

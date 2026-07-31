@@ -19,6 +19,10 @@
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full lg:w-auto">
                 <x-form.multi-select label="Тип ліцензії" :selectedCount="count($filterType)">
+                    <label class="flex items-center gap-2 text-xs font-semibold text-amber-400 cursor-pointer py-1">
+                        <input type="checkbox" value="null" wire:model.live="filterType" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>[Не вказано / Null]</span>
+                    </label>
                     @foreach(['OEM', 'Retail', 'Корпоративна', 'Підписка', 'Безкоштовна'] as $t)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $t }}" wire:model.live="filterType" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
@@ -28,6 +32,10 @@
                 </x-form.multi-select>
 
                 <x-form.multi-select label="Постачальники" :selectedCount="count($filterVendor)">
+                    <label class="flex items-center gap-2 text-xs font-semibold text-amber-400 cursor-pointer py-1">
+                        <input type="checkbox" value="null" wire:model.live="filterVendor" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>[Не вказано / Null]</span>
+                    </label>
                     @foreach($vendorsList as $vendor)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $vendor->id }}" wire:model.live="filterVendor" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">

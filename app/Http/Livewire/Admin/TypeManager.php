@@ -2,42 +2,56 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use App\Models\EquipmentType;
-use App\Models\BrandTz;
 use App\Livewire\Forms\EquipmentTypeForm;
+use App\Models\BrandTz;
+use App\Models\EquipmentType;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('layouts.admin')]
 class TypeManager extends Component
 {
     public EquipmentTypeForm $form;
-    
-    public $types, $brands;
+
+    public $types;
+
+    public $brands;
+
     public $isOpen = 0;
 
     public $search = '';
+
     public $filterBrand = [];
 
     public function render()
     {
         $query = EquipmentType::with('brand')
-            ->when($this->search, function($q) {
-                $search = '%' . $this->search . '%';
-                $q->where(function($sub) use ($search) {
+            ->when($this->search, function ($q) {
+                $search = '%'.$this->search.'%';
+                $q->where(function ($sub) use ($search) {
                     $sub->where('model_name', 'like', $search)
-                        ->orWhereHas('brand', function($b) use ($search) {
+                        ->orWhereHas('brand', function ($b) use ($search) {
                             $b->where('brandtz_name', 'like', $search);
                         });
                 });
             })
-            ->when(!empty($this->filterBrand), function($q) {
-                $q->whereIn('brand_id', $this->filterBrand);
+            ->when(! empty($this->filterBrand), function ($q) {
+                $hasNull = in_array('null', $this->filterBrand, true) || in_array(null, $this->filterBrand, true);
+                $ids = array_filter($this->filterBrand, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($ids, $hasNull) {
+                    if (! empty($ids)) {
+                        $sub->whereIn('brand_id', $ids);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('brand_id');
+                    }
+                });
             })
             ->orderBy('id', 'desc');
 
         $this->types = $query->get();
         $this->brands = BrandTz::all();
+
         return view('livewire.admin.type-manager');
     }
 
@@ -67,7 +81,7 @@ class TypeManager extends Component
     {
         $isUpdate = $this->form->store();
 
-        session()->flash('message', 
+        session()->flash('message',
             $isUpdate ? 'Модель оновлено.' : 'Модель створено.');
 
         $this->closeModal();

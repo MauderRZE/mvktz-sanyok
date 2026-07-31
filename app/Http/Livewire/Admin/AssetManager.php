@@ -242,19 +242,64 @@ class AssetManager extends Component
             });
         })
             ->when(! empty($this->filterStatus), function ($q) {
-                $q->whereIn('assets.status', $this->filterStatus);
+                $hasNull = in_array('null', $this->filterStatus, true) || in_array(null, $this->filterStatus, true);
+                $values = array_filter($this->filterStatus, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($values, $hasNull) {
+                    if (! empty($values)) {
+                        $sub->whereIn('assets.status', $values);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('assets.status');
+                    }
+                });
             })
             ->when(! empty($this->filterBaseComponent), function ($q) {
-                $q->whereIn('assets.base_component_id', $this->filterBaseComponent);
+                $hasNull = in_array('null', $this->filterBaseComponent, true) || in_array(null, $this->filterBaseComponent, true);
+                $values = array_filter($this->filterBaseComponent, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($values, $hasNull) {
+                    if (! empty($values)) {
+                        $sub->whereIn('assets.base_component_id', $values);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('assets.base_component_id');
+                    }
+                });
             })
             ->when(! empty($this->filterLocation), function ($q) {
-                $q->whereIn('assets.current_loc_id', $this->filterLocation);
+                $hasNull = in_array('null', $this->filterLocation, true) || in_array(null, $this->filterLocation, true);
+                $values = array_filter($this->filterLocation, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($values, $hasNull) {
+                    if (! empty($values)) {
+                        $sub->whereIn('assets.current_loc_id', $values);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('assets.current_loc_id');
+                    }
+                });
             })
             ->when(! empty($this->filterHolder), function ($q) {
-                $q->whereIn('assets.current_holder_id', $this->filterHolder);
+                $hasNull = in_array('null', $this->filterHolder, true) || in_array(null, $this->filterHolder, true);
+                $values = array_filter($this->filterHolder, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($values, $hasNull) {
+                    if (! empty($values)) {
+                        $sub->whereIn('assets.current_holder_id', $values);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('assets.current_holder_id');
+                    }
+                });
             })
             ->when(! empty($this->filterModel), function ($q) {
-                $q->whereIn('assets.model_id', $this->filterModel);
+                $hasNull = in_array('null', $this->filterModel, true) || in_array(null, $this->filterModel, true);
+                $values = array_filter($this->filterModel, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($values, $hasNull) {
+                    if (! empty($values)) {
+                        $sub->whereIn('assets.model_id', $values);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('assets.model_id');
+                    }
+                });
             })
             ->when(! empty($this->filterNetwork), function ($q) {
                 $wantsYes = in_array(1, $this->filterNetwork) || in_array('1', $this->filterNetwork, true);
@@ -279,13 +324,37 @@ class AssetManager extends Component
                 }
             })
             ->when(! empty($this->filterCategory), function ($q) {
-                $q->whereHas('componentType', function ($subQ) {
-                    $subQ->whereIn('category_id', $this->filterCategory);
+                $hasNull = in_array('null', $this->filterCategory, true) || in_array(null, $this->filterCategory, true);
+                $values = array_filter($this->filterCategory, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($values, $hasNull) {
+                    if (! empty($values)) {
+                        $sub->whereHas('componentType', function ($subQ) use ($values) {
+                            $subQ->whereIn('category_id', $values);
+                        });
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereDoesntHave('componentType')
+                            ->orWhereHas('componentType', function ($subQ) {
+                                $subQ->whereNull('category_id');
+                            });
+                    }
                 });
             })
             ->when(! empty($this->filterBrand), function ($q) {
-                $q->whereHas('model', function ($subQ) {
-                    $subQ->whereIn('brand_id', $this->filterBrand);
+                $hasNull = in_array('null', $this->filterBrand, true) || in_array(null, $this->filterBrand, true);
+                $values = array_filter($this->filterBrand, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($values, $hasNull) {
+                    if (! empty($values)) {
+                        $sub->whereHas('model', function ($subQ) use ($values) {
+                            $subQ->whereIn('brand_id', $values);
+                        });
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereDoesntHave('model')
+                            ->orWhereHas('model', function ($subQ) {
+                                $subQ->whereNull('brand_id');
+                            });
+                    }
                 });
             })
             ->when(empty($this->search) && empty($this->filterStatus) && empty($this->filterBaseComponent) && empty($this->filterLocation) && empty($this->filterHolder) && empty($this->filterModel) && empty($this->filterNetwork) && empty($this->filterCategory) && empty($this->filterBrand), function ($q) {

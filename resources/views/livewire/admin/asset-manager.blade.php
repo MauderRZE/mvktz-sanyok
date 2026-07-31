@@ -100,6 +100,10 @@
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 w-full">
                 <x-form.multi-select label="Категорія" :selectedCount="count($filterCategory)">
+                    <label class="flex items-center gap-2 text-xs font-semibold text-amber-400 cursor-pointer py-1">
+                        <input type="checkbox" value="null" wire:model.live="filterCategory" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>[Не вказано / Null]</span>
+                    </label>
                     @foreach($categoriesList as $cat)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $cat->id }}" wire:model.live="filterCategory" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
@@ -109,6 +113,10 @@
                 </x-form.multi-select>
 
                 <x-form.multi-select label="Тип компонента" :selectedCount="count($filterBaseComponent)">
+                    <label class="flex items-center gap-2 text-xs font-semibold text-amber-400 cursor-pointer py-1">
+                        <input type="checkbox" value="null" wire:model.live="filterBaseComponent" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>[Не вказано / Null]</span>
+                    </label>
                     @foreach($baseComponentsList as $bc)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $bc->id }}" wire:model.live="filterBaseComponent" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
@@ -118,6 +126,10 @@
                 </x-form.multi-select>
 
                 <x-form.multi-select label="Бренд" :selectedCount="count($filterBrand)">
+                    <label class="flex items-center gap-2 text-xs font-semibold text-amber-400 cursor-pointer py-1">
+                        <input type="checkbox" value="null" wire:model.live="filterBrand" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>[Не вказано / Null]</span>
+                    </label>
                     @foreach($brandsList as $brand)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $brand->id }}" wire:model.live="filterBrand" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
@@ -127,6 +139,10 @@
                 </x-form.multi-select>
 
                 <x-form.multi-select label="Моделі" :selectedCount="count($filterModel)">
+                    <label class="flex items-center gap-2 text-xs font-semibold text-amber-400 cursor-pointer py-1">
+                        <input type="checkbox" value="null" wire:model.live="filterModel" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>[Не вказано / Null]</span>
+                    </label>
                     @foreach($modelsList as $m)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $m->id }}" wire:model.live="filterModel" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
@@ -136,6 +152,10 @@
                 </x-form.multi-select>
 
                 <x-form.multi-select label="Локації" :selectedCount="count($filterLocation)">
+                    <label class="flex items-center gap-2 text-xs font-semibold text-amber-400 cursor-pointer py-1">
+                        <input type="checkbox" value="null" wire:model.live="filterLocation" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>[Не вказано / Null]</span>
+                    </label>
                     @foreach($locationsList as $loc)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $loc->id }}" wire:model.live="filterLocation" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
@@ -145,6 +165,10 @@
                 </x-form.multi-select>
 
                 <x-form.multi-select label="Власники" :selectedCount="count($filterHolder)">
+                    <label class="flex items-center gap-2 text-xs font-semibold text-amber-400 cursor-pointer py-1">
+                        <input type="checkbox" value="null" wire:model.live="filterHolder" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>[Не вказано / Null]</span>
+                    </label>
                     @foreach($holdersList as $h)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $h->id }}" wire:model.live="filterHolder" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
@@ -167,6 +191,10 @@
                 </x-form.multi-select>
 
                 <x-form.multi-select label="Статуси" :selectedCount="count($filterStatus)">
+                    <label class="flex items-center gap-2 text-xs font-semibold text-amber-400 cursor-pointer py-1">
+                        <input type="checkbox" value="null" wire:model.live="filterStatus" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>[Не вказано / Null]</span>
+                    </label>
                     @foreach(['працює', 'потребує уваги', 'в ремонті', 'на списання', 'списано'] as $st)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $st }}" wire:model.live="filterStatus" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">

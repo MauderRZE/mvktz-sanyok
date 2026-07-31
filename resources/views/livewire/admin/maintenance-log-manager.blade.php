@@ -19,6 +19,10 @@
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full lg:w-auto">
                 <x-form.multi-select label="Статус" :selectedCount="count($filterStatus)">
+                    <label class="flex items-center gap-2 text-xs font-semibold text-amber-400 cursor-pointer py-1">
+                        <input type="checkbox" value="null" wire:model.live="filterStatus" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>[Не вказано / Null]</span>
+                    </label>
                     @foreach(['В ремонті', 'Відремонтовано', 'Неможливо відремонтувати'] as $st)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $st }}" wire:model.live="filterStatus" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
@@ -28,6 +32,10 @@
                 </x-form.multi-select>
 
                 <x-form.multi-select label="Комплектуючі" :selectedCount="count($filterAsset)">
+                    <label class="flex items-center gap-2 text-xs font-semibold text-amber-400 cursor-pointer py-1">
+                        <input type="checkbox" value="null" wire:model.live="filterAsset" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                        <span>[Не вказано / Null]</span>
+                    </label>
                     @foreach($assetsList as $comp)
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $comp->id }}" wire:model.live="filterAsset" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">

@@ -2,51 +2,74 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use App\Models\MaintenanceLog;
-use App\Models\Equipment;
 use App\Livewire\Forms\MaintenanceLogForm;
+use App\Models\Asset;
+use App\Models\MaintenanceLog;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('layouts.admin')]
 class MaintenanceLogManager extends Component
 {
     public MaintenanceLogForm $form;
-    
+
     public $logs;
+
     public $assetsList = [];
+
     public $isOpen = 0;
 
     public $search = '';
+
     public $filterStatus = [];
+
     public $filterAsset = [];
 
     public function render()
     {
         $query = MaintenanceLog::with(['asset.equipment', 'asset.componentType'])
-            ->when($this->search, function($q) {
-                $search = '%' . $this->search . '%';
-                $q->where(function($sub) use ($search) {
+            ->when($this->search, function ($q) {
+                $search = '%'.$this->search.'%';
+                $q->where(function ($sub) use ($search) {
                     $sub->where('issue_description', 'like', $search)
-                        ->orWhereHas('asset.equipment', function($eq) use ($search) {
+                        ->orWhereHas('asset.equipment', function ($eq) use ($search) {
                             $eq->where('inv_number', 'like', $search)
-                               ->orWhere('account_name', 'like', $search);
+                                ->orWhere('account_name', 'like', $search);
                         })
-                        ->orWhereHas('asset.componentType', function($ct) use ($search) {
+                        ->orWhereHas('asset.componentType', function ($ct) use ($search) {
                             $ct->where('component_name', 'like', $search);
                         });
                 });
             })
-            ->when(!empty($this->filterStatus), function($q) {
-                $q->whereIn('status', $this->filterStatus);
+            ->when(! empty($this->filterStatus), function ($q) {
+                $hasNull = in_array('null', $this->filterStatus, true) || in_array(null, $this->filterStatus, true);
+                $statuses = array_filter($this->filterStatus, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($statuses, $hasNull) {
+                    if (! empty($statuses)) {
+                        $sub->whereIn('status', $statuses);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('status');
+                    }
+                });
             })
-            ->when(!empty($this->filterAsset), function($q) {
-                $q->whereIn('assets_id', $this->filterAsset);
+            ->when(! empty($this->filterAsset), function ($q) {
+                $hasNull = in_array('null', $this->filterAsset, true) || in_array(null, $this->filterAsset, true);
+                $assets = array_filter($this->filterAsset, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($assets, $hasNull) {
+                    if (! empty($assets)) {
+                        $sub->whereIn('assets_id', $assets);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('assets_id');
+                    }
+                });
             })
             ->orderBy('id', 'desc');
 
         $this->logs = $query->get();
-        $this->assetsList = \App\Models\Asset::with(['equipment', 'componentType'])->get();
+        $this->assetsList = Asset::with(['equipment', 'componentType'])->get();
+
         return view('livewire.admin.maintenance-log-manager');
     }
 
@@ -79,7 +102,7 @@ class MaintenanceLogManager extends Component
     {
         $isUpdate = $this->form->store();
 
-        session()->flash('message', 
+        session()->flash('message',
             $isUpdate ? 'Запис ТО оновлено.' : 'Роботу ТО зареєстровано.');
 
         $this->closeModal();

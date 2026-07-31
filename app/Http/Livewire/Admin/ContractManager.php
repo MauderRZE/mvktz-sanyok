@@ -2,43 +2,56 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
+use App\Livewire\Forms\ContractForm;
 use App\Models\Contract;
 use App\Models\Supplier;
-use App\Livewire\Forms\ContractForm;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('layouts.admin')]
 class ContractManager extends Component
 {
     public ContractForm $form;
-    
+
     public $contracts;
+
     public $suppliersList = [];
+
     public $isOpen = 0;
 
     public $search = '';
+
     public $filterSupplier = [];
 
     public function render()
     {
         $query = Contract::with('supplier')
-            ->when($this->search, function($q) {
-                $search = '%' . $this->search . '%';
-                $q->where(function($sub) use ($search) {
+            ->when($this->search, function ($q) {
+                $search = '%'.$this->search.'%';
+                $q->where(function ($sub) use ($search) {
                     $sub->where('contract_number', 'like', $search)
-                        ->orWhereHas('supplier', function($sup) use ($search) {
+                        ->orWhereHas('supplier', function ($sup) use ($search) {
                             $sup->where('supplier_name', 'like', $search);
                         });
                 });
             })
-            ->when(!empty($this->filterSupplier), function($q) {
-                $q->whereIn('supplier_id', $this->filterSupplier);
+            ->when(! empty($this->filterSupplier), function ($q) {
+                $hasNull = in_array('null', $this->filterSupplier, true) || in_array(null, $this->filterSupplier, true);
+                $ids = array_filter($this->filterSupplier, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($ids, $hasNull) {
+                    if (! empty($ids)) {
+                        $sub->whereIn('supplier_id', $ids);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('supplier_id');
+                    }
+                });
             })
             ->orderBy('id', 'desc');
 
         $this->contracts = $query->get();
         $this->suppliersList = Supplier::all();
+
         return view('livewire.admin.contract-manager');
     }
 
@@ -68,7 +81,7 @@ class ContractManager extends Component
     {
         $isUpdate = $this->form->store();
 
-        session()->flash('message', 
+        session()->flash('message',
             $isUpdate ? 'Договір оновлено.' : 'Договір створено.');
 
         $this->closeModal();

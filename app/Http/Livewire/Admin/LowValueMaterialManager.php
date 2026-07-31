@@ -2,39 +2,63 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use App\Models\LowValueMaterial;
-use App\Models\Equipment;
 use App\Models\Contract;
+use App\Models\LowValueMaterial;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('layouts.admin')]
 class LowValueMaterialManager extends Component
 {
-    public $materials, $materialId, $material_account_name, $price, $count = 1, $nomenklature_number, $contract_id;
+    public $materials;
+
+    public $materialId;
+
+    public $material_account_name;
+
+    public $price;
+
+    public $count = 1;
+
+    public $nomenklature_number;
+
+    public $contract_id;
+
     public $contractsList = [];
+
     public $isOpen = 0;
 
     public $search = '';
+
     public $filterContract = [];
 
     public function render()
     {
         $query = LowValueMaterial::with(['contract'])
-            ->when($this->search, function($q) {
-                $search = '%' . $this->search . '%';
-                $q->where(function($sub) use ($search) {
+            ->when($this->search, function ($q) {
+                $search = '%'.$this->search.'%';
+                $q->where(function ($sub) use ($search) {
                     $sub->where('material_account_name', 'like', $search)
                         ->orWhere('nomenklature_number', 'like', $search);
                 });
             })
-            ->when(!empty($this->filterContract), function($q) {
-                $q->whereIn('contract_id', $this->filterContract);
+            ->when(! empty($this->filterContract), function ($q) {
+                $hasNull = in_array('null', $this->filterContract, true) || in_array(null, $this->filterContract, true);
+                $ids = array_filter($this->filterContract, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($ids, $hasNull) {
+                    if (! empty($ids)) {
+                        $sub->whereIn('contract_id', $ids);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('contract_id');
+                    }
+                });
             })
             ->orderBy('id', 'desc');
 
         $this->materials = $query->get();
         $this->contractsList = Contract::with('supplier')->get();
+
         return view('livewire.admin.low-value-material-manager');
     }
 
@@ -60,7 +84,8 @@ class LowValueMaterialManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields(){
+    private function resetInputFields()
+    {
         $this->materialId = null;
         $this->material_account_name = '';
         $this->price = null;
@@ -87,7 +112,7 @@ class LowValueMaterialManager extends Component
             'contract_id' => $this->contract_id ?: null,
         ]);
 
-        session()->flash('message', 
+        session()->flash('message',
             $this->materialId ? 'Матеріал (МШП) оновлено.' : 'Матеріал (МШП) додано.');
 
         $this->closeModal();

@@ -2,43 +2,54 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use App\Models\Organization;
 use App\Livewire\Forms\OrganizationForm;
+use App\Models\Organization;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('layouts.admin')]
 class OrganizationManager extends Component
 {
     public OrganizationForm $form;
-    
+
     public $organizations;
+
     public $isOpen = 0;
 
     public $search = '';
+
     public $filterType = [];
 
     public function render()
     {
         $query = Organization::query()
-            ->when($this->search, function($q) {
-                $search = '%' . $this->search . '%';
-                $q->where(function($sub) use ($search) {
+            ->when($this->search, function ($q) {
+                $search = '%'.$this->search.'%';
+                $q->where(function ($sub) use ($search) {
                     $sub->where('org_name', 'like', $search)
                         ->orWhere('org_type', 'like', $search);
                 });
             })
-            ->when(!empty($this->filterType), function($q) {
-                $q->whereIn('org_type', $this->filterType);
+            ->when(! empty($this->filterType), function ($q) {
+                $hasNull = in_array('null', $this->filterType, true) || in_array(null, $this->filterType, true);
+                $types = array_filter($this->filterType, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($types, $hasNull) {
+                    if (! empty($types)) {
+                        $sub->whereIn('org_type', $types);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('org_type');
+                    }
+                });
             })
             ->orderBy('id', 'desc');
 
         $this->organizations = $query->get();
-        
+
         $typesList = Organization::select('org_type')->distinct()->pluck('org_type')->filter()->values();
 
         return view('livewire.admin.organization-manager', [
-            'typesList' => $typesList
+            'typesList' => $typesList,
         ]);
     }
 
@@ -68,7 +79,7 @@ class OrganizationManager extends Component
     {
         $isUpdate = $this->form->store();
 
-        session()->flash('message', 
+        session()->flash('message',
             $isUpdate ? 'Організацію оновлено.' : 'Організацію створено.');
 
         $this->closeModal();
