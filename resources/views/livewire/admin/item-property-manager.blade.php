@@ -937,7 +937,7 @@
             <div>
                 <div class="flex items-center gap-3">
                     <span style="font-size: 1.75rem; filter: drop-shadow(0 0 10px rgba(220,20,60,0.6));"></span>
-                    <h1 class="demon-title">властивості</h1>
+                    <h1 class="demon-title">Демонічні властивості</h1>
                 </div>
                 <p class="demon-subtitle">Realm of dynamic attributes</p>
             </div>
