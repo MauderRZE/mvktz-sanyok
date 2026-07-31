@@ -457,7 +457,9 @@
     }
 
     /* Анімація ніг демона */
+    /* --- Анімація зброї, демонів та людей --- */
     .demon-legs { animation: leg-run 0.35s steps(2) infinite; transform-origin: top center; }
+    .human-legs { animation: leg-run 0.3s steps(2) infinite; transform-origin: top center; }
     @keyframes leg-run {
         0%  { transform: skewX(-8deg); }
         50% { transform: skewX(8deg); }
@@ -474,10 +476,93 @@
         to   { transform: rotate(5deg) translateY(-4px); }
     }
 
+    /* Анімації битви */
+    .slash-effect { animation: slash-flash 0.8s ease-out infinite; transform-origin: center; }
+    @keyframes slash-flash {
+        0% { opacity: 0; transform: scale(0.5) rotate(-20deg); }
+        40% { opacity: 1; transform: scale(1.2) rotate(10deg); }
+        100% { opacity: 0; transform: scale(1.5) rotate(30deg); }
+    }
+
+    .fireball-fly { animation: fireball-trajectory 1.4s ease-in-out infinite; }
+    @keyframes fireball-trajectory {
+        0% { transform: translate(0, 0) scale(0.8); opacity: 0.2; }
+        50% { opacity: 1; transform: translate(-60px, -20px) scale(1.2); }
+        100% { transform: translate(-120px, 10px) scale(0.6); opacity: 0; }
+    }
+
+    .shield-block { animation: shield-defend 0.8s ease-in-out infinite alternate; transform-origin: center; }
+    @keyframes shield-defend {
+        0% { transform: rotate(0deg) translateX(0); }
+        100% { transform: rotate(-12deg) translateX(-3px); }
+    }
+
+    .sword-strike { animation: sword-swing 0.6s ease-in-out infinite alternate; transform-origin: bottom right; }
+    @keyframes sword-swing {
+        0% { transform: rotate(-35deg); }
+        100% { transform: rotate(25deg); }
+    }
+
+    .demon-axe-strike { animation: axe-swing 0.7s ease-in-out infinite alternate; transform-origin: bottom left; }
+    @keyframes axe-swing {
+        0% { transform: rotate(30deg); }
+        100% { transform: rotate(-40deg); }
+    }
+
+    /* Літаючий демон / Гарготуля */
+    .demon-flyer-1 {
+        position: absolute;
+        top: 80px;
+        animation: demon-fly-across 14s ease-in-out infinite;
+        filter: drop-shadow(0 0 15px #ff2400);
+        opacity: 0.85;
+    }
+    .demon-flyer-2 {
+        position: absolute;
+        top: 140px;
+        animation: demon-fly-across 20s ease-in-out infinite 6s;
+        filter: drop-shadow(0 0 12px #dc143c);
+        opacity: 0.75;
+    }
+    @keyframes demon-fly-across {
+        0%   { transform: translate(-200px, 0) scaleX(1); }
+        25%  { transform: translate(30vw, -40px) scaleX(1); }
+        50%  { transform: translate(60vw, 20px) scaleX(1); }
+        75%  { transform: translate(85vw, -30px) scaleX(1); }
+        99%  { transform: translate(calc(100vw + 200px), 0) scaleX(1); }
+        100% { transform: translate(-200px, 0) scaleX(1); }
+    }
+
+    .demon-wing-flap { animation: wing-flap 0.4s ease-in-out infinite alternate; transform-origin: center; }
+    @keyframes wing-flap {
+        0% { transform: scaleY(0.7) rotate(-5deg); }
+        100% { transform: scaleY(1.2) rotate(8deg); }
+    }
+
+    /* Битва 1: Воїн проти Демона-Берсерка (Центр-Ліворуч) */
+    .battle-scene-1 {
+        position: absolute;
+        left: 28%;
+        bottom: 25px;
+        opacity: 0.9;
+        filter: drop-shadow(0 0 16px rgba(255, 69, 0, 0.85));
+        animation: scene-float 4.5s ease-in-out infinite alternate;
+    }
+
+    /* Битва 2: Маг і Лучник проти Демона-Властелина з Вогнем (Центр-Праворуч) */
+    .battle-scene-2 {
+        position: absolute;
+        right: 32%;
+        bottom: 25px;
+        opacity: 0.9;
+        filter: drop-shadow(0 0 18px rgba(220, 20, 60, 0.85));
+        animation: scene-float 5s ease-in-out infinite alternate-reverse;
+    }
+
     /* --- Сцена з вилами (ліворуч) --- */
     .demon-pitchfork-scene {
         position: absolute;
-        left: 6%;
+        left: 3%;
         bottom: 30px;
         opacity: 0.85;
         filter: drop-shadow(0 0 15px rgba(255,69,0,0.8));
@@ -491,7 +576,7 @@
     /* --- Чавун (праворуч) --- */
     .demon-cauldron-scene {
         position: absolute;
-        right: 8%;
+        right: 4%;
         bottom: 20px;
         opacity: 0.85;
         filter: drop-shadow(0 0 16px rgba(255,36,0,0.8));
@@ -525,7 +610,7 @@
     /* --- Другий бігун з вилами --- */
     .demon-pitchfork-scene-right {
         position: absolute;
-        right: 22%;
+        right: 18%;
         bottom: 28px;
         opacity: 0.75;
         filter: drop-shadow(0 0 12px rgba(220,20,60,0.7));
@@ -551,8 +636,7 @@
 </style>
 
     {{-- ════════════════════════════════════════════════════
-     🔥 ДЕМОНІЧНА СЦЕНА ЗАДНЬОГО ФОНУ
-     Демони бігають, накалюють людей на вила, варять у чавунах
+     🔥 ДЕМОНІЧНА СЦЕНА ЗАДНЬОГО ФОНУ (З БИТВАМИ ЛЮДЕЙ ТА ДЕМОНІВ)
      ════════════════════════════════════════════════════ --}}
 <template x-teleport="body">
     <div class="demon-background-scene" aria-hidden="true">
@@ -585,75 +669,261 @@
 
     <div class="hell-ground"></div>
 
+    {{-- ══ БІТВА 1: Лицар-воїн з мечем і щитом розбиває великого демона з сокирою ══ --}}
+    <div class="battle-scene-1">
+        <svg width="210" height="130" viewBox="0 0 210 130">
+            {{-- Світлове сяйво удару --}}
+            <path class="slash-effect" d="M95 30 L115 65 L85 50 Z" fill="#fff" opacity="0.9"/>
+            <circle class="slash-effect" cx="105" cy="50" r="18" fill="none" stroke="#ffeb3b" stroke-width="3"/>
+
+            {{-- ЛЮДИНА (Лицар з мечем та щитом) --}}
+            <g transform="translate(20, 20)">
+                {{-- Шолом --}}
+                <ellipse cx="25" cy="18" rx="10" ry="11" fill="#78909c" stroke="#37474f" stroke-width="1.5"/>
+                <rect x="20" y="16" width="10" height="3" fill="#111"/> {{-- проріз шолома --}}
+                <path d="M25 7 L28 1 L22 1 Z" fill="#d32f2f"/> {{-- плюмаж --}}
+                
+                {{-- Тулуб / Обліпи --}}
+                <rect x="14" y="29" width="22" height="28" rx="4" fill="#546e7a" stroke="#263238" stroke-width="1.5"/>
+                <path d="M14 29 L25 45 L36 29" stroke="#cfd8dc" stroke-width="1.5" fill="none"/>
+                
+                {{-- Щит (блокує) --}}
+                <g class="shield-block" transform="translate(30, 25)">
+                    <path d="M5 0 L22 0 L26 15 Q22 35 13 42 Q4 35 0 15 Z" fill="#b0bec5" stroke="#37474f" stroke-width="2"/>
+                    <path d="M13 5 L13 37 M2 18 L24 18" stroke="#d32f2f" stroke-width="2.5"/> {{-- Хрест на щиті --}}
+                </g>
+
+                {{-- Рука з мечем (замах/удар) --}}
+                <g class="sword-strike" transform="translate(18, 32)">
+                    <line x1="0" y1="0" x2="30" y2="-15" stroke="#b0bec5" stroke-width="4" stroke-linecap="round"/>
+                    {{-- Меч --}}
+                    <line x1="30" y1="-15" x2="68" y2="-38" stroke="#ffffff" stroke-width="3.5"/>
+                    <line x1="26" y1="-20" x2="34" y2="-10" stroke="#ffb300" stroke-width="3"/> {{-- гарда --}}
+                    <circle cx="24" cy="-22" r="2.5" fill="#ffb300"/>
+                </g>
+
+                {{-- Ноги воїна --}}
+                <g class="human-legs">
+                    <line x1="18" y1="57" x2="10" y2="85" stroke="#37474f" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="32" y1="57" x2="38" y2="85" stroke="#37474f" stroke-width="6" stroke-linecap="round"/>
+                    <rect x="5" y="83" width="10" height="5" rx="2" fill="#263238"/>
+                    <rect x="35" y="83" width="10" height="5" rx="2" fill="#263238"/>
+                </g>
+            </g>
+
+            {{-- ДЕМОН (Велетень з сокирою) --}}
+            <g transform="translate(125, 10)">
+                {{-- тіло --}}
+                <rect x="12" y="32" width="32" height="36" rx="6" fill="#3d0a0a" stroke="#8b0000" stroke-width="1.5"/>
+                {{-- голова --}}
+                <ellipse cx="28" cy="18" rx="16" ry="15" fill="#2a0000"/>
+                {{-- величезні роги --}}
+                <path d="M14 12 Q2 0 -6 -10 Q8 2 18 13" fill="#8b0000" stroke="#ff2400" stroke-width="1"/>
+                <path d="M42 12 Q54 0 62 -10 Q48 2 38 13" fill="#8b0000" stroke="#ff2400" stroke-width="1"/>
+                {{-- палаючі очі --}}
+                <ellipse cx="21" cy="17" rx="5" ry="4" fill="#ffeb3b"/>
+                <ellipse cx="35" cy="17" rx="5" ry="4" fill="#ffeb3b"/>
+                <circle cx="21" cy="17" r="2" fill="#d50000"/>
+                <circle cx="35" cy="17" r="2" fill="#d50000"/>
+                {{-- Ікла --}}
+                <path d="M18 26 L21 32 L24 26 M32 26 L35 32 L38 26" stroke="#fff" stroke-width="1.5" fill="none"/>
+                
+                {{-- Сокира демона --}}
+                <g class="demon-axe-strike" transform="translate(15, 38)">
+                    <line x1="0" y1="0" x2="-45" y2="15" stroke="#4e342e" stroke-width="5" stroke-linecap="round"/>
+                    {{-- лезо сокири --}}
+                    <path d="M-40 0 Q-60 -15 -55 30 Q-40 20 -35 15 Z" fill="#78909c" stroke="#cfd8dc" stroke-width="1.5"/>
+                </g>
+
+                {{-- Рука --}}
+                <line x1="12" y1="38" x2="-10" y2="48" stroke="#2a0000" stroke-width="6" stroke-linecap="round"/>
+                
+                {{-- Хвіст --}}
+                <g class="demon-tail" transform="translate(20,50)">
+                    <path d="M20 15 Q35 25 38 40" stroke="#8b0000" stroke-width="3.5" fill="none"/>
+                    <polygon points="38,40 43,43 42,36" fill="#ff2400"/>
+                </g>
+
+                {{-- Ноги --}}
+                <g class="demon-legs">
+                    <line x1="20" y1="68" x2="12" y2="98" stroke="#2a0000" stroke-width="7" stroke-linecap="round"/>
+                    <line x1="36" y1="68" x2="44" y2="98" stroke="#2a0000" stroke-width="7" stroke-linecap="round"/>
+                    <ellipse cx="12" cy="98" rx="7" ry="4" fill="#1a0000"/>
+                    <ellipse cx="44" cy="98" rx="7" ry="4" fill="#1a0000"/>
+                </g>
+            </g>
+        </svg>
+    </div>
+
+    {{-- ══ БІТВА 2: Маг випускає фаєрбол, Лучник стріляє в Лорда Демонів ══ --}}
+    <div class="battle-scene-2">
+        <svg width="240" height="135" viewBox="0 0 240 135">
+            {{-- Фаєрбол/Магічний шар політ --}}
+            <g class="fireball-fly" transform="translate(170, 45)">
+                <circle cx="0" cy="0" r="10" fill="#00e5ff" opacity="0.9"/>
+                <circle cx="0" cy="0" r="16" fill="none" stroke="#b2ebf2" stroke-width="2"/>
+                <path d="M0 -8 Q20 0 35 -5 Q20 5 0 8 Z" fill="#00b0ff" opacity="0.7"/>
+            </g>
+
+            {{-- ЛЮДИНА 1: Маг із палицею (Ліворуч) --}}
+            <g transform="translate(20, 25)">
+                {{-- Капюшон / Моб --}}
+                <path d="M12 18 Q22 4 32 18 Q34 32 10 32 Z" fill="#311b92"/>
+                <circle cx="22" cy="20" r="7" fill="#ffcc80"/>
+                <circle cx="25" cy="19" r="1.5" fill="#311b92"/> {{-- око --}}
+
+                {{-- Мантія --}}
+                <path d="M12 30 L5 82 L38 82 L32 30 Z" fill="#4527a0" stroke="#1a237e" stroke-width="1.5"/>
+
+                {{-- Посох з магічним кристалом --}}
+                <g transform="translate(28, 20)">
+                    <line x1="0" y1="40" x2="10" y2="-15" stroke="#5d4037" stroke-width="4" stroke-linecap="round"/>
+                    <polygon points="10,-15 5,-27 15,-30 18,-18" fill="#00e5ff"/>
+                    <circle cx="12" cy="-22" r="8" fill="#80deea" opacity="0.6" class="slash-effect"/>
+                </g>
+            </g>
+
+            {{-- ЛЮДИНА 2: Лучник розтягує лук (Поруч з магом) --}}
+            <g transform="translate(70, 30)">
+                {{-- Голова/Капелюх --}}
+                <circle cx="16" cy="16" r="7" fill="#ffcc80"/>
+                <path d="M6 14 Q16 2 28 12 L30 16 L4 16 Z" fill="#2e7d32"/> {{-- зелений капелюх --}}
+                <path d="M22 8 L28 0 L24 10 Z" fill="#c62828"/> {{-- перо --}}
+
+                {{-- Одяг --}}
+                <rect x="10" y="23" width="14" height="24" rx="3" fill="#388e3c"/>
+                
+                {{-- Лук і стріла (націлена праворуч в демона) --}}
+                <g transform="translate(18, 15)">
+                    {{-- Лук --}}
+                    <path d="M10 -15 Q25 10 10 35" stroke="#4e342e" stroke-width="3" fill="none"/>
+                    <line x1="10" y1="-15" x2="10" y2="35" stroke="#fff" stroke-width="1"/> {{-- тятива --}}
+                    {{-- Стріла --}}
+                    <line x1="0" y1="10" x2="35" y2="10" stroke="#d7ccc8" stroke-width="2"/>
+                    <polygon points="35,10 40,8 40,12" fill="#90a4ae"/>
+                </g>
+
+                {{-- Ноги --}}
+                <g class="human-legs">
+                    <line x1="13" y1="47" x2="8" y2="75" stroke="#1b5e20" stroke-width="4.5"/>
+                    <line x1="21" y1="47" x2="25" y2="75" stroke="#1b5e20" stroke-width="4.5"/>
+                </g>
+            </g>
+
+            {{-- ЛОРД ДЕМОНІВ (Праворуч - відбивається від заклять) --}}
+            <g transform="translate(165, 12)">
+                {{-- Крила демона --}}
+                <g class="demon-wing-flap">
+                    <path d="M15 35 Q-20 10 -25 -10 Q-5 10 15 42" fill="#1a0000" stroke="#ff1744" stroke-width="1.5"/>
+                    <path d="M35 35 Q70 10 75 -10 Q55 10 35 42" fill="#1a0000" stroke="#ff1744" stroke-width="1.5"/>
+                </g>
+
+                {{-- Тіло Лорда --}}
+                <rect x="12" y="30" width="26" height="34" rx="5" fill="#210000" stroke="#d50000" stroke-width="1.5"/>
+                {{-- Голова --}}
+                <ellipse cx="25" cy="18" rx="14" ry="13" fill="#140000"/>
+                {{-- Корона/Роги --}}
+                <polygon points="13,8 8,-6 19,4 25,-10 31,4 42,-6 37,8" fill="#d50000"/>
+                {{-- Очі --}}
+                <ellipse cx="19" cy="17" rx="4" ry="3.5" fill="#ff5722"/>
+                <ellipse cx="31" cy="17" rx="4" ry="3.5" fill="#ff5722"/>
+
+                {{-- Вогняний щит/Аура Демона --}}
+                <circle cx="25" cy="35" r="32" fill="none" stroke="#ff3d00" stroke-width="2" stroke-dasharray="6,4" class="slash-effect"/>
+
+                {{-- Руки замовляють вогонь --}}
+                <line x1="12" y1="35" x2="-8" y2="25" stroke="#210000" stroke-width="5" stroke-linecap="round"/>
+                <line x1="38" y1="35" x2="52" y2="28" stroke="#210000" stroke-width="5" stroke-linecap="round"/>
+
+                {{-- Ноги --}}
+                <g class="demon-legs">
+                    <line x1="17" y1="64" x2="10" y2="92" stroke="#140000" stroke-width="6"/>
+                    <line x1="33" y1="64" x2="40" y2="92" stroke="#140000" stroke-width="6"/>
+                    <ellipse cx="10" cy="92" rx="6" ry="3" fill="#000"/>
+                    <ellipse cx="40" cy="92" rx="6" ry="3" fill="#000"/>
+                </g>
+            </g>
+        </svg>
+    </div>
+
+    {{-- ══ ЛІТАЮЧІ ДЕМОНИ / ГАРГОТУЛІ У ПОВІТРІ ══ --}}
+    <div class="demon-flyer-1">
+        <svg width="70" height="50" viewBox="0 0 70 50">
+            <g class="demon-wing-flap">
+                <path d="M25 25 Q0 0 -10 5 Q5 15 25 30" fill="#2d0a0a" stroke="#dc143c" stroke-width="1"/>
+                <path d="M45 25 Q70 0 80 5 Q65 15 45 30" fill="#2d0a0a" stroke="#dc143c" stroke-width="1"/>
+            </g>
+            <ellipse cx="35" cy="25" rx="10" ry="12" fill="#1a0000"/>
+            <ellipse cx="35" cy="14" rx="7" ry="7" fill="#2d0a0a"/>
+            <polygon points="31,9 28,2 33,10" fill="#ff4500"/>
+            <polygon points="39,9 42,2 37,10" fill="#ff4500"/>
+            <circle cx="32" cy="14" r="1.5" fill="#ffeb3b"/>
+            <circle cx="38" cy="14" r="1.5" fill="#ffeb3b"/>
+            <path d="M35 37 L30 48 M35 37 L40 47" stroke="#8b0000" stroke-width="2"/>
+        </svg>
+    </div>
+
+    <div class="demon-flyer-2">
+        <svg width="55" height="40" viewBox="0 0 55 40">
+            <g class="demon-wing-flap">
+                <path d="M20 20 Q-2 -2 -8 2 Q4 12 20 24" fill="#2d0a0a" stroke="#ff4500" stroke-width="1"/>
+                <path d="M35 20 Q57 -2 63 2 Q51 12 35 24" fill="#2d0a0a" stroke="#ff4500" stroke-width="1"/>
+            </g>
+            <ellipse cx="27" cy="20" rx="8" ry="9" fill="#1a0000"/>
+            <circle cx="24" cy="19" r="1.5" fill="#ff0000"/>
+            <circle cx="30" cy="19" r="1.5" fill="#ff0000"/>
+        </svg>
+    </div>
+
     {{-- ══ СЦЕНА 1: Демон накалює людину на вила (ліворуч) ══ --}}
     <div class="demon-pitchfork-scene">
         <svg width="130" height="120" viewBox="0 0 130 120">
             {{-- Людина на вилах --}}
-            {{-- тіло жертви --}}
             <g transform="translate(20, 10)">
-                {{-- голова --}}
                 <circle cx="20" cy="8" r="7" fill="#c4a373" stroke="#8b5e3c" stroke-width="1"/>
-                {{-- рот відкритий (кричить) --}}
                 <ellipse cx="20" cy="10" rx="3" ry="2" fill="#3d0000"/>
-                {{-- руки вгору (жах) --}}
                 <line x1="20" y1="15" x2="5" y2="5" stroke="#c4a373" stroke-width="3" stroke-linecap="round"/>
                 <line x1="20" y1="15" x2="35" y2="5" stroke="#c4a373" stroke-width="3" stroke-linecap="round"/>
-                {{-- тулуб --}}
                 <rect x="14" y="15" width="12" height="18" rx="3" fill="#8b6355" stroke="#5c3d2e" stroke-width="1"/>
-                {{-- ноги звисають --}}
                 <line x1="17" y1="33" x2="13" y2="50" stroke="#8b6355" stroke-width="4" stroke-linecap="round"/>
                 <line x1="23" y1="33" x2="27" y2="48" stroke="#8b6355" stroke-width="4" stroke-linecap="round"/>
             </g>
 
-            {{-- Вила (проходять крізь тіло) --}}
+            {{-- Вила --}}
             <g class="demon-pitchfork" transform="translate(25,0)">
-                {{-- держак --}}
                 <rect x="34" y="28" width="4" height="80" rx="2" fill="#5c3d1e"/>
-                {{-- зубці вил --}}
                 <rect x="24" y="10" width="3" height="30" rx="1.5" fill="#888"/>
                 <rect x="34" y="10" width="3" height="30" rx="1.5" fill="#aaa"/>
                 <rect x="44" y="10" width="3" height="30" rx="1.5" fill="#888"/>
-                {{-- поперечина --}}
                 <rect x="22" y="35" width="28" height="3" rx="1.5" fill="#666"/>
-                {{-- кров --}}
                 <ellipse cx="36" cy="36" rx="4" ry="2" fill="#8b0000" opacity="0.7"/>
                 <line x1="35" y1="36" x2="33" y2="50" stroke="#8b0000" stroke-width="1.5" opacity="0.6"/>
             </g>
 
             {{-- Демон з вилами --}}
             <g transform="translate(60, 20)">
-                {{-- тіло демона --}}
                 <ellipse cx="22" cy="40" rx="16" ry="20" fill="#2d0a0a"/>
                 <rect x="8" y="30" width="28" height="30" rx="5" fill="#3d1010"/>
-                {{-- голова --}}
                 <ellipse cx="22" cy="18" rx="14" ry="13" fill="#2d0a0a"/>
-                {{-- роги --}}
                 <polygon points="12,8 8,0 16,10" fill="#8b0000"/>
                 <polygon points="32,8 36,0 28,10" fill="#8b0000"/>
-                {{-- очі --}}
                 <ellipse cx="16" cy="17" rx="4" ry="4" fill="#ff4500"/>
                 <ellipse cx="28" cy="17" rx="4" ry="4" fill="#ff4500"/>
                 <circle cx="16" cy="17" r="2" fill="#ff0000"/>
                 <circle cx="28" cy="17" r="2" fill="#ff0000"/>
-                {{-- зуби --}}
                 <path d="M14 24 L16 28 L18 24 L20 28 L22 24 L24 28 L26 24 L28 28 L30 24" stroke="#ccc" stroke-width="1" fill="none"/>
-                {{-- хвіст --}}
                 <g class="demon-tail" transform="translate(0,40)">
                     <path d="M8 20 Q-5 25 -8 35 Q-5 30 0 35" stroke="#8b0000" stroke-width="3" fill="none" stroke-linecap="round"/>
                     <polygon points="-8,35 -4,38 -3,32" fill="#dc143c"/>
                 </g>
-                {{-- руки --}}
                 <line x1="8" y1="35" x2="-5" y2="55" stroke="#2d0a0a" stroke-width="5" stroke-linecap="round"/>
                 <line x1="36" y1="35" x2="48" y2="50" stroke="#2d0a0a" stroke-width="5" stroke-linecap="round"/>
-                {{-- ноги --}}
                 <g class="demon-legs">
                     <line x1="14" y1="60" x2="10" y2="85" stroke="#2d0a0a" stroke-width="6" stroke-linecap="round"/>
                     <line x1="30" y1="60" x2="34" y2="85" stroke="#2d0a0a" stroke-width="6" stroke-linecap="round"/>
-                    {{-- копита --}}
                     <ellipse cx="10" cy="85" rx="6" ry="3" fill="#1a0000"/>
                     <ellipse cx="34" cy="85" rx="6" ry="3" fill="#1a0000"/>
                 </g>
-                {{-- крила --}}
                 <path d="M8 30 Q-15 15 -20 5 Q-10 15 8 35" fill="#1a0505" stroke="#8b0000" stroke-width="1"/>
                 <path d="M36 30 Q55 15 60 5 Q52 15 36 35" fill="#1a0505" stroke="#8b0000" stroke-width="1"/>
             </g>
@@ -663,99 +933,66 @@
     {{-- ══ СЦЕНА 2: Демон варить людину в чавуні (праворуч) ══ --}}
     <div class="demon-cauldron-scene">
         <svg width="180" height="140" viewBox="0 0 180 140">
-
-            {{-- Чавун --}}
             <g transform="translate(20, 50)">
-                {{-- вогонь під чавуном --}}
                 <ellipse cx="55" cy="82" rx="35" ry="8" fill="#ff4500" opacity="0.5"/>
                 <path d="M30 80 Q35 60 40 70 Q45 50 50 65 Q55 45 60 62 Q65 50 70 68 Q75 60 80 78" fill="#ff2400" opacity="0.6"/>
                 <path d="M35 80 Q40 65 45 72 Q50 55 55 68 Q60 52 65 70 Q70 58 75 78" fill="#ff6600" opacity="0.5"/>
-
-                {{-- ніжки --}}
                 <rect x="28" y="74" width="6" height="12" rx="2" fill="#333"/>
                 <rect x="75" y="74" width="6" height="12" rx="2" fill="#333"/>
-
-                {{-- тіло чавуна --}}
                 <path d="M15 35 Q10 70 20 78 L90 78 Q100 70 95 35 Z" fill="#2a2a2a" stroke="#444" stroke-width="2"/>
                 <ellipse cx="55" cy="35" rx="42" ry="12" fill="#333" stroke="#444" stroke-width="1.5"/>
-
-                {{-- кипляча рідина --}}
                 <ellipse cx="55" cy="35" rx="38" ry="9" fill="#8b0000" opacity="0.8"/>
                 <path d="M18 34 Q30 28 42 34 Q54 28 66 34 Q78 28 90 34" stroke="#dc143c" stroke-width="2" fill="none" opacity="0.6"/>
-
-                {{-- Бульбашки --}}
                 <circle class="cauldron-bubble" cx="35" cy="33" r="4" fill="#ff4500" opacity="0.7"/>
                 <circle class="cauldron-bubble" cx="55" cy="30" r="5" fill="#ff2400" opacity="0.6"/>
                 <circle class="cauldron-bubble" cx="72" cy="33" r="3" fill="#ff6600" opacity="0.7"/>
-
-                {{-- Жертва в чавуні (голова і руки стирчать) --}}
                 <g class="cauldron-victim">
-                    {{-- голова --}}
                     <circle cx="55" cy="26" r="9" fill="#c4a373" stroke="#8b5e3c" stroke-width="1"/>
-                    {{-- очі (жах) --}}
                     <circle cx="51" cy="24" r="2" fill="white"/>
                     <circle cx="59" cy="24" r="2" fill="white"/>
                     <circle cx="51" cy="25" r="1" fill="#000"/>
                     <circle cx="59" cy="25" r="1" fill="#000"/>
-                    {{-- відкритий рот --}}
                     <path d="M50 30 Q55 35 60 30" stroke="#3d0000" stroke-width="1.5" fill="none"/>
                     <ellipse cx="55" cy="31" rx="4" ry="2.5" fill="#3d0000" opacity="0.8"/>
-                    {{-- руки --}}
                     <line x1="47" y1="30" x2="30" y2="22" stroke="#c4a373" stroke-width="3" stroke-linecap="round"/>
                     <line x1="63" y1="30" x2="80" y2="22" stroke="#c4a373" stroke-width="3" stroke-linecap="round"/>
-                    {{-- долоні --}}
                     <circle cx="30" cy="21" r="4" fill="#c4a373"/>
                     <circle cx="80" cy="21" r="4" fill="#c4a373"/>
                 </g>
             </g>
-
-            {{-- Демон-кухар помішує --}}
             <g transform="translate(110, 10)">
-                {{-- тіло --}}
                 <rect x="8" y="35" width="26" height="32" rx="4" fill="#2d0a0a"/>
-                {{-- голова --}}
                 <ellipse cx="21" cy="22" rx="14" ry="13" fill="#2d0a0a"/>
-                {{-- роги --}}
                 <polygon points="11,13 7,3 16,14" fill="#8b0000"/>
                 <polygon points="31,13 35,3 26,14" fill="#8b0000"/>
-                {{-- очі (задоволені) --}}
                 <ellipse cx="15" cy="21" rx="4" ry="3" fill="#ff4500"/>
                 <ellipse cx="27" cy="21" rx="4" ry="3" fill="#ff4500"/>
                 <circle cx="15" cy="21" r="1.5" fill="#ff0000"/>
                 <circle cx="27" cy="21" r="1.5" fill="#ff0000"/>
-                {{-- усмішка --}}
                 <path d="M12 28 Q21 34 30 28" stroke="#dc143c" stroke-width="2" fill="none" stroke-linecap="round"/>
-                {{-- зуби --}}
                 <path d="M14 28 L15 31 L17 28 L19 31 L21 28 L23 31 L25 28 L27 31 L28 28" stroke="#ddd" stroke-width="1" fill="none"/>
-                {{-- хвіст --}}
                 <g class="demon-tail">
                     <path d="M8 55 Q-4 62 -6 72" stroke="#8b0000" stroke-width="3" fill="none" stroke-linecap="round"/>
                     <polygon points="-6,72 -2,76 1,70" fill="#dc143c"/>
                 </g>
-                {{-- рука з ложкою (помішує) --}}
                 <g class="demon-stir">
                     <line x1="8" y1="45" x2="-20" y2="80" stroke="#2d0a0a" stroke-width="5" stroke-linecap="round"/>
-                    {{-- ложка --}}
                     <ellipse cx="-23" cy="84" rx="6" ry="4" fill="#888" stroke="#555" stroke-width="1"/>
                     <line x1="-20" y1="80" x2="-23" y2="84" stroke="#888" stroke-width="2"/>
                 </g>
-                {{-- рука інша --}}
                 <line x1="34" y1="45" x2="45" y2="55" stroke="#2d0a0a" stroke-width="5" stroke-linecap="round"/>
-                {{-- ноги --}}
                 <line x1="14" y1="67" x2="10" y2="90" stroke="#2d0a0a" stroke-width="5" stroke-linecap="round"/>
                 <line x1="28" y1="67" x2="32" y2="90" stroke="#2d0a0a" stroke-width="5" stroke-linecap="round"/>
                 <ellipse cx="10" cy="90" rx="5" ry="3" fill="#1a0000"/>
                 <ellipse cx="32" cy="90" rx="5" ry="3" fill="#1a0000"/>
-                {{-- крило --}}
                 <path d="M8 40 Q-8 25 -12 15 Q-4 22 8 42" fill="#1a0505" stroke="#8b0000" stroke-width="1"/>
             </g>
         </svg>
     </div>
 
-    {{-- ══ СЦЕНА 3: Демон з вилами праворуч (дзеркальний) ══ --}}
+    {{-- ══ СЦЕНА 3: Демон з вилами праворуч ══ --}}
     <div class="demon-pitchfork-scene-right">
         <svg width="110" height="110" viewBox="0 0 110 110" style="transform: scaleX(-1);">
-            {{-- людина --}}
             <g transform="translate(15, 5)">
                 <circle cx="20" cy="8" r="7" fill="#c4a373" stroke="#8b5e3c" stroke-width="1"/>
                 <ellipse cx="20" cy="11" rx="3" ry="2" fill="#3d0000"/>
@@ -765,7 +1002,6 @@
                 <line x1="17" y1="33" x2="14" y2="50" stroke="#6b4030" stroke-width="4" stroke-linecap="round"/>
                 <line x1="23" y1="33" x2="26" y2="48" stroke="#6b4030" stroke-width="4" stroke-linecap="round"/>
             </g>
-            {{-- вила --}}
             <g class="demon-pitchfork" transform="translate(22,0)">
                 <rect x="34" y="28" width="4" height="70" rx="2" fill="#5c3d1e"/>
                 <rect x="24" y="10" width="3" height="28" rx="1.5" fill="#888"/>
@@ -774,7 +1010,6 @@
                 <rect x="22" y="33" width="28" height="3" rx="1.5" fill="#666"/>
                 <ellipse cx="36" cy="33" rx="4" ry="2" fill="#8b0000" opacity="0.7"/>
             </g>
-            {{-- демон --}}
             <g transform="translate(55, 18)">
                 <rect x="6" y="30" width="26" height="28" rx="5" fill="#3d1010"/>
                 <ellipse cx="20" cy="18" rx="13" ry="12" fill="#2d0a0a"/>
@@ -806,45 +1041,35 @@
     {{-- ══ Бігаючий демон 1 ══ --}}
     <div class="demon-runner-1">
         <svg width="80" height="90" viewBox="0 0 80 90">
-            {{-- тіло --}}
             <rect x="22" y="32" width="22" height="28" rx="5" fill="#3d1010"/>
-            {{-- голова --}}
             <ellipse cx="33" cy="20" rx="13" ry="12" fill="#2d0a0a"/>
-            {{-- роги --}}
             <polygon points="23,12 19,3 27,13" fill="#8b0000"/>
             <polygon points="43,12 47,3 39,13" fill="#8b0000"/>
-            {{-- очі --}}
             <ellipse cx="27" cy="19" rx="4" ry="4" fill="#ff4500"/>
             <ellipse cx="39" cy="19" rx="4" ry="4" fill="#ff4500"/>
             <circle cx="27" cy="19" r="2" fill="#900"/>
             <circle cx="39" cy="19" r="2" fill="#900"/>
-            {{-- зуби --}}
             <path d="M24 26 L26 30 L28 26 L30 30 L32 26 L34 30 L36 26 L38 30 L40 26" stroke="#ccc" stroke-width="1" fill="none"/>
-            {{-- хвіст --}}
             <g class="demon-tail" transform="translate(0,40)">
                 <path d="M22 20 Q10 27 7 38" stroke="#8b0000" stroke-width="3" fill="none" stroke-linecap="round"/>
                 <polygon points="7,38 11,42 13,36" fill="#dc143c"/>
             </g>
-            {{-- руки (розкинуті при бігу) --}}
             <line x1="22" y1="38" x2="5" y2="32" stroke="#2d0a0a" stroke-width="5" stroke-linecap="round"/>
             <line x1="44" y1="38" x2="62" y2="30" stroke="#2d0a0a" stroke-width="5" stroke-linecap="round"/>
-            {{-- ноги (біг) --}}
             <g class="demon-legs">
                 <line x1="27" y1="60" x2="15" y2="82" stroke="#2d0a0a" stroke-width="6" stroke-linecap="round"/>
                 <line x1="39" y1="60" x2="52" y2="80" stroke="#2d0a0a" stroke-width="6" stroke-linecap="round"/>
                 <ellipse cx="15" cy="82" rx="7" ry="3" fill="#1a0000"/>
                 <ellipse cx="52" cy="80" rx="7" ry="3" fill="#1a0000"/>
             </g>
-            {{-- крила --}}
             <path d="M22 36 Q4 20 0 8 Q8 18 22 38" fill="#1a0505" stroke="#8b0000" stroke-width="1"/>
             <path d="M44 36 Q62 18 68 6 Q60 16 44 38" fill="#1a0505" stroke="#8b0000" stroke-width="1"/>
         </svg>
     </div>
 
-    {{-- ══ Бігаючий демон 2 (менший, із вилами) ══ --}}
+    {{-- ══ Бігаючий демон 2 ══ --}}
     <div class="demon-runner-2">
         <svg width="65" height="75" viewBox="0 0 65 75">
-            {{-- держить вили --}}
             <g class="demon-pitchfork" transform="translate(50, 5) rotate(25)">
                 <rect x="0" y="20" width="3" height="45" rx="1.5" fill="#5c3d1e"/>
                 <rect x="-6" y="5" width="2.5" height="22" rx="1" fill="#888"/>
@@ -852,27 +1077,20 @@
                 <rect x="6" y="5" width="2.5" height="22" rx="1" fill="#888"/>
                 <rect x="-7" y="24" width="20" height="2.5" rx="1" fill="#666"/>
             </g>
-            {{-- тіло --}}
             <rect x="18" y="28" width="20" height="24" rx="4" fill="#3d1010"/>
-            {{-- голова --}}
             <ellipse cx="28" cy="17" rx="11" ry="10" fill="#2d0a0a"/>
-            {{-- роги --}}
             <polygon points="19,10 16,2 23,11" fill="#8b0000"/>
             <polygon points="37,10 40,2 33,11" fill="#8b0000"/>
-            {{-- очі --}}
             <ellipse cx="23" cy="16" rx="3.5" ry="3.5" fill="#ff4500"/>
             <ellipse cx="33" cy="16" rx="3.5" ry="3.5" fill="#ff4500"/>
             <circle cx="23" cy="16" r="1.5" fill="#900"/>
             <circle cx="33" cy="16" r="1.5" fill="#900"/>
-            {{-- хвіст --}}
             <g class="demon-tail" transform="translate(0,35)">
                 <path d="M18 18 Q8 23 6 32" stroke="#8b0000" stroke-width="2.5" fill="none" stroke-linecap="round"/>
                 <polygon points="6,32 9,35 11,30" fill="#dc143c"/>
             </g>
-            {{-- руки --}}
             <line x1="18" y1="35" x2="4" y2="28" stroke="#2d0a0a" stroke-width="4" stroke-linecap="round"/>
             <line x1="38" y1="33" x2="53" y2="24" stroke="#2d0a0a" stroke-width="4" stroke-linecap="round"/>
-            {{-- ноги (біг) --}}
             <g class="demon-legs">
                 <line x1="23" y1="52" x2="12" y2="70" stroke="#2d0a0a" stroke-width="5" stroke-linecap="round"/>
                 <line x1="33" y1="52" x2="44" y2="68" stroke="#2d0a0a" stroke-width="5" stroke-linecap="round"/>
@@ -882,7 +1100,7 @@
         </svg>
     </div>
 
-    {{-- ══ Бігаючий демон 3 (маленький, швидкий) ══ --}}
+    {{-- ══ Бігаючий демон 3 ══ --}}
     <div class="demon-runner-3">
         <svg width="55" height="65" viewBox="0 0 55 65">
             <rect x="14" y="24" width="18" height="20" rx="4" fill="#3d1010"/>
