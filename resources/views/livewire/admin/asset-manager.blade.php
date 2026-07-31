@@ -91,7 +91,7 @@
                 <div class="flex-1">
                     <x-form.search wire:model.blur="search" x-on:keydown.enter="$el.blur()" placeholder="Пошук по всіх полях (серійний номер, IP, модель, кабінет, ПІБ, обладнання...)" />
                 </div>
-                @if($search !== '' || !empty($filterStatus) || !empty($filterCategory) || !empty($filterBaseComponent) || !empty($filterModel) || !empty($filterLocation) || !empty($filterHolder) || !empty($filterNetwork))
+                @if($search !== '' || !empty($filterStatus) || !empty($filterCategory) || !empty($filterBaseComponent) || !empty($filterBrand) || !empty($filterModel) || !empty($filterLocation) || !empty($filterHolder) || !empty($filterNetwork))
                     <button wire:click="resetFilters" class="px-4 py-2 bg-white/5 hover:bg-white/10 text-xs text-gray-400 hover:text-white rounded-xl border border-white/10 transition-colors shrink-0 flex items-center gap-1.5" title="Скинути всі фільтри">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                         <span>Скинути</span>
@@ -113,6 +113,15 @@
                         <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
                             <input type="checkbox" value="{{ $bc->id }}" wire:model.live="filterBaseComponent" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
                             <span>{{ $bc->component_name }}</span>
+                        </label>
+                    @endforeach
+                </x-form.multi-select>
+
+                <x-form.multi-select label="Бренд" :selectedCount="count($filterBrand)">
+                    @foreach($brandsList as $brand)
+                        <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
+                            <input type="checkbox" value="{{ $brand->id }}" wire:model.live="filterBrand" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                            <span>{{ $brand->brandtz_name }}</span>
                         </label>
                     @endforeach
                 </x-form.multi-select>
@@ -429,6 +438,20 @@
                                 </div>
                             </div>
                         @endif
+
+                        @if($c->itemProperties && $c->itemProperties->count() > 0)
+                            <div class="mb-4">
+                                <span class="text-gray-500 block mb-2 text-xs uppercase tracking-wider">🏷 Динамічні властивості ({{ $c->itemProperties->count() }})</span>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach($c->itemProperties as $prop)
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-surface-950 border border-white/5 text-xs transition-colors hover:border-white/10">
+                                            <span class="text-gray-500">{{ $prop->attribute->name ?? '—' }}:</span>
+                                            <span class="text-gray-200 font-medium">{{ $prop->attr_value }}</span>
+                                        </span>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
                     </td>
                 </tr>
                 @endif
@@ -614,6 +637,20 @@
                 <div class="bg-surface-950 p-3 rounded-xl border border-white/5">
                     <span class="text-gray-500 text-xs uppercase tracking-wider block mb-1">📝 Примітки</span>
                     <div class="text-gray-300 whitespace-pre-wrap">{{ $viewAsset->notes }}</div>
+                </div>
+                @endif
+
+                @if($viewAsset->itemProperties && $viewAsset->itemProperties->count() > 0)
+                <div class="bg-surface-950 p-3 rounded-xl border border-white/5">
+                    <span class="text-gray-500 text-xs uppercase tracking-wider block mb-2">🏷 Динамічні властивості</span>
+                    <div class="space-y-2">
+                        @foreach($viewAsset->itemProperties as $prop)
+                            <div class="flex items-center justify-between gap-4 py-1.5 {{ !$loop->last ? 'border-b border-white/5' : '' }}">
+                                <span class="text-gray-500 text-xs">{{ $prop->attribute->name ?? '—' }}</span>
+                                <span class="text-gray-300 text-sm font-medium text-right">{{ $prop->attr_value }}</span>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
                 @endif
             </div>
