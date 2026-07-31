@@ -22,10 +22,23 @@
                 @endforeach
             </x-form.select>
 
-            <x-form.select model="employee_id" label="Новий відповідальний співробітник">
-                <option value="">Без відповідального...</option>
-                @foreach($employeesList as $emp)
-                    <option value="{{ $emp->id }}">{{ $emp->last_name }} {{ $emp->first_name }} {{ $emp->middle_name }}</option>
+            <x-form.select model="holder_id" label="Новий утримувач">
+                <option value="">Без утримувача...</option>
+                @foreach($holdersList as $h)
+                    @php
+                        $empName = $h->employee ? $h->employee->last_name . ' ' . mb_substr($h->employee->first_name, 0, 1) . '.' : null;
+                        $orgName = $h->organization->org_name ?? null;
+                        if ($empName && $orgName) {
+                            $displayName = $empName . ' (' . $orgName . ')';
+                        } elseif ($empName) {
+                            $displayName = $empName;
+                        } elseif ($orgName) {
+                            $displayName = $orgName;
+                        } else {
+                            $displayName = 'Невідомий утримувач';
+                        }
+                    @endphp
+                    <option value="{{ $h->id }}">{{ $displayName }}</option>
                 @endforeach
             </x-form.select>
 

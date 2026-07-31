@@ -3,7 +3,6 @@
 namespace App\Http\Livewire\Admin\Equipment;
 
 use App\Models\Asset;
-use App\Models\Employee;
 use App\Models\EquipmentMovement;
 use App\Models\Location;
 use App\Models\LocationHolder;
@@ -20,7 +19,7 @@ class EquipmentMoveModal extends Component
 
     public $location_id;
 
-    public $employee_id;
+    public $holder_id;
 
     public $action_date;
 
@@ -46,7 +45,7 @@ class EquipmentMoveModal extends Component
         $this->targetName = ($asset->componentType->component_name ?? 'Комплектуюча').' (S/N: '.($asset->serial_number ?: 'немає').$invPart.')';
 
         $this->location_id = $asset->current_loc_id;
-        $this->employee_id = $asset->holder ? $asset->holder->employee_id : null;
+        $this->holder_id = $asset->current_holder_id;
 
         $this->isOpen = true;
     }
@@ -59,7 +58,7 @@ class EquipmentMoveModal extends Component
     private function resetInputFields()
     {
         $this->location_id = null;
-        $this->employee_id = null;
+        $this->holder_id = null;
         $this->action_date = date('Y-m-d\TH:i:s');
         $this->targetName = '';
         $this->targetId = null;
@@ -67,8 +66,8 @@ class EquipmentMoveModal extends Component
 
     public function store()
     {
-        if ($this->employee_id === '') {
-            $this->employee_id = null;
+        if ($this->holder_id === '') {
+            $this->holder_id = null;
         }
         if ($this->location_id === '') {
             $this->location_id = null;
@@ -76,14 +75,11 @@ class EquipmentMoveModal extends Component
 
         $this->validate([
             'location_id' => 'required|exists:locations,id',
-            'employee_id' => 'nullable|exists:employee,id',
+            'holder_id' => 'nullable|exists:location_holders,id',
             'action_date' => 'required|date',
         ]);
 
-        $toHolder = LocationHolder::firstOrCreate([
-            'employee_id' => $this->employee_id ?: null,
-            'organization_id' => null,
-        ]);
+        $toHolder = $this->holder_id ? LocationHolder::find($this->holder_id) : null;
 
         $asset = Asset::findOrFail($this->targetId);
         $this->moveAsset($asset, $toHolder);
@@ -99,7 +95,7 @@ class EquipmentMoveModal extends Component
 
         $asset->update([
             'current_loc_id' => $this->location_id,
-            'current_holder_id' => $toHolder->id,
+            'current_holder_id' => $toHolder?->id,
         ]);
 
         EquipmentMovement::create([
@@ -107,8 +103,8 @@ class EquipmentMoveModal extends Component
             'asset_id' => $asset->id,
             'location_id' => $this->location_id,
             'from_holder_id' => $from_holder_id,
-            'to_holder_id' => $toHolder->id,
-            'employee_id' => $this->employee_id ?: null,
+            'to_holder_id' => $toHolder?->id,
+            'employee_id' => $toHolder?->employee_id,
             'action_date' => $this->action_date ? str_replace('T', ' ', $this->action_date) : date('Y-m-d H:i:s'),
         ]);
     }
@@ -116,10 +112,10 @@ class EquipmentMoveModal extends Component
     public function render()
     {
         $locationsList = $this->isOpen ? Location::all() : collect();
-        $employeesList = $this->isOpen ? Employee::all() : collect();
+        $holdersList = $this->isOpen ? LocationHolder::with(['employee', 'organization'])->get() : collect();
 
         return view('livewire.admin.equipment.equipment-move-modal', compact(
-            'locationsList', 'employeesList'
+            'locationsList', 'holdersList'
         ));
     }
 }
