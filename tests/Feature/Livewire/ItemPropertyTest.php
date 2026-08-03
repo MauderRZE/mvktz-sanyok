@@ -196,4 +196,26 @@ class ItemPropertyTest extends TestCase
             ->call('sortBy', 'inv_number')
             ->assertSet('sortDirection', 'desc');
     }
+
+    public function test_can_filter_item_properties_by_null_attribute()
+    {
+        $propWithAttr = ItemProperty::create([
+            'attribute_id' => $this->attribute->id,
+            'attr_value' => 'WithAttributeVal',
+        ]);
+
+        Livewire::test(ItemPropertyManager::class)
+            ->set('filterAttribute', ['null'])
+            ->assertDontSee('WithAttributeVal');
+    }
+
+    public function test_resets_filters_and_pagination()
+    {
+        Livewire::test(ItemPropertyManager::class)
+            ->set('search', 'TestSearch')
+            ->set('filterAttribute', [$this->attribute->id])
+            ->call('resetFilters')
+            ->assertSet('search', '')
+            ->assertSet('filterAttribute', []);
+    }
 }

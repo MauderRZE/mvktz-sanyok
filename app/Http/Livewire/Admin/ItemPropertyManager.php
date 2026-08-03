@@ -32,7 +32,7 @@ class ItemPropertyManager extends Component
 
     public function updatedSearch(): void
     {
-        $this->resetPage();
+        $this->resetPage(); // Скидаємо пагінацію на 1 сторінку при пошуку
     }
 
     public function updatedFilterAttribute(): void
@@ -87,8 +87,8 @@ class ItemPropertyManager extends Component
         }
 
         return view('livewire.admin.item-property-manager', [
-            'properties' => $query->paginate(25),
-            'assets' => Asset::with(['componentType', 'equipment'])->get(),
+            'properties' => $query->paginate(25), // Додано пагінацію
+            'assets' => Asset::with(['componentType', 'equipment'])->get(), // Передаємо вибіркові довідники прямо у view
             'materials' => LowValueMaterial::all(),
             'dictAttributes' => AttributeDictionary::orderBy('name')->get(),
         ]);
