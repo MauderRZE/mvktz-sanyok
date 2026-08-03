@@ -8,32 +8,39 @@ use App\Models\AttributeDictionary;
 use App\Models\ItemProperty;
 use App\Models\LowValueMaterial;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class ItemPropertyManager extends Component
 {
+    use WithPagination;
+
     public ItemPropertyForm $form;
 
-    public $properties;
+    public bool $isOpen = false;
 
-    public $assets;
+    #[Url(history: true)]
+    public string $search = '';
 
-    public $materials;
+    public array $filterAttribute = [];
 
-    public $dictAttributes;
+    public string $sortField = 'id';
 
-    public $isOpen = false;
+    public string $sortDirection = 'desc';
 
-    public $search = '';
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
 
-    public $filterAttribute = [];
+    public function updatedFilterAttribute(): void
+    {
+        $this->resetPage();
+    }
 
-    public $sortField = 'id';
-
-    public $sortDirection = 'desc';
-
-    public function sortBy($field)
+    public function sortBy(string $field): void
     {
         if ($this->sortField === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
@@ -43,13 +50,6 @@ class ItemPropertyManager extends Component
         }
     }
 
-    public function mount()
-    {
-        $this->assets = Asset::with(['componentType', 'equipment'])->get();
-        $this->materials = LowValueMaterial::all();
-        $this->dictAttributes = AttributeDictionary::orderBy('name')->get();
-    }
-
     public function render()
     {
         $query = ItemProperty::with(['asset.componentType', 'asset.equipment', 'nomenclature', 'attribute'])
@@ -57,18 +57,10 @@ class ItemPropertyManager extends Component
                 $search = '%'.$this->search.'%';
                 $q->where(function ($sub) use ($search) {
                     $sub->where('attr_value', 'like', $search)
-                        ->orWhereHas('attribute', function ($attr) use ($search) {
-                            $attr->where('name', 'like', $search);
-                        })
-                        ->orWhereHas('asset.componentType', function ($ct) use ($search) {
-                            $ct->where('component_name', 'like', $search);
-                        })
-                        ->orWhereHas('asset.equipment', function ($eq) use ($search) {
-                            $eq->where('inv_number', 'like', $search);
-                        })
-                        ->orWhereHas('nomenclature', function ($nom) use ($search) {
-                            $nom->where('material_account_name', 'like', $search);
-                        });
+                        ->orWhereHas('attribute', fn ($attr) => $attr->where('name', 'like', $search))
+                        ->orWhereHas('asset.componentType', fn ($ct) => $ct->where('component_name', 'like', $search))
+                        ->orWhereHas('asset.equipment', fn ($eq) => $eq->where('inv_number', 'like', $search))
+                        ->orWhereHas('nomenclature', fn ($nom) => $nom->where('material_account_name', 'like', $search));
                 });
             })
             ->when(! empty($this->filterAttribute), function ($q) {
@@ -94,51 +86,54 @@ class ItemPropertyManager extends Component
             $query->orderBy('item_properties.id', $this->sortDirection);
         }
 
-        $this->properties = $query->get();
-
-        return view('livewire.admin.item-property-manager');
+        return view('livewire.admin.item-property-manager', [
+            'properties' => $query->paginate(25),
+            'assets' => Asset::with(['componentType', 'equipment'])->get(),
+            'materials' => LowValueMaterial::all(),
+            'dictAttributes' => AttributeDictionary::orderBy('name')->get(),
+        ]);
     }
 
-    public function resetFilters()
+    public function resetFilters(): void
     {
-        $this->search = '';
-        $this->filterAttribute = [];
+        $this->reset(['search', 'filterAttribute']);
+        $this->resetPage();
     }
 
-    public function create()
+    public function create(): void
     {
         $this->form->reset();
         $this->openModal();
     }
 
-    public function openModal()
+    public function openModal(): void
     {
         $this->isOpen = true;
     }
 
-    public function closeModal()
+    public function closeModal(): void
     {
         $this->isOpen = false;
+        $this->form->reset();
     }
 
-    public function store()
+    public function store(): void
     {
         $isUpdate = $this->form->store();
 
-        session()->flash('message',
-            $isUpdate ? 'Властивість оновлено.' : 'Властивість додано.');
+        session()->flash('message', $isUpdate ? 'Властивість оновлено.' : 'Властивість додано.');
 
         $this->closeModal();
     }
 
-    public function edit($id)
+    public function edit(int $id): void
     {
         $prop = ItemProperty::findOrFail($id);
         $this->form->setProperty($prop);
         $this->openModal();
     }
 
-    public function delete($id)
+    public function delete(int $id): void
     {
         ItemProperty::findOrFail($id)->delete();
         session()->flash('message', 'Властивість видалено.');
