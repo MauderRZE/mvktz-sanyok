@@ -2,34 +2,44 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use App\Models\LowValueWriteOffAct;
 use App\Livewire\Forms\WriteOffActForm;
+use App\Models\LowValueWriteOffAct;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class WriteOffActManager extends Component
 {
+    use WithPagination;
+
     public WriteOffActForm $form;
-    
-    public $acts;
+
     public $isOpen = 0;
 
     public $search = '';
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $this->acts = LowValueWriteOffAct::when($this->search, function($q) {
-            $q->where('act_number', 'like', '%' . $this->search . '%');
+        $query = LowValueWriteOffAct::when($this->search, function ($q) {
+            $q->where('act_number', 'like', '%'.$this->search.'%');
         })
-        ->orderBy('id', 'desc')
-        ->get();
-        return view('livewire.admin.write-off-act-manager');
+            ->orderBy('id', 'desc');
+
+        return view('livewire.admin.write-off-act-manager', [
+            'acts' => $query->paginate(15),
+        ]);
     }
 
     public function resetFilters()
     {
         $this->search = '';
+        $this->resetPage();
     }
 
     public function create()
@@ -53,7 +63,7 @@ class WriteOffActManager extends Component
     {
         $isUpdate = $this->form->store();
 
-        session()->flash('message', 
+        session()->flash('message',
             $isUpdate ? 'Акт списання малоцінки оновлено.' : 'Акт списання малоцінки створено.');
 
         $this->closeModal();

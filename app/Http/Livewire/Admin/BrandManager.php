@@ -2,34 +2,44 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use App\Models\BrandTz;
 use App\Livewire\Forms\BrandForm;
+use App\Models\BrandTz;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class BrandManager extends Component
 {
+    use WithPagination;
+
     public BrandForm $form;
-    
-    public $brands;
+
     public $isOpen = 0;
 
     public $search = '';
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $this->brands = BrandTz::when($this->search, function($q) {
-            $q->where('brandtz_name', 'like', '%' . $this->search . '%');
+        $query = BrandTz::when($this->search, function ($q) {
+            $q->where('brandtz_name', 'like', '%'.$this->search.'%');
         })
-        ->orderBy('id', 'desc')
-        ->get();
-        return view('livewire.admin.brand-manager');
+            ->orderBy('id', 'desc');
+
+        return view('livewire.admin.brand-manager', [
+            'brands' => $query->paginate(15),
+        ]);
     }
 
     public function resetFilters()
     {
         $this->search = '';
+        $this->resetPage();
     }
 
     public function create()
@@ -52,7 +62,7 @@ class BrandManager extends Component
     {
         $isUpdate = $this->form->store();
 
-        session()->flash('message', 
+        session()->flash('message',
             $isUpdate ? 'Бренд оновлено.' : 'Бренд створено.');
 
         $this->closeModal();

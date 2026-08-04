@@ -2,38 +2,48 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use App\Models\EquipmentRetirementAct;
 use App\Livewire\Forms\RetirementActForm;
+use App\Models\EquipmentRetirementAct;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class RetirementActManager extends Component
 {
+    use WithPagination;
+
     public RetirementActForm $form;
-    
-    public $acts;
+
     public $isOpen = 0;
 
     public $search = '';
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $this->acts = EquipmentRetirementAct::when($this->search, function($q) {
-            $search = '%' . $this->search . '%';
-            $q->where(function($sub) use ($search) {
+        $query = EquipmentRetirementAct::when($this->search, function ($q) {
+            $search = '%'.$this->search.'%';
+            $q->where(function ($sub) use ($search) {
                 $sub->where('act_number', 'like', $search)
                     ->orWhere('reason', 'like', $search);
             });
         })
-        ->orderBy('id', 'desc')
-        ->get();
-        return view('livewire.admin.retirement-act-manager');
+            ->orderBy('id', 'desc');
+
+        return view('livewire.admin.retirement-act-manager', [
+            'acts' => $query->paginate(15),
+        ]);
     }
 
     public function resetFilters()
     {
         $this->search = '';
+        $this->resetPage();
     }
 
     public function create()
@@ -57,7 +67,7 @@ class RetirementActManager extends Component
     {
         $isUpdate = $this->form->store();
 
-        session()->flash('message', 
+        session()->flash('message',
             $isUpdate ? 'Акт списання оновлено.' : 'Акт списання створено.');
 
         $this->closeModal();

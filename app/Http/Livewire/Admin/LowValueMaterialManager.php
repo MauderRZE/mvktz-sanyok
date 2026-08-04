@@ -6,11 +6,12 @@ use App\Models\Contract;
 use App\Models\LowValueMaterial;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class LowValueMaterialManager extends Component
 {
-    public $materials;
+    use WithPagination;
 
     public $materialId;
 
@@ -31,6 +32,16 @@ class LowValueMaterialManager extends Component
     public $search = '';
 
     public $filterContract = [];
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterContract()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
@@ -56,16 +67,18 @@ class LowValueMaterialManager extends Component
             })
             ->orderBy('id', 'desc');
 
-        $this->materials = $query->get();
         $this->contractsList = Contract::with('supplier')->get();
 
-        return view('livewire.admin.low-value-material-manager');
+        return view('livewire.admin.low-value-material-manager', [
+            'materials' => $query->paginate(15),
+        ]);
     }
 
     public function resetFilters()
     {
         $this->search = '';
         $this->filterContract = [];
+        $this->resetPage();
     }
 
     public function create()

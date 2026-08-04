@@ -2,13 +2,16 @@
 
 namespace App\Livewire\Forms;
 
-use Livewire\Form;
-use Livewire\Attributes\Validate;
 use App\Models\EquipmentType;
+use Livewire\Attributes\Validate;
+use Livewire\Form;
 
 class EquipmentTypeForm extends Form
 {
     public ?int $typeId = null;
+
+    #[Validate('nullable|exists:base_components,id')]
+    public ?int $base_component_id = null;
 
     #[Validate('required')]
     public string $model_name = '';
@@ -19,6 +22,7 @@ class EquipmentTypeForm extends Form
     public function setType(EquipmentType $type)
     {
         $this->typeId = $type->id;
+        $this->base_component_id = $type->base_component_id;
         $this->model_name = $type->model_name;
         $this->brand_id = $type->brand_id;
     }
@@ -28,13 +32,14 @@ class EquipmentTypeForm extends Form
         $this->validate();
 
         EquipmentType::updateOrCreate(['id' => $this->typeId], [
+            'base_component_id' => $this->base_component_id,
             'model_name' => $this->model_name,
             'brand_id' => $this->brand_id,
         ]);
 
         $isUpdate = $this->typeId !== null;
         $this->reset();
-        
+
         return $isUpdate;
     }
 }

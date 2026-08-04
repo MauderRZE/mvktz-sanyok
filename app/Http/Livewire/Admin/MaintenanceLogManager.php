@@ -7,13 +7,14 @@ use App\Models\Asset;
 use App\Models\MaintenanceLog;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class MaintenanceLogManager extends Component
 {
-    public MaintenanceLogForm $form;
+    use WithPagination;
 
-    public $logs;
+    public MaintenanceLogForm $form;
 
     public $assetsList = [];
 
@@ -24,6 +25,21 @@ class MaintenanceLogManager extends Component
     public $filterStatus = [];
 
     public $filterAsset = [];
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterStatus()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterAsset()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
@@ -67,10 +83,11 @@ class MaintenanceLogManager extends Component
             })
             ->orderBy('id', 'desc');
 
-        $this->logs = $query->get();
         $this->assetsList = Asset::with(['equipment', 'componentType'])->get();
 
-        return view('livewire.admin.maintenance-log-manager');
+        return view('livewire.admin.maintenance-log-manager', [
+            'logs' => $query->paginate(15),
+        ]);
     }
 
     public function resetFilters()
@@ -78,6 +95,7 @@ class MaintenanceLogManager extends Component
         $this->search = '';
         $this->filterStatus = [];
         $this->filterAsset = [];
+        $this->resetPage();
     }
 
     public function create()

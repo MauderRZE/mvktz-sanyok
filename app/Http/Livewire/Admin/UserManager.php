@@ -2,36 +2,54 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class UserManager extends Component
 {
-    public $users, $userId, $name, $login, $password;
+    use WithPagination;
+
+    public $userId;
+
+    public $name;
+
+    public $login;
+
+    public $password;
+
     public $isOpen = 0;
 
     public $search = '';
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $this->users = User::when($this->search, function($q) {
-            $search = '%' . $this->search . '%';
-            $q->where(function($sub) use ($search) {
+        $query = User::when($this->search, function ($q) {
+            $search = '%'.$this->search.'%';
+            $q->where(function ($sub) use ($search) {
                 $sub->where('name', 'like', $search)
                     ->orWhere('login', 'like', $search);
             });
         })
-        ->orderBy('id', 'desc')
-        ->get();
-        return view('livewire.admin.user-manager');
+            ->orderBy('id', 'desc');
+
+        return view('livewire.admin.user-manager', [
+            'users' => $query->paginate(15),
+        ]);
     }
 
     public function resetFilters()
     {
         $this->search = '';
+        $this->resetPage();
     }
 
     public function create()
@@ -50,7 +68,8 @@ class UserManager extends Component
         $this->isOpen = false;
     }
 
-    private function resetInputFields(){
+    private function resetInputFields()
+    {
         $this->userId = null;
         $this->name = '';
         $this->login = '';
@@ -61,11 +80,11 @@ class UserManager extends Component
     {
         $rules = [
             'name' => 'required',
-            'login' => 'required|unique:users,login,' . $this->userId,
+            'login' => 'required|unique:users,login,'.$this->userId,
         ];
 
         // Якщо це новий користувач або пароль був введений, вимагаємо пароль
-        if (!$this->userId || !empty($this->password)) {
+        if (! $this->userId || ! empty($this->password)) {
             $rules['password'] = 'required|min:6';
         }
 
@@ -76,13 +95,13 @@ class UserManager extends Component
             'login' => $this->login,
         ];
 
-        if (!empty($this->password)) {
+        if (! empty($this->password)) {
             $data['password'] = Hash::make($this->password);
         }
 
         User::updateOrCreate(['id' => $this->userId], $data);
 
-        session()->flash('message', 
+        session()->flash('message',
             $this->userId ? 'Користувача оновлено.' : 'Користувача створено.');
 
         $this->closeModal();
@@ -103,6 +122,7 @@ class UserManager extends Component
     {
         if (auth()->id() == $id) {
             session()->flash('message', 'Ви не можете видалити самі себе!');
+
             return;
         }
 

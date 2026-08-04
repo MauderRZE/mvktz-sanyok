@@ -8,10 +8,13 @@ use App\Models\ComputerSoftware;
 use App\Models\SoftwareLicense;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class ComputerSoftwareManager extends Component
 {
+    use WithPagination;
+
     public ComputerSoftwareForm $form;
 
     public $isOpen = false;
@@ -21,6 +24,21 @@ class ComputerSoftwareManager extends Component
     public $filterSoftwareName = [];
 
     public $filterIsLicensed = '';
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterSoftwareName()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterIsLicensed()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
@@ -55,7 +73,7 @@ class ComputerSoftwareManager extends Component
             })
             ->orderBy('id', 'desc');
 
-        $software = $query->get();
+        $software = $query->paginate(15);
 
         $computersOptions = [];
         $licensesOptions = [];
@@ -83,6 +101,7 @@ class ComputerSoftwareManager extends Component
         $this->search = '';
         $this->filterSoftwareName = [];
         $this->filterIsLicensed = '';
+        $this->resetPage();
     }
 
     public function create()

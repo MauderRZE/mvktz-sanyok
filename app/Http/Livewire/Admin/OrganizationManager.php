@@ -6,19 +6,30 @@ use App\Livewire\Forms\OrganizationForm;
 use App\Models\Organization;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class OrganizationManager extends Component
 {
-    public OrganizationForm $form;
+    use WithPagination;
 
-    public $organizations;
+    public OrganizationForm $form;
 
     public $isOpen = 0;
 
     public $search = '';
 
     public $filterType = [];
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterType()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
@@ -44,11 +55,10 @@ class OrganizationManager extends Component
             })
             ->orderBy('id', 'desc');
 
-        $this->organizations = $query->get();
-
         $typesList = Organization::select('org_type')->distinct()->pluck('org_type')->filter()->values();
 
         return view('livewire.admin.organization-manager', [
+            'organizations' => $query->paginate(15),
             'typesList' => $typesList,
         ]);
     }
@@ -57,6 +67,7 @@ class OrganizationManager extends Component
     {
         $this->search = '';
         $this->filterType = [];
+        $this->resetPage();
     }
 
     public function create()

@@ -16,6 +16,8 @@ class EquipmentType extends Model
     protected $fillable = [
         'brand_id',
         'model_name',
+        'base_component_id',
+
     ];
 
     public function brand()
@@ -26,5 +28,10 @@ class EquipmentType extends Model
     public function assets()
     {
         return $this->hasMany(Asset::class, 'model_id');
+    }
+
+    public function baseComponent()
+    {
+        return $this->belongsTo(BaseComponent::class, 'base_component_id');
     }
 }

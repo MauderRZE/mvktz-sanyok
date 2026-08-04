@@ -2,31 +2,45 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
 use App\Models\SupplierType;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class SupplierTypeManager extends Component
 {
-    public $types, $typeId, $type_name;
+    use WithPagination;
+
+    public $typeId;
+
+    public $type_name;
+
     public $isOpen = false;
 
     public $search = '';
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $this->types = SupplierType::when($this->search, function($q) {
-            $q->where('type_name', 'like', '%' . $this->search . '%');
+        $query = SupplierType::when($this->search, function ($q) {
+            $q->where('type_name', 'like', '%'.$this->search.'%');
         })
-        ->orderBy('id', 'desc')
-        ->get();
-        return view('livewire.admin.supplier-type-manager');
+            ->orderBy('id', 'desc');
+
+        return view('livewire.admin.supplier-type-manager', [
+            'types' => $query->paginate(15),
+        ]);
     }
 
     public function resetFilters()
     {
         $this->search = '';
+        $this->resetPage();
     }
 
     public function create()
@@ -58,10 +72,10 @@ class SupplierTypeManager extends Component
         ]);
 
         SupplierType::updateOrCreate(['id' => $this->typeId], [
-            'type_name' => $this->type_name
+            'type_name' => $this->type_name,
         ]);
 
-        session()->flash('message', 
+        session()->flash('message',
             $this->typeId ? 'Тип оновлено.' : 'Тип створено.');
 
         $this->closeModal();

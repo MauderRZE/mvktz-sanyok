@@ -1,7 +1,7 @@
 <div>
 <x-ui.page-wrapper>
     <x-ui.flash />
-    <x-ui.toolbar :count="count($organizations)" label="Всього організацій" buttonLabel="Додати організацію" />
+    <x-ui.toolbar :count="$organizations->total()" label="Всього організацій" buttonLabel="Додати організацію" />
 
     {{-- Filters Bar --}}
     <x-ui.card class="p-4 mb-4 space-y-4">
@@ -77,5 +77,9 @@
             <x-table.mobile-empty />
         @endforelse
     </x-table.mobile-list>
+
+    <div class="mt-4">
+        {{ $organizations->links() }}
+    </div>
 </x-ui.page-wrapper>
 </div>

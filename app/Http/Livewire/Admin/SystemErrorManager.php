@@ -5,11 +5,12 @@ namespace App\Http\Livewire\Admin;
 use App\Models\SystemError;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class SystemErrorManager extends Component
 {
-    public $errorsList;
+    use WithPagination;
 
     public $errorId;
 
@@ -30,6 +31,26 @@ class SystemErrorManager extends Component
     public $filterPageType = [];
 
     public $filterErrorType = [];
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterResolved()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterPageType()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterErrorType()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
@@ -71,9 +92,9 @@ class SystemErrorManager extends Component
             })
             ->orderBy('created_at', 'desc');
 
-        $this->errorsList = $query->get();
-
-        return view('livewire.admin.system-error-manager');
+        return view('livewire.admin.system-error-manager', [
+            'errorsList' => $query->paginate(15),
+        ]);
     }
 
     public function resetFilters()
@@ -82,6 +103,7 @@ class SystemErrorManager extends Component
         $this->filterResolved = '';
         $this->filterPageType = [];
         $this->filterErrorType = [];
+        $this->resetPage();
     }
 
     public function create()

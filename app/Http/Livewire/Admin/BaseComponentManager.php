@@ -7,19 +7,30 @@ use App\Models\BaseComponent;
 use App\Models\EquipmentCategory;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class BaseComponentManager extends Component
 {
-    public BaseComponentForm $form;
+    use WithPagination;
 
-    public $components;
+    public BaseComponentForm $form;
 
     public $isOpen = 0;
 
     public $search = '';
 
     public $filterCategory = [];
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterCategory()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
@@ -47,9 +58,8 @@ class BaseComponentManager extends Component
             })
             ->orderBy('id', 'desc');
 
-        $this->components = $query->get();
-
         return view('livewire.admin.base-component-manager', [
+            'components' => $query->paginate(15),
             'categories' => EquipmentCategory::all(),
         ]);
     }
@@ -58,6 +68,7 @@ class BaseComponentManager extends Component
     {
         $this->search = '';
         $this->filterCategory = [];
+        $this->resetPage();
     }
 
     public function create()

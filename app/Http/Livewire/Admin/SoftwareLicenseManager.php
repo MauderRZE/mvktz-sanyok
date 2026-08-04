@@ -7,13 +7,14 @@ use App\Models\SoftwareLicense;
 use App\Models\Supplier;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class SoftwareLicenseManager extends Component
 {
-    public SoftwareLicenseForm $form;
+    use WithPagination;
 
-    public $licenses;
+    public SoftwareLicenseForm $form;
 
     public $vendorsList = [];
 
@@ -24,6 +25,21 @@ class SoftwareLicenseManager extends Component
     public $filterType = [];
 
     public $filterVendor = [];
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterType()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterVendor()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
@@ -63,10 +79,11 @@ class SoftwareLicenseManager extends Component
             })
             ->orderBy('id', 'desc');
 
-        $this->licenses = $query->get();
         $this->vendorsList = Supplier::all();
 
-        return view('livewire.admin.software-license-manager');
+        return view('livewire.admin.software-license-manager', [
+            'licenses' => $query->paginate(15),
+        ]);
     }
 
     public function resetFilters()
@@ -74,6 +91,7 @@ class SoftwareLicenseManager extends Component
         $this->search = '';
         $this->filterType = [];
         $this->filterVendor = [];
+        $this->resetPage();
     }
 
     public function create()

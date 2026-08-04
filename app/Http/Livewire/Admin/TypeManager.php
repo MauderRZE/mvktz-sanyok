@@ -3,19 +3,19 @@
 namespace App\Http\Livewire\Admin;
 
 use App\Livewire\Forms\EquipmentTypeForm;
+use App\Models\BaseComponent;
 use App\Models\BrandTz;
 use App\Models\EquipmentType;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class TypeManager extends Component
 {
+    use WithPagination;
+
     public EquipmentTypeForm $form;
-
-    public $types;
-
-    public $brands;
 
     public $isOpen = 0;
 
@@ -23,9 +23,28 @@ class TypeManager extends Component
 
     public $filterBrand = [];
 
+    public $base_component_id;
+
+    public $filterBaseComponent = [];
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterBrand()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterBaseComponent()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $query = EquipmentType::with('brand')
+        $query = EquipmentType::with(['brand', 'baseComponent'])
             ->when($this->search, function ($q) {
                 $search = '%'.$this->search.'%';
                 $q->where(function ($sub) use ($search) {
@@ -47,18 +66,33 @@ class TypeManager extends Component
                     }
                 });
             })
+            ->when(! empty($this->filterBaseComponent), function ($q) {
+                $hasNull = in_array('null', (array) $this->filterBaseComponent, true) || in_array(null, (array) $this->filterBaseComponent, true);
+                $ids = array_filter((array) $this->filterBaseComponent, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($ids, $hasNull) {
+                    if (! empty($ids)) {
+                        $sub->whereIn('base_component_id', $ids);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('base_component_id');
+                    }
+                });
+            })
             ->orderBy('id', 'desc');
 
-        $this->types = $query->get();
-        $this->brands = BrandTz::all();
-
-        return view('livewire.admin.type-manager');
+        return view('livewire.admin.type-manager', [
+            'types' => $query->paginate(15),
+            'baseComponents' => BaseComponent::orderBy('component_name')->get(),
+            'brands' => BrandTz::orderBy('brandtz_name')->get(),
+        ]);
     }
 
     public function resetFilters()
     {
         $this->search = '';
         $this->filterBrand = [];
+        $this->filterBaseComponent = [];
+        $this->resetPage();
     }
 
     public function create()

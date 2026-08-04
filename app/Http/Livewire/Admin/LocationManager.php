@@ -2,34 +2,44 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use App\Models\Location;
 use App\Livewire\Forms\LocationForm;
+use App\Models\Location;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class LocationManager extends Component
 {
+    use WithPagination;
+
     public LocationForm $form;
-    
-    public $locations;
+
     public $isOpen = 0;
 
     public $search = '';
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $this->locations = Location::when($this->search, function($q) {
-            $q->where('room_number', 'like', '%' . $this->search . '%');
+        $query = Location::when($this->search, function ($q) {
+            $q->where('room_number', 'like', '%'.$this->search.'%');
         })
-        ->orderBy('id', 'desc')
-        ->get();
-        return view('livewire.admin.location-manager');
+            ->orderBy('id', 'desc');
+
+        return view('livewire.admin.location-manager', [
+            'locations' => $query->paginate(15),
+        ]);
     }
 
     public function resetFilters()
     {
         $this->search = '';
+        $this->resetPage();
     }
 
     public function create()
@@ -52,7 +62,7 @@ class LocationManager extends Component
     {
         $isUpdate = $this->form->store();
 
-        session()->flash('message', 
+        session()->flash('message',
             $isUpdate ? 'Локацію оновлено.' : 'Локацію створено.');
 
         $this->closeModal();

@@ -7,19 +7,30 @@ use App\Models\Supplier;
 use App\Models\SupplierType;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class SupplierManager extends Component
 {
-    public SupplierForm $form;
+    use WithPagination;
 
-    public $suppliers;
+    public SupplierForm $form;
 
     public $isOpen = 0;
 
     public $search = '';
 
     public $filterType = [];
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterType()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
@@ -45,9 +56,8 @@ class SupplierManager extends Component
             })
             ->orderBy('id', 'desc');
 
-        $this->suppliers = $query->get();
-
         return view('livewire.admin.supplier-manager', [
+            'suppliers' => $query->paginate(15),
             'supplierTypes' => SupplierType::all(),
         ]);
     }
@@ -56,6 +66,7 @@ class SupplierManager extends Component
     {
         $this->search = '';
         $this->filterType = [];
+        $this->resetPage();
     }
 
     public function create()

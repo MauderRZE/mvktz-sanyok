@@ -2,34 +2,44 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use App\Models\AttributeDictionary;
 use App\Livewire\Forms\AttributeDictionaryForm;
+use App\Models\AttributeDictionary;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class AttributeDictionaryManager extends Component
 {
+    use WithPagination;
+
     public AttributeDictionaryForm $form;
 
-    public $dictAttributes;
     public $isOpen = false;
 
     public $search = '';
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $this->dictAttributes = AttributeDictionary::when($this->search, function($q) {
-            $q->where('name', 'like', '%' . $this->search . '%');
+        $query = AttributeDictionary::when($this->search, function ($q) {
+            $q->where('name', 'like', '%'.$this->search.'%');
         })
-        ->orderBy('id', 'desc')
-        ->get();
-        return view('livewire.admin.attribute-dictionary-manager');
+            ->orderBy('id', 'desc');
+
+        return view('livewire.admin.attribute-dictionary-manager', [
+            'dictAttributes' => $query->paginate(15),
+        ]);
     }
 
     public function resetFilters()
     {
         $this->search = '';
+        $this->resetPage();
     }
 
     public function create()
@@ -52,7 +62,7 @@ class AttributeDictionaryManager extends Component
     {
         $isUpdate = $this->form->store();
 
-        session()->flash('message', 
+        session()->flash('message',
             $isUpdate ? 'Атрибут оновлено.' : 'Атрибут створено.');
 
         $this->closeModal();

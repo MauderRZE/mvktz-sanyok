@@ -7,13 +7,14 @@ use App\Models\Employee;
 use App\Models\EmployeePhone;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class EmployeePhoneManager extends Component
 {
-    public EmployeePhoneForm $form;
+    use WithPagination;
 
-    public $phones;
+    public EmployeePhoneForm $form;
 
     public $employees;
 
@@ -28,6 +29,21 @@ class EmployeePhoneManager extends Component
     public function mount()
     {
         $this->employees = Employee::orderBy('last_name')->get();
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterPhoneType()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterEmployee()
+    {
+        $this->resetPage();
     }
 
     public function render()
@@ -69,9 +85,9 @@ class EmployeePhoneManager extends Component
             })
             ->orderBy('id', 'desc');
 
-        $this->phones = $query->get();
-
-        return view('livewire.admin.employee-phone-manager');
+        return view('livewire.admin.employee-phone-manager', [
+            'phones' => $query->paginate(15),
+        ]);
     }
 
     public function resetFilters()
@@ -79,6 +95,7 @@ class EmployeePhoneManager extends Component
         $this->search = '';
         $this->filterPhoneType = [];
         $this->filterEmployee = [];
+        $this->resetPage();
     }
 
     public function create()

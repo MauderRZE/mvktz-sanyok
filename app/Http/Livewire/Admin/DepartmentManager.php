@@ -2,34 +2,44 @@
 
 namespace App\Http\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use App\Models\Department;
 use App\Livewire\Forms\DepartmentForm;
+use App\Models\Department;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class DepartmentManager extends Component
 {
+    use WithPagination;
+
     public DepartmentForm $form;
-    
-    public $departments;
+
     public $isOpen = 0;
 
     public $search = '';
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $this->departments = Department::when($this->search, function($q) {
-            $q->where('name', 'like', '%' . $this->search . '%');
+        $query = Department::when($this->search, function ($q) {
+            $q->where('name', 'like', '%'.$this->search.'%');
         })
-        ->orderBy('id', 'desc')
-        ->get();
-        return view('livewire.admin.department-manager');
+            ->orderBy('id', 'desc');
+
+        return view('livewire.admin.department-manager', [
+            'departments' => $query->paginate(15),
+        ]);
     }
 
     public function resetFilters()
     {
         $this->search = '';
+        $this->resetPage();
     }
 
     public function create()
@@ -52,7 +62,7 @@ class DepartmentManager extends Component
     {
         $isUpdate = $this->form->store();
 
-        session()->flash('message', 
+        session()->flash('message',
             $isUpdate ? 'Відділ оновлено.' : 'Відділ створено.');
 
         $this->closeModal();

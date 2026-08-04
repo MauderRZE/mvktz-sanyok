@@ -7,13 +7,14 @@ use App\Models\Contract;
 use App\Models\Supplier;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.admin')]
 class ContractManager extends Component
 {
-    public ContractForm $form;
+    use WithPagination;
 
-    public $contracts;
+    public ContractForm $form;
 
     public $suppliersList = [];
 
@@ -22,6 +23,16 @@ class ContractManager extends Component
     public $search = '';
 
     public $filterSupplier = [];
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterSupplier()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
@@ -49,16 +60,18 @@ class ContractManager extends Component
             })
             ->orderBy('id', 'desc');
 
-        $this->contracts = $query->get();
         $this->suppliersList = Supplier::all();
 
-        return view('livewire.admin.contract-manager');
+        return view('livewire.admin.contract-manager', [
+            'contracts' => $query->paginate(15),
+        ]);
     }
 
     public function resetFilters()
     {
         $this->search = '';
         $this->filterSupplier = [];
+        $this->resetPage();
     }
 
     public function create()

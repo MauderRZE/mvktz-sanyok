@@ -244,13 +244,13 @@
                     <x-form.select label="Обладнання (ПК / Пристрій)" model="form.equipment_id" placeholder="Оберіть обладнання..." :options="$eqOptions" />
                 </div>
                 <div>
-                    <x-form.select label="Базовий компонент" model="form.base_component_id" placeholder="Оберіть компонент..." :live="true" :options="$bcOptions" />
+                    <x-form.select label="Базовий компонент" model="form.base_component_id" placeholder="Оберіть компонент..." :live="true" :nullable="true" :options="$bcOptions"  />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                 <div>
-                    <x-form.select label="Модель" model="form.model_id" placeholder="Оберіть модель..." :options="$modOptions" :nullable="true" />
+                    <x-form.select label="Модель" model="form.model_id" placeholder="Оберіть модель..." :options="$modOptions" :live="true" :nullable="true" />
                 </div>
                 <div>
                     @if($isSystemUnit)

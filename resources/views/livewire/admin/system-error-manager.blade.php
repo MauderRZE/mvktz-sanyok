@@ -1,7 +1,7 @@
 <div>
 <x-ui.page-wrapper>
     <x-ui.flash />
-    <x-ui.toolbar :count="count($errorsList)" label="Всього помилок" />
+    <x-ui.toolbar :count="$errorsList->total()" label="Всього помилок" />
 
     {{-- Filters Bar --}}
     <x-ui.card class="p-4 mb-4 space-y-4">
@@ -207,5 +207,8 @@
         @endforelse
     </x-table.mobile-list>
 
+    <div class="mt-4">
+        {{ $errorsList->links() }}
+    </div>
 </x-ui.page-wrapper>
 </div>

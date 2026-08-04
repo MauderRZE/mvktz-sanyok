@@ -104,6 +104,7 @@ class AssetManager extends Component
 
     public function updatedFilterCategory()
     {
+        $this->resetPage();
         if (! empty($this->filterCategory) && ! empty($this->filterBaseComponent)) {
             $validComponentIds = BaseComponent::whereIn('category_id', $this->filterCategory)
                 ->pluck('id')
@@ -117,6 +118,7 @@ class AssetManager extends Component
 
     public function updatedFilterBrand()
     {
+        $this->resetPage();
         if (! empty($this->filterModel) && ! empty($this->filterBrand)) {
             $validModelIds = EquipmentType::whereIn('id', $this->filterModel)
                 ->whereIn('brand_id', $this->filterBrand)
@@ -132,6 +134,11 @@ class AssetManager extends Component
     public function updatedFormBaseComponentId($value)
     {
         $this->form->handleBaseComponentChange($value);
+        $this->form->model_id = null;
+
+        if (empty($value)) {
+            $this->resetValidation('form.base_component_id'); // <-- Скидає червоний напис помилки
+        }
     }
 
     public function resetFilters()
@@ -154,6 +161,7 @@ class AssetManager extends Component
             ? ($this->sortDirection === 'asc' ? 'desc' : 'asc')
             : 'asc';
         $this->sortField = $field;
+        $this->resetPage();
     }
 
     public function toggleRow(int $id): void
@@ -171,6 +179,23 @@ class AssetManager extends Component
     public function refreshAssets()
     {
         // just to trigger a re-render
+    }
+
+    public function updatedFormModelId($value)
+    {
+        if (! $value) {
+            return;
+        }
+
+        $model = EquipmentType::find($value);
+
+        if ($model && $model->base_component_id) {
+            // 1. Присвоюємо ID компонента прямо у форму як integer
+            $this->form->base_component_id = (int) $model->base_component_id;
+
+            // 2. Викликаємо внутрішній обробник форми, передаючи йому ID компонента
+            $this->form->handleBaseComponentChange((int) $model->base_component_id);
+        }
     }
 
     public function render()
@@ -383,10 +408,27 @@ class AssetManager extends Component
         if (! empty($this->filterCategory)) {
             $baseComponentsQuery->whereIn('category_id', $this->filterCategory);
         }
+        if (! empty($this->filterModel)) {
+            $baseComponentsQuery->whereHas('assets', function ($q) {
+                $q->whereIn('model_id', $this->filterModel);
+            });
+        } elseif (! empty($this->filterBrand)) {
+            $baseComponentsQuery->whereHas('assets.model', function ($q) {
+                $q->whereIn('brand_id', $this->filterBrand);
+            });
+        }
 
-        $modelsQuery = EquipmentType::with('brand:id,brandtz_name')->select('id', 'model_name', 'brand_id')->orderBy('model_name');
+        $modelsQuery = EquipmentType::with('brand:id,brandtz_name')
+            ->select('id', 'model_name', 'brand_id')
+            ->orderBy('model_name');
         if (! empty($this->filterBrand)) {
             $modelsQuery->whereIn('brand_id', $this->filterBrand);
+        }
+
+        if (! empty($this->filterBaseComponent)) {
+            $modelsQuery->whereHas('assets', function ($q) {
+                $q->whereIn('base_component_id', $this->filterBaseComponent);
+            });
         }
 
         $data = [
@@ -401,10 +443,18 @@ class AssetManager extends Component
 
         if ($this->isOpen) {
             $data['equipmentList'] = Equipment::select('id', 'inv_number', 'account_name')->get();
+            $data['modelsList'] = EquipmentType::with('brand:id,brandtz_name')
+                ->select('id', 'model_name', 'brand_id')
+                ->when($this->form->base_component_id, function ($q) {
+                    // Фільтруємо моделі за базовим компонентом напряму:
+                    $q->where('base_component_id', $this->form->base_component_id);
+                })
+                ->orderBy('model_name')
+                ->get();
             $data['parentAssetsList'] = Asset::with(['componentType:id,component_name', 'equipment:id,inv_number'])
                 ->select('id', 'base_component_id', 'equipment_id', 'serial_number')
                 ->whereHas('componentType', function ($q) {
-                    $q->where('component_name', 'Системний блок');
+                    $q->whereIn('component_name', ['Системний блок', 'Ноутбук']);
                 })->get();
             $data['nomenclaturesList'] = LowValueMaterial::select('id', 'material_account_name', 'nomenklature_number')->get();
             $data['writeOffActsList'] = LowValueWriteOffAct::select('id', 'act_number')->get();
@@ -469,8 +519,7 @@ class AssetManager extends Component
     {
         $isUpdate = $this->form->store();
 
-        session()->flash('message',
-            $isUpdate ? 'Актив оновлено.' : 'Актив додано.');
+        session()->flash('message', $isUpdate ? 'Актив оновлено.' : 'Актив додано.');
 
         $this->closeModal();
     }

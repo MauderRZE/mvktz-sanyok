@@ -80,10 +80,20 @@ class AssetForm extends Form
 
     public function handleBaseComponentChange($value)
     {
+
+        $this->base_component_id = $value ? (int) $value : null;
         if ($value) {
             $component = BaseComponent::find($value);
-            if ($component && mb_strtolower($component->component_name) === 'системний блок') {
-                $this->parent_asset_id = null;
+            if ($component) {
+                // Список компонентів, які є самостійними активуми і не можуть підпорядковуватись іншим:
+                $allowedComponents = ['системний блок', 'ноутбук'];
+
+                // Назва з бази приводиться до нижнього регістру (наприклад, "Системний блок" -> "системний блок")
+                $name = mb_strtolower(trim($component->component_name));
+
+                if (in_array($name, $allowedComponents)) {
+                    $this->parent_asset_id = null;
+                }
             }
         }
     }
