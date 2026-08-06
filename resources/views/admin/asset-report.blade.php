@@ -5,7 +5,7 @@
     <title>Звіт: Активи (Компоненти)</title>
     @php
         $orientation = $filters['orientation'] ?? 'landscape';
-        $columns = $filters['columns'] ?? ['equipment', 'component_type', 'model_sn', 'network', 'location', 'status'];
+        $columns = $filters['columns'] ?? ['num', 'equipment', 'component_type', 'model_sn', 'network', 'location', 'status'];
     @endphp
     <style>
         body {
@@ -115,6 +115,7 @@
     <table>
         <thead>
             <tr>
+                @if(in_array('num', $columns)) <th style="width: 4%; text-align: center;">№ з/п</th> @endif
                 @if(in_array('id', $columns)) <th style="width: 5%">ID</th> @endif
                 @if(in_array('equipment', $columns)) <th style="width: 15%">Пристрій (Інв. №)</th> @endif
                 @if(in_array('component_type', $columns)) <th style="width: 15%">Тип компонента</th> @endif
@@ -125,8 +126,9 @@
             </tr>
         </thead>
         <tbody>
-            @forelse($assets as $c)
+            @forelse($assets as $index => $c)
                 <tr>
+                    @if(in_array('num', $columns)) <td style="text-align: center; color: #666;">{{ $index + 1 }}</td> @endif
                     @if(in_array('id', $columns)) <td>#{{ $c->id }}</td> @endif
                     
                     @if(in_array('equipment', $columns)) 

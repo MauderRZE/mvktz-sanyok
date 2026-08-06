@@ -99,21 +99,25 @@ class DashboardStatsService
             $assetsChartData = [];
             $equipmentChartData = [];
 
+            $hasAssetCreatedAt = \Illuminate\Support\Facades\Schema::hasColumn('assets', 'created_at');
+            $hasEquipCreatedAt = \Illuminate\Support\Facades\Schema::hasColumn('equipment', 'created_at');
+            $hasMoveActionDate = \Illuminate\Support\Facades\Schema::hasColumn('movements', 'action_date');
+
             for ($i = 5; $i >= 0; $i--) {
                 $date = now()->subMonths($i);
                 $chartLabels[] = $date->format('m.Y');
 
-                $chartData[] = EquipmentMovement::whereMonth('action_date', $date->month)
-                    ->whereYear('action_date', $date->year)
-                    ->count();
+                $chartData[] = $hasMoveActionDate
+                    ? EquipmentMovement::whereMonth('action_date', $date->month)->whereYear('action_date', $date->year)->count()
+                    : 0;
 
-                $assetsChartData[] = Asset::whereMonth('created_at', $date->month)
-                    ->whereYear('created_at', $date->year)
-                    ->count();
+                $assetsChartData[] = $hasAssetCreatedAt
+                    ? Asset::whereMonth('created_at', $date->month)->whereYear('created_at', $date->year)->count()
+                    : Asset::count();
 
-                $equipmentChartData[] = Equipment::whereMonth('created_at', $date->month)
-                    ->whereYear('created_at', $date->year)
-                    ->count();
+                $equipmentChartData[] = $hasEquipCreatedAt
+                    ? Equipment::whereMonth('created_at', $date->month)->whereYear('created_at', $date->year)->count()
+                    : Equipment::count();
             }
 
             return [

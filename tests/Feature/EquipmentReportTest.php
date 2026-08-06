@@ -28,14 +28,14 @@ class EquipmentReportTest extends TestCase
     {
         // Equipment with null status
         $eqWithNullStatus = Equipment::create([
-            'inv_number' => 'EQ-NULL-STATUS',
+            'inv_number' => 9999901,
             'account_name' => 'Тестове обладнання NULL',
             'status' => null,
         ]);
 
         // Equipment with non-null status
         $eqWithStatus = Equipment::create([
-            'inv_number' => 'EQ-IN-USE',
+            'inv_number' => 9999902,
             'account_name' => 'Тестове обладнання В експлуатації',
             'status' => 'в експлуатації',
         ]);
@@ -46,8 +46,8 @@ class EquipmentReportTest extends TestCase
             ]));
 
         $response->assertStatus(200);
-        $response->assertSee('EQ-NULL-STATUS');
-        $response->assertDontSee('EQ-IN-USE');
+        $response->assertSee('9999901');
+        $response->assertDontSee('9999902');
 
         $eqWithNullStatus->delete();
         $eqWithStatus->delete();

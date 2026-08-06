@@ -16,7 +16,7 @@
         <div class="flex gap-2" x-data="{
             showPrintModal: false,
             orientation: 'landscape',
-            columns: ['id', 'inv', 'name', 'components', 'location', 'status', 'price'],
+            columns: ['num', 'id', 'inv', 'name', 'components', 'location', 'status', 'price'],
             getReportUrl() {
                 const params = new URLSearchParams();
                 if ($wire.search) params.append('search', $wire.search);
@@ -70,7 +70,7 @@
                         <div>
                             <label class="block text-xs font-medium text-gray-400 mb-2">Стовпчики звіту</label>
                             <div class="space-y-2">
-                                <template x-for="(label, key) in {'id':'ID', 'inv':'Інв. №', 'name':'Назва', 'components':'Комплектуючі', 'location':'Локація / Відпов.', 'status':'Статус', 'price':'Ціна'}">
+                                <template x-for="(label, key) in {'num':'№ з/п', 'id':'ID', 'inv':'Інв. №', 'name':'Назва', 'components':'Комплектуючі', 'location':'Локація / Відпов.', 'status':'Статус', 'price':'Ціна'}">
                                     <label class="flex items-center gap-2 text-sm text-gray-300">
                                         <input type="checkbox" x-model="columns" :value="key" class="rounded text-brand-500 bg-surface-900 border-white/10">
                                         <span x-text="label"></span>

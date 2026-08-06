@@ -446,8 +446,9 @@ class AssetManager extends Component
             $data['modelsList'] = EquipmentType::with('brand:id,brandtz_name')
                 ->select('id', 'model_name', 'brand_id')
                 ->when($this->form->base_component_id, function ($q) {
-                    // Фільтруємо моделі за базовим компонентом напряму:
-                    $q->where('base_component_id', $this->form->base_component_id);
+                    if (\Illuminate\Support\Facades\Schema::hasColumn('models_tz', 'base_component_id')) {
+                        $q->where('base_component_id', $this->form->base_component_id);
+                    }
                 })
                 ->orderBy('model_name')
                 ->get();

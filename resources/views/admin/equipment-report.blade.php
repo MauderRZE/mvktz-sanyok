@@ -5,7 +5,7 @@
     <title>Звіт: Обладнання</title>
     @php
         $orientation = $filters['orientation'] ?? 'landscape';
-        $columns = $filters['columns'] ?? ['id', 'inv', 'name', 'components', 'location', 'status', 'price'];
+        $columns = $filters['columns'] ?? ['num', 'id', 'inv', 'name', 'components', 'location', 'status', 'price'];
     @endphp
     <style>
         body {
@@ -121,6 +121,7 @@
     <table>
         <thead>
             <tr>
+                @if(in_array('num', $columns)) <th style="width: 4%; text-align: center;">№ з/п</th> @endif
                 @if(in_array('id', $columns)) <th style="width: 5%">ID</th> @endif
                 @if(in_array('inv', $columns)) <th style="width: 10%">Інв. №</th> @endif
                 @if(in_array('name', $columns)) <th style="width: 20%">Назва</th> @endif
@@ -131,8 +132,9 @@
             </tr>
         </thead>
         <tbody>
-            @forelse($equipments as $eq)
+            @forelse($equipments as $index => $eq)
                 <tr>
+                    @if(in_array('num', $columns)) <td style="text-align: center; color: #666;">{{ $index + 1 }}</td> @endif
                     @if(in_array('id', $columns)) <td>#{{ $eq->id }}</td> @endif
                     @if(in_array('inv', $columns)) <td>{{ $eq->inv_number }}</td> @endif
                     @if(in_array('name', $columns)) <td>{{ $eq->account_name }}</td> @endif

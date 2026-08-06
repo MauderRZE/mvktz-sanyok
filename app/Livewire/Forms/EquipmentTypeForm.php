@@ -31,11 +31,16 @@ class EquipmentTypeForm extends Form
     {
         $this->validate();
 
-        EquipmentType::updateOrCreate(['id' => $this->typeId], [
-            'base_component_id' => $this->base_component_id,
+        $payload = [
             'model_name' => $this->model_name,
             'brand_id' => $this->brand_id,
-        ]);
+        ];
+
+        if (\Illuminate\Support\Facades\Schema::hasColumn('models_tz', 'base_component_id')) {
+            $payload['base_component_id'] = $this->base_component_id;
+        }
+
+        EquipmentType::updateOrCreate(['id' => $this->typeId], $payload);
 
         $isUpdate = $this->typeId !== null;
         $this->reset();
