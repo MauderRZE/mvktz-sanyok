@@ -19,6 +19,30 @@ class AssetReportController extends Controller
         $filterNetwork = $request->get('filterNetwork', []);
         $filterCategory = $request->get('filterCategory', []);
 
+        $applyNullableFilter = function ($query, $column, $selectedValues) {
+            if (empty($selectedValues)) {
+                return;
+            }
+
+            $values = (array) $selectedValues;
+
+            $hasNull = in_array('null', $values, true) || in_array('NULL', $values, true) || in_array(null, $values, true);
+            $cleanValues = array_values(array_filter($values, function ($v) {
+                return $v !== 'null' && $v !== 'NULL' && ! is_null($v) && $v !== '';
+            }));
+
+            $query->where(function ($subQ) use ($column, $hasNull, $cleanValues) {
+                if (! empty($cleanValues)) {
+                    $subQ->whereIn($column, $cleanValues);
+                    if ($hasNull) {
+                        $subQ->orWhereNull($column);
+                    }
+                } elseif ($hasNull) {
+                    $subQ->whereNull($column);
+                }
+            });
+        };
+
         $query = Asset::with([
             'equipment',
             'componentType',
@@ -77,21 +101,11 @@ class AssetReportController extends Controller
                         });
                 });
             })
-            ->when(! empty($filterStatus), function ($q) use ($filterStatus) {
-                $q->whereIn('assets.status', $filterStatus);
-            })
-            ->when(! empty($filterBaseComponent), function ($q) use ($filterBaseComponent) {
-                $q->whereIn('assets.base_component_id', $filterBaseComponent);
-            })
-            ->when(! empty($filterLocation), function ($q) use ($filterLocation) {
-                $q->whereIn('assets.current_loc_id', $filterLocation);
-            })
-            ->when(! empty($filterHolder), function ($q) use ($filterHolder) {
-                $q->whereIn('assets.current_holder_id', $filterHolder);
-            })
-            ->when(! empty($filterModel), function ($q) use ($filterModel) {
-                $q->whereIn('assets.model_id', $filterModel);
-            })
+            ->when(! empty($filterStatus), fn ($q) => $applyNullableFilter($q, 'assets.status', $filterStatus))
+            ->when(! empty($filterBaseComponent), fn ($q) => $applyNullableFilter($q, 'assets.base_component_id', $filterBaseComponent))
+            ->when(! empty($filterLocation), fn ($q) => $applyNullableFilter($q, 'assets.current_loc_id', $filterLocation))
+            ->when(! empty($filterHolder), fn ($q) => $applyNullableFilter($q, 'assets.current_holder_id', $filterHolder))
+            ->when(! empty($filterModel), fn ($q) => $applyNullableFilter($q, 'assets.model_id', $filterModel))
             ->when(! empty($filterNetwork), function ($q) use ($filterNetwork) {
                 $wantsYes = in_array(1, $filterNetwork) || in_array('1', $filterNetwork, true);
                 $wantsNo = in_array(0, $filterNetwork) || in_array('0', $filterNetwork, true);
@@ -115,8 +129,21 @@ class AssetReportController extends Controller
                 }
             })
             ->when(! empty($filterCategory), function ($q) use ($filterCategory) {
-                $q->whereHas('componentType', function ($subQ) use ($filterCategory) {
-                    $subQ->whereIn('category_id', $filterCategory);
+                $values = (array) $filterCategory;
+                $hasNull = in_array('null', $values, true) || in_array('NULL', $values, true) || in_array(null, $values, true);
+                $cleanValues = array_values(array_filter($values, fn ($v) => $v !== 'null' && $v !== 'NULL' && ! is_null($v) && $v !== ''));
+
+                $q->where(function ($subQ) use ($hasNull, $cleanValues) {
+                    if (! empty($cleanValues)) {
+                        $subQ->whereHas('componentType', fn ($ct) => $ct->whereIn('category_id', $cleanValues));
+                        if ($hasNull) {
+                            $subQ->orWhereDoesntHave('componentType')
+                                ->orWhereHas('componentType', fn ($ct) => $ct->whereNull('category_id'));
+                        }
+                    } elseif ($hasNull) {
+                        $subQ->whereDoesntHave('componentType')
+                            ->orWhereHas('componentType', fn ($ct) => $ct->whereNull('category_id'));
+                    }
                 });
             })
             ->when(empty($search) && empty($filterStatus) && empty($filterBaseComponent) && empty($filterLocation) && empty($filterHolder) && empty($filterModel) && empty($filterNetwork) && empty($filterCategory), function ($q) {

@@ -85,9 +85,30 @@
     <h1>Перелік активів МВКТЗ</h1>
     <div class="header-info">Сформовано: {{ $generatedAt }}</div>
 
-    @if(!empty($filters['search']))
-        <div class="filters">
-            <strong>Пошуковий запит:</strong> {{ $filters['search'] }}
+    @if(!empty($filters['search']) || !empty($filters['filterCategory']) || !empty($filters['filterStatus']) || !empty($filters['filterLocation']) || !empty($filters['filterHolder']) || !empty($filters['filterModel']) || !empty($filters['filterBaseComponent']) || !empty($filters['filterNetwork']))
+        <div class="filters" style="background: #f8f9fa; padding: 8px 12px; border: 1px solid #e9ecef; border-radius: 4px; margin-bottom: 15px;">
+            <strong>Активні фільтри:</strong>
+            @if(!empty($filters['search']))
+                <span style="display: inline-block; margin-right: 10px;">🔍 {{ $filters['search'] }}</span>
+            @endif
+            @if(!empty($filters['filterCategory']) && (in_array('null', (array)$filters['filterCategory']) || in_array(null, (array)$filters['filterCategory'])))
+                <span style="display: inline-block; margin-right: 10px; color: #d97706;">• Категорія: [Не вказано / Null]</span>
+            @endif
+            @if(!empty($filters['filterStatus']) && (in_array('null', (array)$filters['filterStatus']) || in_array(null, (array)$filters['filterStatus'])))
+                <span style="display: inline-block; margin-right: 10px; color: #d97706;">• Статус: [Не вказано / Null]</span>
+            @endif
+            @if(!empty($filters['filterLocation']) && (in_array('null', (array)$filters['filterLocation']) || in_array(null, (array)$filters['filterLocation'])))
+                <span style="display: inline-block; margin-right: 10px; color: #d97706;">• Локація: [Не вказано / Null]</span>
+            @endif
+            @if(!empty($filters['filterHolder']) && (in_array('null', (array)$filters['filterHolder']) || in_array(null, (array)$filters['filterHolder'])))
+                <span style="display: inline-block; margin-right: 10px; color: #d97706;">• Відповідальний / Власник: [Не вказано / Null]</span>
+            @endif
+            @if(!empty($filters['filterModel']) && (in_array('null', (array)$filters['filterModel']) || in_array(null, (array)$filters['filterModel'])))
+                <span style="display: inline-block; margin-right: 10px; color: #d97706;">• Модель: [Не вказано / Null]</span>
+            @endif
+            @if(!empty($filters['filterBaseComponent']) && (in_array('null', (array)$filters['filterBaseComponent']) || in_array(null, (array)$filters['filterBaseComponent'])))
+                <span style="display: inline-block; margin-right: 10px; color: #d97706;">• Базовий компонент: [Не вказано / Null]</span>
+            @endif
         </div>
     @endif
 
