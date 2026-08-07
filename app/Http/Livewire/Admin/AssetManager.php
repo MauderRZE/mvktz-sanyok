@@ -119,7 +119,7 @@ class AssetManager extends Component
         if (!empty($this->filterCategory) && !empty($this->filterBaseComponent)) {
             $validComponentIds = BaseComponent::whereIn('category_id', $this->filterCategory)
                 ->pluck('id')
-                ->map(fn ($id) => (string) $id)
+                ->map(fn($id) => (string) $id)
                 ->toArray();
             $this->filterBaseComponent = array_values(array_filter($this->filterBaseComponent, function ($id) use ($validComponentIds) {
                 return in_array((string) $id, $validComponentIds, true);
@@ -134,7 +134,7 @@ class AssetManager extends Component
             $validModelIds = EquipmentType::whereIn('id', $this->filterModel)
                 ->whereIn('brand_id', $this->filterBrand)
                 ->pluck('id')
-                ->map(fn ($id) => (string) $id)
+                ->map(fn($id) => (string) $id)
                 ->toArray();
             $this->filterModel = array_values(array_filter($this->filterModel, function ($id) use ($validModelIds) {
                 return in_array((string) $id, $validModelIds, true);
@@ -180,7 +180,7 @@ class AssetManager extends Component
     {
         if (in_array($id, $this->expandedRows)) {
             $this->expandedRows = array_values(
-                array_filter($this->expandedRows, fn ($r) => $r !== $id)
+                array_filter($this->expandedRows, fn($r) => $r !== $id)
             );
         } else {
             $this->expandedRows[] = $id;
@@ -212,7 +212,7 @@ class AssetManager extends Component
 
     public function render()
     {
-        
+
         $query = Asset::with([
             'equipment',
             'componentType',
@@ -281,7 +281,7 @@ class AssetManager extends Component
         })
             ->when(!empty($this->filterStatus), function ($q) {
                 $hasNull = in_array('null', $this->filterStatus, true) || in_array(null, $this->filterStatus, true);
-                $values = array_filter($this->filterStatus, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $values = array_filter($this->filterStatus, fn($v) => $v !== 'null' && $v !== null && $v !== '');
                 $q->where(function ($sub) use ($values, $hasNull) {
                     if (!empty($values)) {
                         $sub->whereIn('assets.status', $values);
@@ -293,7 +293,7 @@ class AssetManager extends Component
             })
             ->when(!empty($this->filterBaseComponent), function ($q) {
                 $hasNull = in_array('null', $this->filterBaseComponent, true) || in_array(null, $this->filterBaseComponent, true);
-                $values = array_filter($this->filterBaseComponent, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $values = array_filter($this->filterBaseComponent, fn($v) => $v !== 'null' && $v !== null && $v !== '');
                 $q->where(function ($sub) use ($values, $hasNull) {
                     if (!empty($values)) {
                         $sub->whereIn('assets.base_component_id', $values);
@@ -305,7 +305,7 @@ class AssetManager extends Component
             })
             ->when(!empty($this->filterLocation), function ($q) {
                 $hasNull = in_array('null', $this->filterLocation, true) || in_array(null, $this->filterLocation, true);
-                $values = array_filter($this->filterLocation, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $values = array_filter($this->filterLocation, fn($v) => $v !== 'null' && $v !== null && $v !== '');
                 $q->where(function ($sub) use ($values, $hasNull) {
                     if (!empty($values)) {
                         $sub->whereIn('assets.current_loc_id', $values);
@@ -317,7 +317,7 @@ class AssetManager extends Component
             })
             ->when(!empty($this->filterHolder), function ($q) {
                 $hasNull = in_array('null', $this->filterHolder, true) || in_array(null, $this->filterHolder, true);
-                $values = array_filter($this->filterHolder, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $values = array_filter($this->filterHolder, fn($v) => $v !== 'null' && $v !== null && $v !== '');
                 $q->where(function ($sub) use ($values, $hasNull) {
                     if (!empty($values)) {
                         $sub->whereIn('assets.current_holder_id', $values);
@@ -329,7 +329,7 @@ class AssetManager extends Component
             })
             ->when(!empty($this->filterModel), function ($q) {
                 $hasNull = in_array('null', $this->filterModel, true) || in_array(null, $this->filterModel, true);
-                $values = array_filter($this->filterModel, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $values = array_filter($this->filterModel, fn($v) => $v !== 'null' && $v !== null && $v !== '');
                 $q->where(function ($sub) use ($values, $hasNull) {
                     if (!empty($values)) {
                         $sub->whereIn('assets.model_id', $values);
@@ -363,7 +363,7 @@ class AssetManager extends Component
             })
             ->when(!empty($this->filterCategory), function ($q) {
                 $hasNull = in_array('null', $this->filterCategory, true) || in_array(null, $this->filterCategory, true);
-                $values = array_filter($this->filterCategory, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $values = array_filter($this->filterCategory, fn($v) => $v !== 'null' && $v !== null && $v !== '');
                 $q->where(function ($sub) use ($values, $hasNull) {
                     if (!empty($values)) {
                         $sub->whereHas('componentType', function ($subQ) use ($values) {
@@ -380,7 +380,7 @@ class AssetManager extends Component
             })
             ->when(!empty($this->filterBrand), function ($q) {
                 $hasNull = in_array('null', $this->filterBrand, true) || in_array(null, $this->filterBrand, true);
-                $values = array_filter($this->filterBrand, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $values = array_filter($this->filterBrand, fn($v) => $v !== 'null' && $v !== null && $v !== '');
                 $q->where(function ($sub) use ($values, $hasNull) {
                     if (!empty($values)) {
                         $sub->whereHas('model', function ($subQ) use ($values) {
@@ -397,7 +397,7 @@ class AssetManager extends Component
             })
             ->when(!empty($this->filterYears), function ($q) {
                 $hasNull = in_array('null', $this->filterYears, true) || in_array(null, $this->filterYears, true);
-                $values = array_filter($this->filterYears, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $values = array_filter($this->filterYears, fn($v) => $v !== 'null' && $v !== null && $v !== '');
                 $q->where(function ($sub) use ($values, $hasNull) {
                     if (!empty($values)) {
                         // Повертає активи за роком введення (замініть commissioning_date на назву вашої колонки з датою)
