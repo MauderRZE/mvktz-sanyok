@@ -117,12 +117,15 @@
             <tr>
                 @if(in_array('num', $columns)) <th style="width: 4%; text-align: center;">№ з/п</th> @endif
                 @if(in_array('id', $columns)) <th style="width: 5%">ID</th> @endif
-                @if(in_array('equipment', $columns)) <th style="width: 15%">Пристрій (Інв. №)</th> @endif
-                @if(in_array('component_type', $columns)) <th style="width: 15%">Тип компонента</th> @endif
-                @if(in_array('model_sn', $columns)) <th style="width: 20%">Модель / S/N</th> @endif
-                @if(in_array('network', $columns)) <th style="width: 15%">Мережа</th> @endif
-                @if(in_array('location', $columns)) <th style="width: 15%">Місце / Власник</th> @endif
-                @if(in_array('status', $columns)) <th style="width: 10%">Статус</th> @endif
+                @if(in_array('equipment', $columns)) <th style="width: 14%">Пристрій (Інв. №)</th> @endif
+                @if(in_array('component_type', $columns)) <th style="width: 14%">Тип компонента</th> @endif
+                @if(in_array('model_sn', $columns)) <th style="width: 16%">Модель / S/N</th> @endif
+                @if(in_array('year', $columns)) <th style="width: 8%">Рік</th> @endif
+                @if(in_array('specs', $columns)) <th style="width: 15%">Специфікація</th> @endif
+                @if(in_array('network', $columns)) <th style="width: 12%">Мережа</th> @endif
+                @if(in_array('location', $columns)) <th style="width: 14%">Місце / Власник</th> @endif
+                @if(in_array('status', $columns)) <th style="width: 8%">Статус</th> @endif
+                @if(in_array('notes', $columns)) <th style="width: 12%">Примітки</th> @endif
             </tr>
         </thead>
         <tbody>
@@ -159,6 +162,22 @@
                         </td> 
                     @endif
 
+                    @if(in_array('year', $columns))
+                        <td>{{ $c->purchase_year ?? '-' }}</td>
+                    @endif
+
+                    @if(in_array('specs', $columns))
+                        <td>
+                            @if(!empty($c->specifications) && is_array($c->specifications))
+                                @foreach($c->specifications as $key => $val)
+                                    <small><strong>{{ $key }}:</strong> {{ is_array($val) ? implode(', ', $val) : $val }}</small><br>
+                                @endforeach
+                            @else
+                                -
+                            @endif
+                        </td>
+                    @endif
+
                     @if(in_array('network', $columns)) 
                         <td>
                             @if(!empty($c->ip_address) || !empty($c->mac_address) || !empty($c->hostname))
@@ -191,6 +210,10 @@
 
                     @if(in_array('status', $columns)) 
                         <td>{{ $c->status }}</td> 
+                    @endif
+
+                    @if(in_array('notes', $columns))
+                        <td><small>{{ $c->notes ?? '-' }}</small></td>
                     @endif
                 </tr>
             @empty

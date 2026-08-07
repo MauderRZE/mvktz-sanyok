@@ -65,7 +65,7 @@
                         <div>
                             <label class="block text-xs font-medium text-gray-400 mb-2">Стовпчики звіту</label>
                             <div class="space-y-2">
-                                <template x-for="(label, key) in {'num':'№ з/п', 'id':'ID', 'equipment':'Пристрій (Інв. №)', 'component_type':'Тип компонента', 'model_sn':'Модель / S/N', 'network':'Мережа', 'location':'Місце / Власник', 'status':'Статус'}">
+                                <template x-for="(label, key) in {'num':'№ з/п', 'id':'ID', 'equipment':'Пристрій (Інв. №)', 'component_type':'Тип компонента', 'model_sn':'Модель / S/N', 'year':'Рік закупівлі', 'specs':'Специфікації', 'network':'Мережа', 'location':'Місце / Власник', 'status':'Статус', 'notes':'Примітки'}">
                                     <label class="flex items-center gap-2 text-sm text-gray-300">
                                         <input type="checkbox" x-model="columns" :value="key" class="rounded text-brand-500 bg-surface-900 border-white/10">
                                         <span x-text="label"></span>
