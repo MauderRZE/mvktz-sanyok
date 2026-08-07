@@ -35,6 +35,9 @@ class AssetForm extends Form
     #[Validate('nullable|string|max:100')]
     public string $serial_number = '';
 
+    #[Validate('nullable|integer|min:1900|max:2100')]
+    public ?int $purchase_year = null;
+
     #[Validate('boolean')]
     public bool $has_network = false;
 
@@ -67,8 +70,9 @@ class AssetForm extends Form
         $this->parent_asset_id = $asset->parent_asset_id;
         $this->notes = $asset->notes ?? '';
         $this->serial_number = $asset->serial_number ?? '';
+        $this->purchase_year = $asset->purchase_year;
 
-        $this->has_network = ! empty($asset->ip_address) || ! empty($asset->mac_address) || ! empty($asset->hostname);
+        $this->has_network = !empty($asset->ip_address) || !empty($asset->mac_address) || !empty($asset->hostname);
         $this->ip_address = $asset->ip_address ?? '';
         $this->mac_address = $asset->mac_address ?? '';
         $this->hostname = $asset->hostname ?? '';
@@ -111,6 +115,7 @@ class AssetForm extends Form
             'parent_asset_id' => $this->parent_asset_id ?: null,
             'notes' => $this->notes ?: null,
             'serial_number' => $this->serial_number ?: null,
+            'purchase_year' => $this->purchase_year ?: null,
             'ip_address' => $this->ip_address ?: null,
             'mac_address' => $this->mac_address ?: null,
             'hostname' => $this->hostname ?: null,

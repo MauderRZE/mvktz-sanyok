@@ -94,7 +94,7 @@
                     <div class="flex-1">
                         <x-form.search wire:model.blur="search" x-on:keydown.enter="$el.blur()" placeholder="Пошук по всіх полях (серійний номер, IP, модель, кабінет, ПІБ, обладнання...)" />
                     </div>
-                    @if($search !== '' || !empty($filterStatus) || !empty($filterCategory) || !empty($filterBaseComponent) || !empty($filterBrand) || !empty($filterModel) || !empty($filterLocation) || !empty($filterHolder) || !empty($filterNetwork))
+                    @if($search !== '' || !empty($filterStatus) || !empty($filterCategory) || !empty($filterBaseComponent) || !empty($filterBrand) || !empty($filterModel) || !empty($filterLocation) || !empty($filterHolder) || !empty($filterNetwork) || !empty($filterYears))
                     <button wire:click="resetFilters" class="px-4 py-2 bg-white/5 hover:bg-white/10 text-xs text-gray-400 hover:text-white rounded-xl border border-white/10 transition-colors shrink-0 flex items-center gap-1.5" title="Скинути всі фільтри">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -207,8 +207,8 @@
                         </label>
                         @endforeach
                     </x-form.multi-select>
-                    
-                    <x-form.multi-select label="Роки" :selectedCount="count($filterYears ?? [])">
+
+                    <x-form.multi-select label="Рік придбання" :selectedCount="count($filterYears ?? [])">
                         <label class="flex items-center gap-2 text-xs font-semibold text-amber-400 cursor-pointer py-1">
                             <input type="checkbox" value="null" wire:model.live="filterYears" class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
                             <span>[Не вказано / Null]</span>
@@ -285,6 +285,9 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
                         <div>
                             <x-form.input label="Серійний номер" model="form.serial_number" type="text" />
+                        </div>
+                        <div>
+                            <x-form.input label="Рік купівлі" model="form.purchase_year" type="int" type="number" placeholder="на приклад 2026" min="1900" max="2100" step="1" />
                         </div>
                         <div>
                             <x-form.input label="Додаткові примітки" model="form.notes" type="text" placeholder="напр. розширено пам'ять" />

@@ -156,6 +156,7 @@ class AssetManager extends Component
     {
         $this->search = '';
         $this->filterStatus = [];
+        $this->filterYears = [];
         $this->filterBaseComponent = [];
         $this->filterLocation = [];
         $this->filterHolder = [];
