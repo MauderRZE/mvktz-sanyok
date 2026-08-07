@@ -6,12 +6,14 @@ use App\Models\Asset;
 use App\Models\BaseComponent;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
+use Illuminate\Support\Facades\DB;
+use App\Models\Equipment;
 
 class AssetForm extends Form
 {
     public ?int $assetId = null;
 
-    #[Validate('required|exists:equipment,id')]
+    // Зверніть увагу: прибрали #[Validate] з $equipment_id, бо воно тепер у rules()
     public ?int $equipment_id = null;
 
     #[Validate('required|exists:base_components,id')]
@@ -59,6 +61,31 @@ class AssetForm extends Form
     #[Validate('required|string|max:50')]
     public string $status = 'працює';
 
+    // --- НОВІ ПОЛЯ ДЛЯ EQUIPMENT "НА ЛЬОТУ" ---
+    public bool $create_new_equipment = false;
+
+    public ?string $new_inv_number = null;
+    public ?string $new_account_name = null;
+    public ?float $new_buy_price = null;
+
+    public function rules(): array
+    {
+        $rules = [
+            'base_component_id' => 'required',
+            // Інші ваші базові правила валідації...
+        ];
+
+        if ($this->create_new_equipment) {
+            $rules['new_inv_number'] = 'required|string|max:255';
+            $rules['new_account_name'] = 'nullable|string|max:255';
+            $rules['new_buy_price'] = 'nullable|numeric|min:0';
+        } else {
+            $rules['equipment_id'] = 'required|exists:equipment,id';
+        }
+
+        return $rules;
+    }
+
     public function setAsset(Asset $asset)
     {
         $this->assetId = $asset->id;
@@ -105,25 +132,42 @@ class AssetForm extends Form
     public function store()
     {
         $this->validate();
+        $isUpdate = $this->assetId !== null;
 
-        Asset::updateOrCreate(['id' => $this->assetId], [
-            'equipment_id' => $this->equipment_id,
-            'base_component_id' => $this->base_component_id,
-            'model_id' => $this->model_id ?: null,
-            'current_loc_id' => $this->current_loc_id ?: null,
-            'current_holder_id' => $this->current_holder_id ?: null,
-            'parent_asset_id' => $this->parent_asset_id ?: null,
-            'notes' => $this->notes ?: null,
-            'serial_number' => $this->serial_number ?: null,
-            'purchase_year' => $this->purchase_year ?: null,
-            'ip_address' => $this->ip_address ?: null,
-            'mac_address' => $this->mac_address ?: null,
-            'hostname' => $this->hostname ?: null,
-            'nomenclature_id' => $this->nomenclature_id ?: null,
-            'write_off_act_id' => $this->write_off_act_id ?: null,
-            'status' => $this->status,
-        ]);
+        DB::transaction(function () {
+            $equipmentId = $this->equipment_id;
 
+            // Якщо увімкнено створення нового обладнання "на льоту"
+            if ($this->create_new_equipment) {
+                $equipment = Equipment::create([
+                    'inv_number'   => $this->new_inv_number,
+                    'account_name' => $this->new_account_name ?: null,
+                    'buy_price'    => $this->new_buy_price ?: null,
+                    'status'       => 'в експлуатації', // Або за замовчуванням
+                ]);
+
+                $equipmentId = $equipment->id;
+            }
+
+            // Зберігаємо / оновлюємо актив
+            Asset::updateOrCreate(['id' => $this->assetId], [
+                'equipment_id'      => $equipmentId,
+                'base_component_id' => $this->base_component_id,
+                'model_id'          => $this->model_id ?: null,
+                'current_loc_id'    => $this->current_loc_id ?: null,
+                'current_holder_id' => $this->current_holder_id ?: null,
+                'parent_asset_id'   => $this->parent_asset_id ?: null,
+                'notes'             => $this->notes ?: null,
+                'serial_number'     => $this->serial_number ?: null,
+                'purchase_year'     => $this->purchase_year ?: null,
+                'ip_address'        => $this->ip_address ?: null,
+                'mac_address'       => $this->mac_address ?: null,
+                'hostname'          => $this->hostname ?: null,
+                'nomenclature_id'   => $this->nomenclature_id ?: null,
+                'write_off_act_id'  => $this->write_off_act_id ?: null,
+                'status'            => $this->status,
+            ]);
+        });
         $isUpdate = $this->assetId !== null;
         $this->reset();
 
