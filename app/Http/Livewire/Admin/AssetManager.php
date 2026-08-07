@@ -33,6 +33,8 @@ class AssetManager extends Component
 
     public array $expandedRows = [];
 
+
+
     // Пошук та сортування
     public $search = '';
 
@@ -56,6 +58,8 @@ class AssetManager extends Component
     public $filterCategory = [];
 
     public $filterBrand = [];
+
+    public array $filterYears = [];
 
     public function updatingSearch()
     {
@@ -102,10 +106,17 @@ class AssetManager extends Component
         $this->resetPage();
     }
 
-    public function updatedFilterCategory()
+    public function updatedFilterYears()
     {
         $this->resetPage();
-        if (! empty($this->filterCategory) && ! empty($this->filterBaseComponent)) {
+    }
+
+    public function updatedFilterCategory()
+
+
+    {
+        $this->resetPage();
+        if (!empty($this->filterCategory) && !empty($this->filterBaseComponent)) {
             $validComponentIds = BaseComponent::whereIn('category_id', $this->filterCategory)
                 ->pluck('id')
                 ->map(fn ($id) => (string) $id)
@@ -119,7 +130,7 @@ class AssetManager extends Component
     public function updatedFilterBrand()
     {
         $this->resetPage();
-        if (! empty($this->filterModel) && ! empty($this->filterBrand)) {
+        if (!empty($this->filterModel) && !empty($this->filterBrand)) {
             $validModelIds = EquipmentType::whereIn('id', $this->filterModel)
                 ->whereIn('brand_id', $this->filterBrand)
                 ->pluck('id')
@@ -183,7 +194,7 @@ class AssetManager extends Component
 
     public function updatedFormModelId($value)
     {
-        if (! $value) {
+        if (!$value) {
             return;
         }
 
@@ -200,6 +211,7 @@ class AssetManager extends Component
 
     public function render()
     {
+        
         $query = Asset::with([
             'equipment',
             'componentType',
@@ -212,7 +224,7 @@ class AssetManager extends Component
             'writeOffAct',
         ])->withCount('childAssets');
 
-        if (! empty($this->expandedRows)) {
+        if (!empty($this->expandedRows)) {
             $query->with([
                 'childAssets.componentType',
                 'childAssets.model.brand',
@@ -227,7 +239,7 @@ class AssetManager extends Component
 
         $query->when($this->search, function ($q) {
             $q->where(function ($q) {
-                $search = '%'.$this->search.'%';
+                $search = '%' . $this->search . '%';
                 $q->where('assets.serial_number', 'like', $search)
                     ->orWhere('assets.notes', 'like', $search)
                     ->orWhere('assets.ip_address', 'like', $search)
@@ -266,11 +278,11 @@ class AssetManager extends Component
                     });
             });
         })
-            ->when(! empty($this->filterStatus), function ($q) {
+            ->when(!empty($this->filterStatus), function ($q) {
                 $hasNull = in_array('null', $this->filterStatus, true) || in_array(null, $this->filterStatus, true);
                 $values = array_filter($this->filterStatus, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
                 $q->where(function ($sub) use ($values, $hasNull) {
-                    if (! empty($values)) {
+                    if (!empty($values)) {
                         $sub->whereIn('assets.status', $values);
                     }
                     if ($hasNull) {
@@ -278,11 +290,11 @@ class AssetManager extends Component
                     }
                 });
             })
-            ->when(! empty($this->filterBaseComponent), function ($q) {
+            ->when(!empty($this->filterBaseComponent), function ($q) {
                 $hasNull = in_array('null', $this->filterBaseComponent, true) || in_array(null, $this->filterBaseComponent, true);
                 $values = array_filter($this->filterBaseComponent, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
                 $q->where(function ($sub) use ($values, $hasNull) {
-                    if (! empty($values)) {
+                    if (!empty($values)) {
                         $sub->whereIn('assets.base_component_id', $values);
                     }
                     if ($hasNull) {
@@ -290,11 +302,11 @@ class AssetManager extends Component
                     }
                 });
             })
-            ->when(! empty($this->filterLocation), function ($q) {
+            ->when(!empty($this->filterLocation), function ($q) {
                 $hasNull = in_array('null', $this->filterLocation, true) || in_array(null, $this->filterLocation, true);
                 $values = array_filter($this->filterLocation, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
                 $q->where(function ($sub) use ($values, $hasNull) {
-                    if (! empty($values)) {
+                    if (!empty($values)) {
                         $sub->whereIn('assets.current_loc_id', $values);
                     }
                     if ($hasNull) {
@@ -302,11 +314,11 @@ class AssetManager extends Component
                     }
                 });
             })
-            ->when(! empty($this->filterHolder), function ($q) {
+            ->when(!empty($this->filterHolder), function ($q) {
                 $hasNull = in_array('null', $this->filterHolder, true) || in_array(null, $this->filterHolder, true);
                 $values = array_filter($this->filterHolder, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
                 $q->where(function ($sub) use ($values, $hasNull) {
-                    if (! empty($values)) {
+                    if (!empty($values)) {
                         $sub->whereIn('assets.current_holder_id', $values);
                     }
                     if ($hasNull) {
@@ -314,11 +326,11 @@ class AssetManager extends Component
                     }
                 });
             })
-            ->when(! empty($this->filterModel), function ($q) {
+            ->when(!empty($this->filterModel), function ($q) {
                 $hasNull = in_array('null', $this->filterModel, true) || in_array(null, $this->filterModel, true);
                 $values = array_filter($this->filterModel, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
                 $q->where(function ($sub) use ($values, $hasNull) {
-                    if (! empty($values)) {
+                    if (!empty($values)) {
                         $sub->whereIn('assets.model_id', $values);
                     }
                     if ($hasNull) {
@@ -326,17 +338,17 @@ class AssetManager extends Component
                     }
                 });
             })
-            ->when(! empty($this->filterNetwork), function ($q) {
+            ->when(!empty($this->filterNetwork), function ($q) {
                 $wantsYes = in_array(1, $this->filterNetwork) || in_array('1', $this->filterNetwork, true);
                 $wantsNo = in_array(0, $this->filterNetwork) || in_array('0', $this->filterNetwork, true);
 
-                if ($wantsYes && ! $wantsNo) {
+                if ($wantsYes && !$wantsNo) {
                     $q->where(function ($sub) {
                         $sub->whereNotNull('assets.ip_address')->where('assets.ip_address', '!=', '')
                             ->orWhereNotNull('assets.mac_address')->where('assets.mac_address', '!=', '')
                             ->orWhereNotNull('assets.hostname')->where('assets.hostname', '!=', '');
                     });
-                } elseif ($wantsNo && ! $wantsYes) {
+                } elseif ($wantsNo && !$wantsYes) {
                     $q->where(function ($sub) {
                         $sub->where(function ($s) {
                             $s->whereNull('assets.ip_address')->orWhere('assets.ip_address', '');
@@ -348,11 +360,11 @@ class AssetManager extends Component
                     });
                 }
             })
-            ->when(! empty($this->filterCategory), function ($q) {
+            ->when(!empty($this->filterCategory), function ($q) {
                 $hasNull = in_array('null', $this->filterCategory, true) || in_array(null, $this->filterCategory, true);
                 $values = array_filter($this->filterCategory, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
                 $q->where(function ($sub) use ($values, $hasNull) {
-                    if (! empty($values)) {
+                    if (!empty($values)) {
                         $sub->whereHas('componentType', function ($subQ) use ($values) {
                             $subQ->whereIn('category_id', $values);
                         });
@@ -365,11 +377,11 @@ class AssetManager extends Component
                     }
                 });
             })
-            ->when(! empty($this->filterBrand), function ($q) {
+            ->when(!empty($this->filterBrand), function ($q) {
                 $hasNull = in_array('null', $this->filterBrand, true) || in_array(null, $this->filterBrand, true);
                 $values = array_filter($this->filterBrand, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
                 $q->where(function ($sub) use ($values, $hasNull) {
-                    if (! empty($values)) {
+                    if (!empty($values)) {
                         $sub->whereHas('model', function ($subQ) use ($values) {
                             $subQ->whereIn('brand_id', $values);
                         });
@@ -382,7 +394,20 @@ class AssetManager extends Component
                     }
                 });
             })
-            ->when(empty($this->search) && empty($this->filterStatus) && empty($this->filterBaseComponent) && empty($this->filterLocation) && empty($this->filterHolder) && empty($this->filterModel) && empty($this->filterNetwork) && empty($this->filterCategory) && empty($this->filterBrand), function ($q) {
+            ->when(!empty($this->filterYears), function ($q) {
+                $hasNull = in_array('null', $this->filterYears, true) || in_array(null, $this->filterYears, true);
+                $values = array_filter($this->filterYears, fn ($v) => $v !== 'null' && $v !== null && $v !== '');
+                $q->where(function ($sub) use ($values, $hasNull) {
+                    if (!empty($values)) {
+                        // Повертає активи за роком введення (замініть commissioning_date на назву вашої колонки з датою)
+                        $sub->whereIn('assets.purchase_year', $values);
+                    }
+                    if ($hasNull) {
+                        $sub->orWhereNull('assets.purchase_year');
+                    }
+                });
+            })
+            ->when(empty($this->search) && empty($this->filterStatus) && empty($this->filterBaseComponent) && empty($this->filterLocation) && empty($this->filterHolder) && empty($this->filterModel) && empty($this->filterNetwork) && empty($this->filterCategory) && empty($this->filterBrand) && empty($this->filterYears), function ($q) {
                 $q->whereNull('assets.parent_asset_id');
             });
 
@@ -399,20 +424,20 @@ class AssetManager extends Component
                 ->select('assets.*')
                 ->orderBy('locations.room_number', $this->sortDirection);
         } elseif (in_array($this->sortField, ['id', 'serial_number', 'status', 'ip_address', 'mac_address'])) {
-            $query->orderBy('assets.'.$this->sortField, $this->sortDirection);
+            $query->orderBy('assets.' . $this->sortField, $this->sortDirection);
         } else {
             $query->orderBy('assets.id', 'desc');
         }
 
         $baseComponentsQuery = BaseComponent::select('id', 'component_name', 'category_id')->orderBy('component_name');
-        if (! empty($this->filterCategory)) {
+        if (!empty($this->filterCategory)) {
             $baseComponentsQuery->whereIn('category_id', $this->filterCategory);
         }
-        if (! empty($this->filterModel)) {
+        if (!empty($this->filterModel)) {
             $baseComponentsQuery->whereHas('assets', function ($q) {
                 $q->whereIn('model_id', $this->filterModel);
             });
-        } elseif (! empty($this->filterBrand)) {
+        } elseif (!empty($this->filterBrand)) {
             $baseComponentsQuery->whereHas('assets.model', function ($q) {
                 $q->whereIn('brand_id', $this->filterBrand);
             });
@@ -421,11 +446,11 @@ class AssetManager extends Component
         $modelsQuery = EquipmentType::with('brand:id,brandtz_name')
             ->select('id', 'model_name', 'brand_id')
             ->orderBy('model_name');
-        if (! empty($this->filterBrand)) {
+        if (!empty($this->filterBrand)) {
             $modelsQuery->whereIn('brand_id', $this->filterBrand);
         }
 
-        if (! empty($this->filterBaseComponent)) {
+        if (!empty($this->filterBaseComponent)) {
             $modelsQuery->whereHas('assets', function ($q) {
                 $q->whereIn('base_component_id', $this->filterBaseComponent);
             });
@@ -439,6 +464,11 @@ class AssetManager extends Component
             'modelsList' => $modelsQuery->get(),
             'locationsList' => Location::select('id', 'room_number')->get(),
             'holdersList' => LocationHolder::with(['employee:id,first_name,last_name', 'organization:id,org_name'])->select('id', 'employee_id', 'organization_id')->get(),
+            'years' => Asset::whereNotNull('purchase_year')
+                ->distinct()
+                ->orderBy('purchase_year', 'desc')
+                ->pluck('purchase_year')
+                ->toArray(),
         ];
 
         if ($this->isOpen) {

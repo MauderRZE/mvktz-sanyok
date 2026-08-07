@@ -19,6 +19,7 @@ class Asset extends Model
         'base_component_id',
         'model_id',
         'serial_number',
+        'purchase_year',
         'current_loc_id',
         'current_holder_id',
         'equipment_id',
