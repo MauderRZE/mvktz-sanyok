@@ -529,6 +529,7 @@ class AssetManager extends Component
             'lowValueMaterial',
             'writeOffAct',
             'itemProperties.attribute',
+            'equipment.purchase.supplier'
         ])->find($id);
         $this->isViewOpen = true;
     }

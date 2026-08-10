@@ -804,6 +804,8 @@
           </div>
           @endif
 
+
+
           @if($viewAsset->notes)
           <div class="bg-surface-950 p-3 rounded-xl border border-white/5">
             <span class="text-gray-500 text-xs uppercase tracking-wider block mb-1">📝 Примітки</span>
@@ -825,6 +827,56 @@
             </div>
           </div>
           @endif
+          {{-- 1. Картка: Договір / Закупівля --}}
+          {{-- 1. Картка: Договір / Закупівля + Постачальник --}}
+          @if($viewAsset->equipment?->purchase)
+          <div class="bg-surface-950 p-3 rounded-xl border border-white/5 space-y-2">
+            <span class="text-gray-500 text-xs uppercase tracking-wider block">📜 Договір / Закупівля</span>
+
+            {{-- Договір і дата --}}
+            <div class="text-sm font-medium">
+              @if($viewAsset->equipment->purchase->contract_link)
+              <a href="{{ $viewAsset->equipment->purchase->contract_link }}" target="_blank"
+                class="text-brand-400 hover:underline inline-flex items-center gap-1">
+                <span>Договір № {{ $viewAsset->equipment->purchase->contract_number }}</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+              </a>
+              @else
+              <span class="text-gray-300">Договір № {{ $viewAsset->equipment->purchase->contract_number }}</span>
+              @endif
+
+              @if($viewAsset->equipment->purchase->contract_date)
+              <span class="text-gray-500 text-xs ml-1">
+                від {{ \Carbon\Carbon::parse($viewAsset->equipment->purchase->contract_date)->format('d.m.Y') }}
+              </span>
+              @endif
+            </div>
+
+            {{-- Постачальник знизу під рискою --}}
+            @if($viewAsset->equipment->purchase->supplier)
+            <div class="text-xs text-gray-400 pt-2 border-t border-white/5 truncate">
+              <span class="text-gray-500">Постачальник:</span>
+              <span
+                class="text-gray-200 font-medium ml-1">{{ $viewAsset->equipment->purchase->supplier->supplier_name }}</span>
+            </div>
+            @endif
+          </div>
+          @endif
+
+          {{-- 2. Картка: Рік придбання (показується ТІЛЬКИ якщо немає договору) --}}
+          @if(!$viewAsset->equipment?->purchase && $viewAsset->purchase_year)
+          <div class="bg-surface-950 p-3 rounded-xl border border-white/5 flex items-center justify-between gap-2">
+            <span class="text-gray-500 text-xs uppercase tracking-wider shrink-0">📅 Рік придбання</span>
+            <span class="text-gray-300 font-medium text-sm">
+              {{ $viewAsset->purchase_year }}
+            </span>
+          </div>
+          @endif
+
+
         </div>
 
         <div class="mt-6 pt-4 border-t border-white/10 flex justify-end">
