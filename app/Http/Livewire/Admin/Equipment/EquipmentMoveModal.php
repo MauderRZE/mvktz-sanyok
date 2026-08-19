@@ -23,6 +23,7 @@ class EquipmentMoveModal extends Component
 
     public $action_date;
 
+
     public function mount()
     {
         $this->action_date = date('Y-m-d\TH:i:s');
