@@ -61,6 +61,9 @@ class AssetManager extends Component
 
     public array $filterYears = [];
 
+    public array $filterAssetTypes = [];
+
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -408,7 +411,30 @@ class AssetManager extends Component
                     }
                 });
             })
-            ->when(empty($this->search) && empty($this->filterStatus) && empty($this->filterBaseComponent) && empty($this->filterLocation) && empty($this->filterHolder) && empty($this->filterModel) && empty($this->filterNetwork) && empty($this->filterCategory) && empty($this->filterBrand) && empty($this->filterYears), function ($q) {
+           // ФІЛЬТР ОЗ / МШП:
+           ->when(!empty($this->filterAssetTypes), function ($q) {
+            $types = $this->filterAssetTypes;
+
+            // Якщо обрано обидва — показуємо все
+            if (in_array('main', $types) && in_array('msh', $types)) {
+                return;
+            }
+
+            if (in_array('main', $types)) {
+                // ОЗ: є інвентарник (equipment_id), верхній рівень і НЕ малоцінка
+                $q->whereNotNull('assets.equipment_id')
+                  ->whereNull('assets.parent_asset_id')
+                  ->whereNull('assets.nomenclature_id')
+                  ->whereNull('assets.write_off_act_id');
+            } elseif (in_array('msh', $types)) {
+                // МШП: є номенклатура МШП, АБО є акт списання, АБО це взагалі річ без інвентарника
+                $q->where(function ($sub) {
+                    $sub->whereNotNull('assets.nomenclature_id')
+                    ->orWhereNotNull('assets.write_off_act_id');
+                });
+            }
+        })
+            ->when(empty($this->search) && empty($this->filterStatus) && empty($this->filterBaseComponent) && empty($this->filterLocation) && empty($this->filterHolder) && empty($this->filterModel) && empty($this->filterNetwork) && empty($this->filterCategory) && empty($this->filterBrand) && empty($this->filterYears) && empty($this->filterStatus), function ($q) {
                 $q->whereNull('assets.parent_asset_id');
             });
 

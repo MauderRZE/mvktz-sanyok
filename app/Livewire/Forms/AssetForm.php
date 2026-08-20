@@ -93,8 +93,8 @@ class AssetForm extends Form
     public function setAsset(Asset $asset)
     {
         $this->assetId = $asset->id;
-        $this->equipment_id = ($asset->parent_asset_id && $asset->parent?->equipment_id)
-        ? $asset->parent->equipment_id
+        $this->equipment_id = ($asset->parent_asset_id && $asset->parentAsset?->equipment_id)
+        ? $asset->parentAsset->equipment_id
         : $asset->equipment_id;
         $this->base_component_id = $asset->base_component_id;
         $this->model_id = $asset->model_id;

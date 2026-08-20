@@ -268,6 +268,22 @@
                         </label>
                         @endforeach
                     </x-form.multi-select>
+                    <x-form.multi-select label="Тип обліку (ОЗ / МШП)" :selectedCount="count($filterAssetTypes ?? [])">
+                        <label
+                            class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
+                            <input type="checkbox" value="main" wire:model.live="filterAssetTypes"
+                                class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                            <span>Основні засоби (ОЗ)</span>
+                        </label>
+
+                        <label
+                            class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer py-1">
+                            <input type="checkbox" value="msh" wire:model.live="filterAssetTypes"
+                                class="rounded border-white/10 bg-surface-900 text-brand-500 focus:ring-0 focus:ring-offset-0">
+                            <span>Малоцінка (МШП)</span>
+                        </label>
+                    </x-form.multi-select>
+
                 </div>
             </div>
         </x-ui.card>
@@ -277,13 +293,9 @@
             <x-ui.modal wire:key="asset-modal" title="{{ $form->assetId ? 'Редагувати' : 'Додати' }} актив"
                 maxWidth="2xl">
                 @php
-                $eqOptions = collect([
-                '' => 'Без обладнання',
-                ])->merge(
-                $equipmentList->mapWithKeys(fn($eq) => [
-                $eq->id => $eq->inv_number . ' - ' . $eq->account_name
-                ])
-                )->toArray();
+                $eqOptions = ['' => 'Без обладнання'] + $equipmentList->mapWithKeys(fn($eq) => [
+                    $eq->id => $eq->inv_number . ' - ' . $eq->account_name,
+                ])->all();
                 $bcOptions = $baseComponentsList->mapWithKeys(fn($bc) => [$bc->id => $bc->component_name])->toArray();
                 $modOptions = $modelsList->mapWithKeys(fn($m) => [$m->id => trim(($m->brand->brandtz_name ?? '') . ' ' .
                 $m->model_name)])->toArray();
