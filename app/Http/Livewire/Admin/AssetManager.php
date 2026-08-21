@@ -33,8 +33,6 @@ class AssetManager extends Component
 
     public array $expandedRows = [];
 
-
-
     // Пошук та сортування
     public $search = '';
 
@@ -62,7 +60,6 @@ class AssetManager extends Component
     public array $filterYears = [];
 
     public array $filterAssetTypes = [];
-
 
     public function updatingSearch()
     {
@@ -114,9 +111,12 @@ class AssetManager extends Component
         $this->resetPage();
     }
 
+    public function updatedFilterAssetTypes()
+    {
+        $this->resetPage();
+    }
+
     public function updatedFilterCategory()
-
-
     {
         $this->resetPage();
         if (!empty($this->filterCategory) && !empty($this->filterBaseComponent)) {
@@ -167,14 +167,15 @@ class AssetManager extends Component
         $this->filterNetwork = [];
         $this->filterCategory = [];
         $this->filterBrand = [];
+        $this->filterAssetTypes = [];
         $this->resetPage();
     }
 
     public function sortBy($field)
     {
         $this->sortDirection = ($this->sortField === $field)
-            ? ($this->sortDirection === 'asc' ? 'desc' : 'asc')
-            : 'asc';
+        ? ($this->sortDirection === 'asc' ? 'desc' : 'asc')
+        : 'asc';
         $this->sortField = $field;
         $this->resetPage();
     }
@@ -411,30 +412,26 @@ class AssetManager extends Component
                     }
                 });
             })
-           // ФІЛЬТР ОЗ / МШП:
-           ->when(!empty($this->filterAssetTypes), function ($q) {
-            $types = $this->filterAssetTypes;
+            ->when(!empty($this->filterAssetTypes), function ($q) {
+                $types = $this->filterAssetTypes;
 
-            // Якщо обрано обидва — показуємо все
-            if (in_array('main', $types) && in_array('msh', $types)) {
-                return;
-            }
+                // Якщо обрано обидва — не накладаємо обмежень
+                if (in_array('main', $types) && in_array('msh', $types)) {
+                    return;
+                }
 
-            if (in_array('main', $types)) {
-                // ОЗ: є інвентарник (equipment_id), верхній рівень і НЕ малоцінка
-                $q->whereNotNull('assets.equipment_id')
-                  ->whereNull('assets.parent_asset_id')
-                  ->whereNull('assets.nomenclature_id')
-                  ->whereNull('assets.write_off_act_id');
-            } elseif (in_array('msh', $types)) {
-                // МШП: є номенклатура МШП, АБО є акт списання, АБО це взагалі річ без інвентарника
-                $q->where(function ($sub) {
-                    $sub->whereNotNull('assets.nomenclature_id')
-                    ->orWhereNotNull('assets.write_off_act_id');
-                });
-            }
-        })
-            ->when(empty($this->search) && empty($this->filterStatus) && empty($this->filterBaseComponent) && empty($this->filterLocation) && empty($this->filterHolder) && empty($this->filterModel) && empty($this->filterNetwork) && empty($this->filterCategory) && empty($this->filterBrand) && empty($this->filterYears) && empty($this->filterStatus), function ($q) {
+                if (in_array('main', $types)) {
+                    // ОЗ: є інвентарник, верхній рівень і немає номенклатури
+                    $q->whereNotNull('assets.equipment_id')
+                        // ->whereNull('assets.parent_asset_id')
+                        ->whereNull('assets.nomenclature_id');
+                } elseif (in_array('msh', $types)) {
+                    // МШП: є валідна номенклатура
+                    $q->whereNotNull('assets.nomenclature_id')
+                        ->where('assets.nomenclature_id', '!=', 0);
+                }
+            })
+            ->when(empty($this->search) && empty($this->filterStatus) && empty($this->filterBaseComponent) && empty($this->filterLocation) && empty($this->filterHolder) && empty($this->filterModel) && empty($this->filterNetwork) && empty($this->filterCategory) && empty($this->filterBrand) && empty($this->filterYears) && empty($this->filterStatus) && empty($this->filterAssetTypes), function ($q) {
                 $q->whereNull('assets.parent_asset_id');
             });
 
@@ -555,7 +552,7 @@ class AssetManager extends Component
             'lowValueMaterial',
             'writeOffAct',
             'itemProperties.attribute',
-            'equipment.purchase.supplier'
+            'equipment.purchase.supplier',
         ])->find($id);
         $this->isViewOpen = true;
     }

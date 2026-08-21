@@ -13,7 +13,7 @@
             <div class="flex gap-2" x-data="{
             showPrintModal: false,
             orientation: 'landscape',
-            columns: ['num', 'equipment', 'component_type', 'model_sn', 'network', 'location', 'status', 'years'],
+            columns: ['num', 'equipment', 'component_type', 'model_sn', 'network', 'location', 'status', 'years', ],
             getReportUrl() {
                 const params = new URLSearchParams();
                 if ($wire.search) params.append('search', $wire.search);
@@ -25,7 +25,8 @@
                     filterModel: $wire.filterModel,
                     filterNetwork: $wire.filterNetwork,
                     filterCategory: $wire.filterCategory,
-                    filterYears:$wire.filterYears
+                    filterYears:$wire.filterYears,
+                    filterAssetTypes:$wire.filterAssetTypes
                 };
                 for (const [key, values] of Object.entries(arrays)) {
                     if (Array.isArray(values)) {
@@ -109,7 +110,7 @@
                     @if($search !== '' || !empty($filterStatus) || !empty($filterCategory) ||
                     !empty($filterBaseComponent) ||
                     !empty($filterBrand) || !empty($filterModel) || !empty($filterLocation) || !empty($filterHolder) ||
-                    !empty($filterNetwork) || !empty($filterYears))
+                    !empty($filterNetwork) || !empty($filterYears) || !empty($filterAssetTypes))
                     <button wire:click="resetFilters"
                         class="px-4 py-2 bg-white/5 hover:bg-white/10 text-xs text-gray-400 hover:text-white rounded-xl border border-white/10 transition-colors shrink-0 flex items-center gap-1.5"
                         title="Скинути всі фільтри">
